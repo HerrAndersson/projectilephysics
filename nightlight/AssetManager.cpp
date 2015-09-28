@@ -19,7 +19,7 @@ AssetManager::AssetManager(ID3D11Device* device)
 	//for (int i = 0; i < (signed)renderObjectIDs.size(); i++)
 	//{
 	//	vector<int> IDs = StringToIntArray(renderObjectIDs[i]);
-	//	CreateRenderObject(IDs[0], IDs[1], IDs[2]);
+	//	CreateRenderObject(IDs[0], IDs[1]);
 	//}
 };
 
@@ -45,8 +45,7 @@ void AssetManager::LoadModel(string file_path)
 	if (!infile.is_open())
 	{
 		string outputstring = file_path + " not found.\n";
-		throw runtime_error(outputstring.c_str());
-		return;
+		throw runtime_error("AssetManager(LoadModel): " + outputstring);
 	}
 
 	string name;
@@ -62,15 +61,14 @@ void AssetManager::LoadModel(string file_path)
 	models.push_back(model);
 }
 
-void AssetManager::CreateRenderObject(int modelID, int diffuseID, int specularID)
+void AssetManager::CreateRenderObject(int modelID, int diffuseID)
 {
 	RenderObject* renderObject = new RenderObject();
+
 	renderObject->model = models[modelID];
 
 	if (diffuseID!=-1)
 		renderObject->diffuseTexture = textures[diffuseID];
-	if (specularID != -1)
-		renderObject->specularTexture = textures[specularID];
 
 	renderObjects.push_back(renderObject);
 }
@@ -117,8 +115,9 @@ ID3D11Buffer* AssetManager::CreateVertexBuffer(vector<Point>* purePoints, vector
 	ID3D11Buffer* vertexBuffer;
 
 	HRESULT result = device->CreateBuffer(&vbDESC, &vertexData, &vertexBuffer);
-	if (FAILED(result)){
-		throw runtime_error("Failed to create vertexBuffer");
+	if (FAILED(result))
+	{
+		throw runtime_error("AssetManager(CreateVertexBuffer): Failed to create vertexBuffer");
 		return nullptr;
 	}
 

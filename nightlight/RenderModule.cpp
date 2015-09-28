@@ -51,7 +51,7 @@ bool RenderModule::InitializeSamplers()
 
 	result = device->CreateSamplerState(&samplerDesc, &sampleStateWrap);
 	if (FAILED(result))
-		throw std::runtime_error("RenderModule: samplerStateWrap initialization failed.");
+		throw std::runtime_error("RenderModule(InitializeSamplers): samplerStateWrap initialization failed.");
 
 	//Create a CLAMP texture sampler state description.
 	//samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
@@ -61,7 +61,7 @@ bool RenderModule::InitializeSamplers()
 
 	result = device->CreateSamplerState(&samplerDesc, &sampleStateClamp);
 	if (FAILED(result))
-		throw std::runtime_error("RenderModule: samplerStateClamp initialization failed.");
+		throw std::runtime_error("RenderModule(InitializeSamplers): samplerStateClamp initialization failed.");
 
 	//Create a COMPARISON sampler state
 	samplerDesc.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_MIP_POINT;
@@ -80,7 +80,7 @@ bool RenderModule::InitializeSamplers()
 
 	result = device->CreateSamplerState(&samplerDesc, &sampleStateComparison);
 	if (FAILED(result))
-		throw std::runtime_error("RenderModule: samplerStateComparison initialization failed.");
+		throw std::runtime_error("RenderModule(InitializeSamplers): samplerStateComparison initialization failed.");
 
 	return true;
 }
@@ -101,16 +101,16 @@ bool RenderModule::InitializeConstantBuffers()
 	result = device->CreateBuffer(&matrixBufferDesc, NULL, &matrixBufferPerObject);
 
 	if (FAILED(result))
-		throw std::runtime_error("RenderModule: Failed to create MatrixBufferPerObject");
+		throw std::runtime_error("RenderModule(InitializeConstantBuffers): Failed to create MatrixBufferPerObject");
 
 	matrixBufferDesc.ByteWidth = sizeof(MatrixBufferPerFrame);
 	result = device->CreateBuffer(&matrixBufferDesc, NULL, &matrixBufferPerFrame);
 
 	if (FAILED(result))
-		throw std::runtime_error("RenderModule: Failed to create MatrixBufferPerFrame");
+		throw std::runtime_error("RenderModule(InitializeConstantBuffers): Failed to create MatrixBufferPerFrame");
 
 	if (FAILED(result))
-		throw std::runtime_error("RenderModule: Failed to create MatrixBufferPerBlendObject");
+		throw std::runtime_error("RenderModule(InitializeConstantBuffers): Failed to create MatrixBufferPerBlendObject");
 
 	return true;
 }
@@ -151,9 +151,9 @@ bool RenderModule::InitializeShader(WCHAR* vsFilename, WCHAR* psFilename)
 		if (FAILED(result))
 		{
 			if (errorMessage)
-				throw runtime_error(string(static_cast<const char*>(errorMessage->GetBufferPointer()), errorMessage->GetBufferSize()));
+				throw runtime_error("RenderModule(InitializeShader): " + string(static_cast<const char*>(errorMessage->GetBufferPointer()), errorMessage->GetBufferSize()));
 			else
-				throw std::runtime_error("Vertexshader not found");;
+				throw std::runtime_error("RenderModule(InitializeShader): Vertexshader not found");;
 
 			return false;
 		}
@@ -169,9 +169,9 @@ bool RenderModule::InitializeShader(WCHAR* vsFilename, WCHAR* psFilename)
 		if (FAILED(result))
 		{
 			if (errorMessage)
-				throw runtime_error(string(static_cast<const char*>(errorMessage->GetBufferPointer()), errorMessage->GetBufferSize()));
+				throw runtime_error("RenderModule(InitializeShader) :" + string(static_cast<const char*>(errorMessage->GetBufferPointer()), errorMessage->GetBufferSize()));
 			else
-				throw std::runtime_error("Pixelshader not found");
+				throw std::runtime_error("RenderModule(InitializeShader): Pixelshader not found");
 
 			return false;
 		}

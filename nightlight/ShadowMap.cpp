@@ -39,15 +39,15 @@ ShadowMap::ShadowMap(ID3D11Device* device, int dimensions, LPCWSTR vsFilename)
 
 	hr = device->CreateTexture2D(&shadowMapDesc, nullptr, &shadowMap);
 	if (FAILED(hr))
-		throw runtime_error("Could not create Shadow map Texture2D");
+		throw runtime_error("ShadowMap: Could not create Shadow map Texture2D");
 
 	hr = device->CreateDepthStencilView(shadowMap, &depthStencilViewDesc, &shadowDepthView);
 	if (FAILED(hr))
-		throw runtime_error("Could not create Shadow map DSV");
+		throw runtime_error("ShadowMap: Could not create Shadow map DSV");
 	
 	hr = device->CreateShaderResourceView(shadowMap, &shaderResourceViewDesc, &shadowResourceView);
 	if (FAILED(hr))
-		throw runtime_error("Could not create Shadow map SRV");
+		throw runtime_error("ShadowMap: Could not create Shadow map SRV");
 
 	///////////////////////////////////////////////////////// Vertex shader /////////////////////////////////////////////////////////
 	D3D11_INPUT_ELEMENT_DESC inputDesc[] =
@@ -60,9 +60,9 @@ ShadowMap::ShadowMap(ID3D11Device* device, int dimensions, LPCWSTR vsFilename)
 	if (FAILED(hr))
 	{
 		if (errorMessage)
-			throw runtime_error(string(static_cast<const char *>(errorMessage->GetBufferPointer()), errorMessage->GetBufferSize()));
+			throw runtime_error("ShadowMap: " + string(static_cast<const char *>(errorMessage->GetBufferPointer()), errorMessage->GetBufferSize()));
 		else
-			throw runtime_error("Shadow Vertex file missing");
+			throw runtime_error("ShadowMap: Shadow Vertex file missing");
 	}
 
 	device->CreateVertexShader(pVS->GetBufferPointer(), pVS->GetBufferSize(), nullptr, &shadowVS);
@@ -81,13 +81,13 @@ ShadowMap::ShadowMap(ID3D11Device* device, int dimensions, LPCWSTR vsFilename)
 	hr = device->CreateBuffer(&matrixBufferDesc, NULL, &matrixBufferPerObject);
 
 	if (FAILED(hr))
-		throw std::runtime_error("Failed to create matrixBufferPerObject");
+		throw std::runtime_error("ShadowMap: Failed to create matrixBufferPerObject");
 
 	matrixBufferDesc.ByteWidth = sizeof(MatrixBufferPerFrame);
 	hr = device->CreateBuffer(&matrixBufferDesc, NULL, &matrixBufferPerFrame);
 
 	if (FAILED(hr))
-		throw std::runtime_error("Failed to create matrixBufferPerFrame");
+		throw std::runtime_error("ShadowMap: Failed to create matrixBufferPerFrame");
 
 	///////////////////////////////////////////////////////////// Other /////////////////////////////////////////////////////////////
 	ZeroMemory(&shadowViewport, sizeof(D3D11_VIEWPORT));
@@ -105,7 +105,7 @@ ShadowMap::ShadowMap(ID3D11Device* device, int dimensions, LPCWSTR vsFilename)
 
 	hr = device->CreateDepthStencilState(&shadowDepthStencilDesc, &shadowDepthState);
 	if (FAILED(hr))
-		throw runtime_error("Shadow Depth stencil error");
+		throw runtime_error("ShadowMap: Shadow Depth stencil error");
 }
 
 ShadowMap::~ShadowMap()

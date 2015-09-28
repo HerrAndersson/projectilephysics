@@ -9,7 +9,7 @@ Timer::Timer()
 
 	if (frequency == 0)
 	{
-		throw runtime_error("Could not initialize Timer");
+		throw runtime_error("Timer: Could not initialize Timer");
 	}
 
 	ticksPerMs = (float)(frequency / 1000);

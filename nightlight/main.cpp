@@ -5,20 +5,31 @@
 #include <ctime>
 //#include "vld.h"
 
-//#if DEBUG
 //#include "Console.h"
 //#include <fstream>
 //#include <conio.h>
 //#include <stdio.h>
 //#include <cstdlib>
-//#endif
+
+
+/*
+
+
+
+Add Quad-tree culling: http://www.rastertek.com/tertut05.html
+
+Add small body of water
+
+
+
+*/
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
-//#if DEBUG
+
 	//_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	//RedirectIOToConsole();
-//#endif
+
 
 	srand((unsigned)time(NULL));
 
