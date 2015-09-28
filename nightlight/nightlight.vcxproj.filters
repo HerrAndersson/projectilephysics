@@ -18,9 +18,6 @@
     <Filter Include="Game">
       <UniqueIdentifier>{1b906654-dee9-47bf-ab29-9ee96b2c2db1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\AI">
-      <UniqueIdentifier>{ba03b9a5-a6e6-418b-8fbd-16e8b8b595ba}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Render\Shaders">
       <UniqueIdentifier>{b2697dec-6260-4df1-8af4-a7f43c6791af}</UniqueIdentifier>
     </Filter>
@@ -29,9 +26,6 @@
     </Filter>
     <Filter Include="Game\GameObjects">
       <UniqueIdentifier>{1ad5cb94-ed8d-4fb9-95e7-6ea362b4515a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\Level">
-      <UniqueIdentifier>{e4e6b5e4-50a5-48ed-af4b-dc766853f2a5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -75,62 +69,11 @@
     <ClCompile Include="GameObject.cpp">
       <Filter>Game\GameObjects</Filter>
     </ClCompile>
-    <ClCompile Include="Wall.cpp">
-      <Filter>Game\GameObjects</Filter>
-    </ClCompile>
-    <ClCompile Include="Level.cpp">
-      <Filter>Game\Level</Filter>
-    </ClCompile>
-    <ClCompile Include="LevelParser.cpp">
-      <Filter>Game\Level</Filter>
-    </ClCompile>
-    <ClCompile Include="Door.cpp">
-      <Filter>Game\GameObjects</Filter>
-    </ClCompile>
     <ClCompile Include="Cpu.cpp">
       <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="AiModule.cpp">
-      <Filter>Game\AI</Filter>
-    </ClCompile>
-    <ClCompile Include="Floor.cpp">
-      <Filter>Game\GameObjects</Filter>
-    </ClCompile>
-    <ClCompile Include="Tile.cpp">
-      <Filter>Game\Level</Filter>
-    </ClCompile>
-    <ClCompile Include="Character.cpp">
-      <Filter>Game\GameObjects</Filter>
-    </ClCompile>
-    <ClCompile Include="Container.cpp">
-      <Filter>Game\GameObjects</Filter>
-    </ClCompile>
-    <ClCompile Include="Corner.cpp">
-      <Filter>Game\GameObjects</Filter>
-    </ClCompile>
-    <ClCompile Include="Lever.cpp">
-      <Filter>Game\GameObjects</Filter>
-    </ClCompile>
-    <ClCompile Include="MovableObject.cpp">
-      <Filter>Game\GameObjects</Filter>
-    </ClCompile>
-    <ClCompile Include="PressurePlate.cpp">
-      <Filter>Game\GameObjects</Filter>
-    </ClCompile>
-    <ClCompile Include="StaticObject.cpp">
-      <Filter>Game\GameObjects</Filter>
-    </ClCompile>
-    <ClCompile Include="Enemy.cpp">
-      <Filter>Game\AI</Filter>
-    </ClCompile>
     <ClCompile Include="SaveLoadManager.cpp">
       <Filter>Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Button.cpp">
-      <Filter>Game\GameObjects</Filter>
-    </ClCompile>
-    <ClCompile Include="Sounds.cpp">
-      <Filter>Game</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -179,67 +122,13 @@
     <ClInclude Include="GameObject.h">
       <Filter>Game\GameObjects</Filter>
     </ClInclude>
-    <ClInclude Include="Wall.h">
-      <Filter>Game\GameObjects</Filter>
-    </ClInclude>
-    <ClInclude Include="LevelParser.h">
-      <Filter>Game\Level</Filter>
-    </ClInclude>
-    <ClInclude Include="Level.h">
-      <Filter>Game\Level</Filter>
-    </ClInclude>
-    <ClInclude Include="Door.h">
-      <Filter>Game\GameObjects</Filter>
-    </ClInclude>
     <ClInclude Include="Cpu.h">
       <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="AiUtil.h">
-      <Filter>Game\AI</Filter>
-    </ClInclude>
-    <ClInclude Include="AiModule.h">
-      <Filter>Game\AI</Filter>
-    </ClInclude>
-    <ClInclude Include="Floor.h">
-      <Filter>Game\GameObjects</Filter>
-    </ClInclude>
-    <ClInclude Include="Tile.h">
-      <Filter>Game\Level</Filter>
-    </ClInclude>
-    <ClInclude Include="Character.h">
-      <Filter>Game\GameObjects</Filter>
-    </ClInclude>
-    <ClInclude Include="Container.h">
-      <Filter>Game\GameObjects</Filter>
-    </ClInclude>
-    <ClInclude Include="Corner.h">
-      <Filter>Game\GameObjects</Filter>
-    </ClInclude>
-    <ClInclude Include="Lever.h">
-      <Filter>Game\GameObjects</Filter>
-    </ClInclude>
-    <ClInclude Include="MovableObject.h">
-      <Filter>Game\GameObjects</Filter>
-    </ClInclude>
-    <ClInclude Include="PressurePlate.h">
-      <Filter>Game\GameObjects</Filter>
-    </ClInclude>
-    <ClInclude Include="StaticObject.h">
-      <Filter>Game\GameObjects</Filter>
-    </ClInclude>
-    <ClInclude Include="Enemy.h">
-      <Filter>Game\AI</Filter>
     </ClInclude>
     <ClInclude Include="SaveLoadManager.h">
       <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="Collision.h">
-      <Filter>Game</Filter>
-    </ClInclude>
-    <ClInclude Include="Button.h">
-      <Filter>Game\GameObjects</Filter>
-    </ClInclude>
-    <ClInclude Include="Sounds.h">
       <Filter>Game</Filter>
     </ClInclude>
   </ItemGroup>
@@ -251,12 +140,6 @@
       <Filter>Render\Shaders</Filter>
     </None>
     <None Include="Assets\Shaders\ShadowVS.hlsl">
-      <Filter>Render\Shaders</Filter>
-    </None>
-    <None Include="Assets\Shaders\blendVertexShader.hlsl">
-      <Filter>Render\Shaders</Filter>
-    </None>
-    <None Include="Assets\Shaders\SkeletalVertexShader.hlsl">
       <Filter>Render\Shaders</Filter>
     </None>
   </ItemGroup>
