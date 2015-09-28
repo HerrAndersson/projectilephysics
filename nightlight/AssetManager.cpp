@@ -4,23 +4,23 @@ AssetManager::AssetManager(ID3D11Device* device)
 {
 	this->device = device;
 
-	//vector<string> modelNames;
-	//FileToStrings("Assets/models.txt", modelNames);
-	//for (int i = 0; i < (signed)modelNames.size(); i++)
-	//	LoadModel("Assets/Models/" + modelNames[i]);
+	vector<string> modelNames;
+	FileToStrings("Assets/models.txt", modelNames);
+	for (int i = 0; i < (signed)modelNames.size(); i++)
+		LoadModel("Assets/Models/" + modelNames[i]);
 
-	//vector<string> textureNames;
-	//FileToStrings("Assets/textures.txt", textureNames);
-	//for (int i = 0; i < (signed)textureNames.size(); i++)
-	//	LoadTexture("Assets/Textures/" + textureNames[i]);
+	vector<string> textureNames;
+	FileToStrings("Assets/textures.txt", textureNames);
+	for (int i = 0; i < (signed)textureNames.size(); i++)
+		LoadTexture("Assets/Textures/" + textureNames[i]);
 
-	//vector<string> renderObjectIDs;
-	//FileToStrings("Assets/renderObjects.txt", renderObjectIDs);
-	//for (int i = 0; i < (signed)renderObjectIDs.size(); i++)
-	//{
-	//	vector<int> IDs = StringToIntArray(renderObjectIDs[i]);
-	//	CreateRenderObject(IDs[0], IDs[1]);
-	//}
+	vector<string> renderObjectIDs;
+	FileToStrings("Assets/renderObjects.txt", renderObjectIDs);
+	for (int i = 0; i < (signed)renderObjectIDs.size(); i++)
+	{
+		vector<int> IDs = StringToIntArray(renderObjectIDs[i]);
+		CreateRenderObject(IDs[0], IDs[1]);
+	}
 };
 
 AssetManager::~AssetManager()
@@ -48,16 +48,100 @@ void AssetManager::LoadModel(string file_path)
 		throw runtime_error("AssetManager(LoadModel): " + outputstring);
 	}
 
-	string name;
-	vector<Point> purePoints;
+	vector<XMFLOAT3> vertices;
 	vector<XMFLOAT3> normals;
-	vector<XMFLOAT2> UVs;
-	vector<XMINT3> vertexIndices;
+	vector<XMFLOAT2> uvs;
+	vector<Vertex> faces;
 
-	model->vertexBufferSize = vertexIndices.size();
+	if (infile.good())
+	{
+		while (!infile.eof())
+		{
+			string command;
+			infile >> command;
+			if (command == "v")
+			{
+				XMFLOAT3 tempVertex;
+				infile >> tempVertex.x;
+				infile >> tempVertex.y;
+				infile >> tempVertex.z;
+				tempVertex.z *= -1.0f;
+				vertices.push_back(tempVertex);
+			}
+			else if (command == "vt")
+			{
+				XMFLOAT2 tempUv;
+				infile >> tempUv.x;
+				infile >> tempUv.y;
+				tempUv.y = 1.0f - tempUv.y;
+				uvs.push_back(tempUv);
+			}
+			else if (command == "vn")
+			{
+				XMFLOAT3 tempNormal;
+				infile >> tempNormal.x;
+				infile >> tempNormal.y;
+				infile >> tempNormal.z;
+				tempNormal.z *= -1.0f;
+				normals.push_back(tempNormal);
+			}
+			else if (command == "f")
+			{
+				int vertexIndex[3];
+				int uvIndex[3];
+				int normalIndex[3];
+
+				for (int i = 0; i < 3; i++)
+				{
+					infile >> vertexIndex[i];
+					//Check if we can load UV coordinates
+					if (infile.peek() == '/')
+					{
+						infile.get();
+						infile >> uvIndex[i];
+						//Check if we can load normals
+						if (infile.peek() == '/')
+						{
+							infile.get();
+							infile >> normalIndex[i];
+						}
+					}
+				}
+				for (int i = 2; i >= 0; i--)
+				{
+					Vertex tempVertex;
+					tempVertex.position = vertices[vertexIndex[i] - 1];
+					tempVertex.uv = uvs[uvIndex[i] - 1];
+					tempVertex.normal = normals[normalIndex[i] - 1];
+					faces.push_back(tempVertex);
+				}
+			}
+			else //Unknown command, ignore it
+			{
+				string tempString;
+				getline(infile, tempString);
+			}
+		}
+	}
+
+	model->vertexBufferSize = faces.size();
 	infile.close();
 
-	model->vertexBuffer = CreateVertexBuffer(&purePoints, &normals, &UVs, &vertexIndices);
+	ID3D11Buffer* vertexBuffer;
+	D3D11_BUFFER_DESC bufferDesc;
+	ZeroMemory(&bufferDesc, sizeof(bufferDesc));
+	bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	bufferDesc.ByteWidth = sizeof(Vertex) * faces.size();
+
+	D3D11_SUBRESOURCE_DATA data;
+	data.pSysMem = faces.data();
+	HRESULT result = device->CreateBuffer(&bufferDesc, &data, &vertexBuffer);
+
+	if (FAILED(result))
+		throw runtime_error("AssetManager(LoadModel): Failed to create vertexBuffer");
+
+	model->vertexBuffer = vertexBuffer;
 	models.push_back(model);
 }
 
@@ -80,50 +164,6 @@ void AssetManager::LoadTexture(string file_path)
 	DirectX::CreateWICTextureFromFile(device, widestr.c_str(), nullptr, &texture, 0);
 	textures.push_back(texture);
 }
-
-ID3D11Buffer* AssetManager::CreateVertexBuffer(vector<Point>* purePoints, vector<XMFLOAT3>* normals, vector<XMFLOAT2>* UVs, vector<XMINT3>* vertexIndices)
-{
-	vector<Vertex> vertices;
-
-	for (int i = 0; i < (signed)vertexIndices->size(); i += 3) 
-	{
-		for (int a = 0; a < 3; a++) 
-		{
-			Vertex tempVertex;
-			tempVertex.position = purePoints->at(vertexIndices->at(i + a).x).position;
-			tempVertex.normal = normals->at(vertexIndices->at(i + a).y);
-			tempVertex.uv = UVs->at(vertexIndices->at(i + a).z);
-			vertices.push_back(tempVertex);
-		}
-	}
-
-	D3D11_BUFFER_DESC vbDESC;
-	vbDESC.Usage = D3D11_USAGE_DEFAULT;
-
-	vbDESC.ByteWidth = sizeof(Vertex)* vertexIndices->size();
-	vbDESC.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	vbDESC.CPUAccessFlags = 0;
-	vbDESC.MiscFlags = 0;
-	vbDESC.StructureByteStride = 0;
-
-	D3D11_SUBRESOURCE_DATA vertexData;
-
-	vertexData.pSysMem = vertices.data();
-	vertexData.SysMemPitch = 0;
-	vertexData.SysMemSlicePitch = 0;
-
-	ID3D11Buffer* vertexBuffer;
-
-	HRESULT result = device->CreateBuffer(&vbDESC, &vertexData, &vertexBuffer);
-	if (FAILED(result))
-	{
-		throw runtime_error("AssetManager(CreateVertexBuffer): Failed to create vertexBuffer");
-		return nullptr;
-	}
-
-	return vertexBuffer;
-}
-
 
 RenderObject* AssetManager::GetRenderObject(int id)
 {

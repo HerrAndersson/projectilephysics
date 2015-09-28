@@ -18,11 +18,6 @@ namespace AssetUtility
 		XMFLOAT3 normal;
 	};
 
-	struct Point
-	{
-		XMFLOAT3 position;
-	};
-
 	struct Model 
 	{
 		~Model ( ) 

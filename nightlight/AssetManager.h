@@ -26,6 +26,6 @@ private:
 	void LoadTexture(string file_path);
 
 	void CreateRenderObject(int modelID, int diffuseID);
-	ID3D11Buffer* CreateVertexBuffer(vector<Point>* purePoints, vector<XMFLOAT3>* normals, vector<XMFLOAT2>* UVs, vector<XMINT3>* vertexIndices);
+
 };
 

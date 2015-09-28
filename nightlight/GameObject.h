@@ -2,8 +2,6 @@
 #include "AssetUtil.h"
 #include <DirectXMath.h>
 
-#define TILE_SIZE 1.0f
-
 using DirectX::XMMATRIX;
 using namespace AssetUtility;
 
@@ -13,11 +11,14 @@ class GameObject
 protected:
 
 	int id;
+
 	XMFLOAT3		position;
 	XMFLOAT3		rotation = XMFLOAT3(0, 0, 0);
-	XMVECTOR		forwardVector;
-	RenderObject*	renderObject;
 	XMFLOAT3		colorModifier = XMFLOAT3(0, 0, 0);
+	XMVECTOR		forwardVector;
+
+	RenderObject*	renderObject;
+
 
 public:
 

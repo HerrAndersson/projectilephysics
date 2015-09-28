@@ -67,11 +67,11 @@ bool System::Update()
 
 	if (timer->GetGameTime() > MS_PER_FRAME)
 	{
-		if (GetFocus() == hwnd)
-		{
-			result = game->Update();
-			if (!result) { return false; }
-		}
+		//if (GetFocus() == hwnd)
+		//{
+		result = game->Update(timer->GetGameTime());
+		if (!result) { return false; }
+		//}
 
 		result = game->Render();
 		if (!result) { return false; }

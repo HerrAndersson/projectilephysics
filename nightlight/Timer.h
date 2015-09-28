@@ -40,8 +40,8 @@ private:
 	double ticksPerMs;
 	INT64 startTime;
 
-	double frameTime;
-	double gameTime;
+	double frameTime; //Time since last frame
+	double gameTime;  //Time since the beginning of the game
 
 	FPS framesPerSecond;
 

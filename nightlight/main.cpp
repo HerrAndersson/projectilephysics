@@ -3,13 +3,13 @@
 #include <crtdbg.h>
 #include <iostream>
 #include <ctime>
-//#include "vld.h"
+#include "vld.h"
 
-//#include "Console.h"
-//#include <fstream>
-//#include <conio.h>
-//#include <stdio.h>
-//#include <cstdlib>
+#include "Console.h"
+#include <fstream>
+#include <conio.h>
+#include <stdio.h>
+#include <cstdlib>
 
 
 /*
@@ -26,10 +26,8 @@ Add small body of water
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
-
-	//_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	//RedirectIOToConsole();
-
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	RedirectIOToConsole();
 
 	srand((unsigned)time(NULL));
 

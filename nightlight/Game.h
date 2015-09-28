@@ -33,12 +33,14 @@ private:
 	SaveLoadManager			saveLoadManager;
 	InputManager*			Input;
 
+	vector<GameObject*>		gameObjects;
+
 public:
 
 	Game(HINSTANCE hInstance, HWND hwnd, int screenWidth, int screenHeight, bool fullscreen);
 	~Game();
 
-	bool Update();
+	bool Update(double gameTime);
 	bool Render();
 
 	//Overloading these guarantees 16B alignment of XMMATRIX

@@ -21,6 +21,10 @@ Game::Game(HINSTANCE hInstance, HWND hwnd, int screenWidth, int screenHeight, bo
 	Input = new InputManager(hwnd, screenWidth, screenHeight);
 
 	Logic = new GameLogic(Input);
+
+	GameObject* sphere = new GameObject(1, XMFLOAT3(0, 0, 0), 5.0f, Assets->GetRenderObject(3));
+
+	gameObjects.push_back(sphere);
 }
 
 Game::~Game()
@@ -34,10 +38,13 @@ Game::~Game()
 	delete spotLight;
 }
 
-bool Game::Update()
+bool Game::Update(double gameTime)
 {
 	bool result = true;
-	
+
+	XMFLOAT3 pos = gameObjects.at(0)->GetPosition();
+	gameObjects.at(0)->SetPosition(XMFLOAT3(pos.x, pos.y, pos.z+1));
+
 	result = Logic->Update();
 	
 	if (!result)
@@ -52,13 +59,10 @@ bool Game::Render()
 {
 	bool result = true;
 
-	//std::vector<GameObject*>* toRender = levelStates.currentLevel->GetGameObjects();
-
 	XMMATRIX worldMatrix, viewMatrix, projectionMatrix;
 	worldMatrix = DirectX::XMMatrixIdentity();
 	camera->GetProjectionMatrix(projectionMatrix);
 	camera->GetViewMatrix(viewMatrix);
-
 
 	XMMATRIX lightView, lightProj;
 	spotLight->getViewMatrix(lightView);
@@ -66,16 +70,16 @@ bool Game::Render()
 
 	Renderer->ActivateShadowRendering(lightView, lightProj);
 	
-	//for (int i = 0; i < (signed)toRender->size(); i++) 
-	//	Renderer->RenderShadow(toRender->at(i));
+	for (int i = 0; i < (signed)gameObjects.size(); i++) 
+		Renderer->RenderShadow(gameObjects.at(i));
 
 	Renderer->BeginScene(0.05f, 0.05f, 0.05f, 1.0f);
 
 	Renderer->SetDataPerFrame(viewMatrix, projectionMatrix, camera->GetPosition());
 	Renderer->UseDefaultShader();
 	
-	//for (int i = 0; i < (signed)toRender->size(); i++)
-	//	Renderer->Render(toRender->at(i), toRender->at(i)->GetWeights());
+	for (int i = 0; i < (signed)gameObjects.size(); i++)
+		Renderer->RenderShadow(gameObjects.at(i));
 
 	Renderer->EndScene();
 
