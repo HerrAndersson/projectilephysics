@@ -3,8 +3,8 @@
 Camera::Camera(float fovAngleY, int width, int height, float viewNear, float viewFar)
 {
 	positionX = 0.0f;
-	positionY = 20.0f;
-	positionZ = 0.0f;
+	positionY = 0.0f;
+	positionZ = -20.0f;
 
 	rotationX = 0.0f;
 	rotationY = 0.0f;
@@ -17,7 +17,7 @@ Camera::Camera(float fovAngleY, int width, int height, float viewNear, float vie
 	this->viewFar = viewFar;
 
 	//Set where the camera is looking by default.
-	camLookAt = XMVectorSet(0.0f, 0.0f, -1.0f, 1.0f);
+	camLookAt = XMVectorSet(0.0f, 0.0f, 1.0f, 1.0f);
 
 	projectionMatrix = XMMatrixPerspectiveFovLH(fovAngleY, aspectRatioWbyH, viewNear, viewFar);
 	UpdateCamera();
@@ -62,15 +62,13 @@ void Camera::UpdateCamera()
 {
 	XMVECTOR up, position;
 	XMMATRIX rotationMatrix;
-	XMMATRIX translationMatrix;
 
 	position = XMVectorSet(positionX, positionY, positionZ, 1.0f);
 
 	rotationMatrix = XMMatrixRotationRollPitchYaw(XMConvertToRadians(rotationX), XMConvertToRadians(rotationY), XMConvertToRadians(rotationZ));
 	
-	up = XMVectorSet(0.0f, 0.0f, 1.0f, 1.0f);
+	up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	up = XMVector3TransformCoord(up, rotationMatrix);
-
 	camUp = up;
 
 	//Create the view matrix from the updated vectors.

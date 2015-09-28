@@ -22,15 +22,10 @@ private:
 	int screenWidth, screenHeight;
 	const int shadowMapSize = 2048;
 
-	std::string saveFilePath = "nightlight.sav";
-
 	Camera*			        camera;
-	DirectionalLight*		spotLight;
-
 	GameLogic*              Logic;
 	RenderModule*           Renderer;
 	AssetManager*			Assets;
-	SaveLoadManager			saveLoadManager;
 	InputManager*			Input;
 
 	vector<GameObject*>		gameObjects;
