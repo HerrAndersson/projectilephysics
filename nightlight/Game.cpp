@@ -2,16 +2,15 @@
 
 Game::Game(HINSTANCE hInstance, HWND hwnd, int screenWidth, int screenHeight, bool fullscreen)
 {
-
 	this->screenWidth = screenWidth;
 	this->screenHeight = screenHeight;
 
-	camera = new CameraObject(XM_PI / 3, screenWidth, screenHeight, 0.1f, 1000.0f);
+	camera = new Camera(XM_PI / 3, screenWidth, screenHeight, 0.1f, 1000.0f);
 
 	float spotRange = 15.0f;
 	float spotCone = 29.0f;
 	float fov = (spotCone + 20.0f) * (XM_PI / 180);
-	spotLight = new LightObject(fov, 1.0f, 0.1f, spotRange, spotCone, spotRange);
+	spotLight = new DirectionalLight(fov, 1.0f, 0.1f, spotRange, spotCone, spotRange);
 
 	spotLight->setAmbientColor(0.09f, 0.09f, 0.09f, 1.0f);
 	spotLight->setDiffuseColor(0.55f, 0.45f, 0.2f, 1.0f);

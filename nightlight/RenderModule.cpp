@@ -236,10 +236,7 @@ bool RenderModule::SetDataPerObject(XMMATRIX& worldMatrix, RenderObject* renderO
 
 
 	UINT32 vertexSize;
-	if (renderObject->model->hasSkeleton)
-		vertexSize = sizeof(WeightedVertex);
-	else
-		vertexSize = sizeof(Vertex);
+	vertexSize = sizeof(Vertex);
 
 	UINT32 offset = 0;
 
@@ -348,10 +345,8 @@ bool RenderModule::RenderShadow(GameObject* gameObject)
 
 	UINT32 offset = 0;
 	UINT32 vertexSize;
-	if (renderObject->model->hasBlendShapes)
-		vertexSize = sizeof(BlendVertex);
-	else
-		vertexSize = sizeof(Vertex);
+
+	vertexSize = sizeof(Vertex);
 
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	deviceContext->IASetVertexBuffers(0, 1, &renderObject->model->vertexBuffer, &vertexSize, &offset);

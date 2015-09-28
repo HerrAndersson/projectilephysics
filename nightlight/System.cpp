@@ -76,17 +76,17 @@ bool System::Update()
 		result = game->Render();
 		if (!result) { return false; }
 
-		std::string s = "nightlight";
-		if (game->GetDebugShowFps()){
-			s += " - msPerSystemUpdate: " + std::to_string(timer->GetFrameTime())
-				+ " msPerFrame: " + std::to_string(timer->GetGameTime())
-				+ " SystemUpdatePerSecond : " + std::to_string(timer->GetFPS())
-				+ " CPU% : " + std::to_string(cpuUsage->GetCpuPercentage());
+		std::string s = "Physics";
+		if (debugShowFps)
+		{
+			s += " - CPU% : " + std::to_string(cpuUsage->GetCpuPercentage())
+				+ "    msPerFrame: " + std::to_string(timer->GetGameTime())
+				+ "    SystemUpdatePerSecond : " + std::to_string(timer->GetFPS());
 		}
 
-		SetWindowText(hwnd, s.c_str());
-
 		timer->Reset();
+
+		SetWindowText(hwnd, s.c_str());
 	}
 
 	return result;
@@ -108,7 +108,7 @@ void System::InitializeWindows()
 	gameHandle = this;
 
 	hinstance = GetModuleHandle(NULL);
-	applicationName = "nightlight";
+	applicationName = "Physics";
 
 	//Setup the windows class with default settings.
 	wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;

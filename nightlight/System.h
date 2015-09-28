@@ -11,8 +11,9 @@ class System
 
 private:
 
-	const double MS_PER_FRAME = (1000 / 62.0f); //62FPS
-	//const double MS_PER_FRAME = (1000 / 60.0f);//60FPS
+	const bool debugShowFps = true;
+	//const double MS_PER_FRAME = (1000 / 62.0f); //62FPS
+	const double MS_PER_FRAME = (1000 / 60.0f);//60FPS
 	//const double MS_PER_FRAME =  (1000 / 120.0f); //120FPS
 	//const double MS_PER_FRAME =  (1000 / 144.0f); //144FPS
 

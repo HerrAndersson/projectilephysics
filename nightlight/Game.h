@@ -9,8 +9,8 @@
 
 #include "AssetUtil.h"
 #include "GameObject.h"
-#include "cameraObject.h"
-#include "lightObject.h"
+#include "Camera.h"
+#include "DirectionalLight.h"
 
 using namespace DirectX;
 using std::vector;
@@ -24,18 +24,14 @@ private:
 
 	std::string saveFilePath = "nightlight.sav";
 
-	CameraObject*			camera;
-	LightObject*			spotLight;
+	Camera*			        camera;
+	DirectionalLight*		spotLight;
 
 	GameLogic*              Logic;
 	RenderModule*           Renderer;
 	AssetManager*			Assets;
 	SaveLoadManager			saveLoadManager;
 	InputManager*			Input;
-
-	const bool debugDisableWallRendering = false;
-	const bool debugRenderEnemyPaths = false;
-	const bool debugShowFps = false;
 
 public:
 
@@ -44,9 +40,6 @@ public:
 
 	bool Update();
 	bool Render();
-
-	void UpdateCharacterAnimation();
-	bool GetDebugShowFps() { return debugShowFps; }
 
 	//Overloading these guarantees 16B alignment of XMMATRIX
 	void* operator new(size_t i);

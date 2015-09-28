@@ -3,7 +3,7 @@
 #include <iostream>
 #include <math.h>
 #include "InputManager.h"
-#include "cameraObject.h"
+#include "Camera.h"
 
 
 class GameLogic

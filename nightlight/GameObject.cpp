@@ -1,12 +1,11 @@
 #include "GameObject.h"
 
-GameObject::GameObject(int id, XMFLOAT3 position, float rotation, RenderObject* renderObject, int coordX, int coordY)
+GameObject::GameObject(int id, XMFLOAT3 position, float rotation, RenderObject* renderObject)
 {
 	this->id = id;
 	this->position = position;
 	this->rotation.y = XMConvertToDegrees(rotation);
 	this->renderObject = renderObject;
-	this->tileCoord = Coord(coordX, coordY);
 	forwardVector = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
 }
 
@@ -24,17 +23,9 @@ RenderObject* GameObject::GetRenderObject()
 	return renderObject;
 }
 
-void GameObject::SetPosition(XMFLOAT3 pos) {
-	position = pos;
-	tileCoord.x = (int)(-position.x);
-	tileCoord.y = (int)(-position.z);
-}
-
-void GameObject::SetTilePosition(Coord coord) 
+void GameObject::SetPosition(XMFLOAT3 pos) 
 {
-	tileCoord = coord;
-	position.x = -coord.x - TILE_SIZE / 2;
-	position.z = -coord.y - TILE_SIZE / 2;
+	position = pos;
 }
 
 XMFLOAT3 GameObject::GetPosition()
@@ -75,20 +66,6 @@ ID3D11ShaderResourceView* GameObject::GetDiffuseTexture()
 ID3D11ShaderResourceView* GameObject::GetSpecularTexture()
 {
 	return renderObject->specularTexture;
-}
-
-bool GameObject::IsSelected()
-{
-	return isSelected;
-}
-
-void GameObject::SetSelected(bool selected)
-{
-	if (selected)
-		colorModifier = selectionColor;
-	else
-		colorModifier = XMFLOAT3(0, 0, 0);
-	isSelected = selected;
 }
 
 void* GameObject::operator new(size_t i)

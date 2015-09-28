@@ -7,7 +7,7 @@
 #include "D3DManager.h"
 #include "AssetUtil.h"
 #include "GameObject.h"
-#include "lightObject.h"
+#include "DirectionalLight.h"
 #include "ShadowMap.h"
 #include "GameLogic.h"
 

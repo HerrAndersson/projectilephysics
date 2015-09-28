@@ -26,7 +26,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 	try
 	{
-		system = new System(false, true, 1920, 1080);
+		system = new System(false, true, 1280, 720);
 		system->Run();
 		delete system;
 	}

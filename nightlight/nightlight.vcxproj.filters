@@ -57,12 +57,6 @@
     <ClCompile Include="WICTextureLoader\WICTextureLoader.cpp">
       <Filter>Wic</Filter>
     </ClCompile>
-    <ClCompile Include="CameraObject.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
-    <ClCompile Include="LightObject.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
     <ClCompile Include="ShadowMap.cpp">
       <Filter>Render</Filter>
     </ClCompile>
@@ -73,6 +67,12 @@
       <Filter>Core</Filter>
     </ClCompile>
     <ClCompile Include="SaveLoadManager.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectionalLight.cpp">
       <Filter>Core</Filter>
     </ClCompile>
   </ItemGroup>
@@ -110,12 +110,6 @@
     <ClInclude Include="WICTextureLoader\WICTextureLoader.h">
       <Filter>Wic</Filter>
     </ClInclude>
-    <ClInclude Include="CameraObject.h">
-      <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="LightObject.h">
-      <Filter>Core</Filter>
-    </ClInclude>
     <ClInclude Include="ShadowMap.h">
       <Filter>Render</Filter>
     </ClInclude>
@@ -130,6 +124,12 @@
     </ClInclude>
     <ClInclude Include="Collision.h">
       <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectionalLight.h">
+      <Filter>Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
