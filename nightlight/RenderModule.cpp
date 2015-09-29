@@ -356,6 +356,12 @@ bool RenderModule::RenderShadow(GameObject* gameObject)
 	return result;
 }
 
+bool RenderModule::RenderTerrain(Terrain* terrain)
+{
+	terrain->Render(d3d->GetDeviceContext());
+	return true;
+}
+
 void RenderModule::BeginScene(float red, float green, float blue, float alpha)
 {
 	d3d->BeginScene(red, green, blue, alpha);

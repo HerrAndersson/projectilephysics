@@ -33,7 +33,7 @@ public:
 	XMVECTOR GetCamUp();
 	const float GetAspectRatio();
 
-	void UpdateCamera();
+	void Update();
 	void GetViewMatrix(XMMATRIX& viewMatrix);
 	void GetProjectionMatrix(XMMATRIX& projectionMatrix);
 

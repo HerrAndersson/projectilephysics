@@ -37,10 +37,7 @@ bool Game::Update(double gameTime)
 {
 	bool result = true;
 
-	XMFLOAT3 pos = gameObjects.at(0)->GetPosition();
-	gameObjects.at(0)->SetPosition(XMFLOAT3(pos.x + gameTime / 10000.0f, pos.y + gameTime / 10000.0f, pos.z));
-
-	result = Logic->Update();
+	result = Logic->Update(gameTime, gameObjects, camera);
 	
 	if (!result)
 	{
@@ -65,14 +62,17 @@ bool Game::Render()
 	//	Renderer->RenderShadow(gameObjects.at(i));
 
 	Renderer->BeginScene(0.05f, 0.05f, 0.05f, 1.0f);
-
 	Renderer->SetDataPerFrame(viewMatrix, projectionMatrix, camera->GetPosition());
-	Renderer->UseDefaultShader();
 
-	terrain->Render(Renderer->GetDeviceContext());
+	//UseTerrainShader
+	//RenderTerrain
+
+	Renderer->UseDefaultShader();
 	
 	for (int i = 0; i < (signed)gameObjects.size(); i++)
 		Renderer->Render(gameObjects.at(i));
+
+	Renderer->RenderTerrain(terrain);
 
 	Renderer->EndScene();
 

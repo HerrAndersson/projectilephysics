@@ -10,6 +10,7 @@
 #include "DirectionalLight.h"
 #include "ShadowMap.h"
 #include "GameLogic.h"
+#include "Terrain.h"
 
 using DirectX::XMMATRIX;
 using DirectX::XMFLOAT3;
@@ -80,6 +81,7 @@ public:
 
 	bool Render(GameObject* gameObject);
 	bool RenderShadow(GameObject* gameObject);
+	bool RenderTerrain(Terrain* terrain);
 
 	void EndScene();
 

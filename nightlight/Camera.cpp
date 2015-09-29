@@ -20,7 +20,7 @@ Camera::Camera(float fovAngleY, int width, int height, float viewNear, float vie
 	camLookAt = XMVectorSet(0.0f, 0.0f, 1.0f, 1.0f);
 
 	projectionMatrix = XMMatrixPerspectiveFovLH(fovAngleY, aspectRatioWbyH, viewNear, viewFar);
-	UpdateCamera();
+	Update();
 }
 
 Camera::~Camera()
@@ -31,7 +31,7 @@ void Camera::SetPosition(float x, float y, float z)
 	positionX = x;
 	positionY = y;
 	positionZ = z;
-	UpdateCamera();
+	Update();
 }
 
 void Camera::SetRotation(float x, float y, float z)
@@ -39,7 +39,7 @@ void Camera::SetRotation(float x, float y, float z)
 	rotationX = x;
 	rotationY = y; 
 	rotationZ = z;
-	UpdateCamera();
+	Update();
 }
 
 XMVECTOR Camera::GetLookAt()
@@ -58,7 +58,7 @@ XMFLOAT3 Camera::GetRotation()
 	return XMFLOAT3(rotationX, rotationY, rotationZ);
 }
 
-void Camera::UpdateCamera()
+void Camera::Update()
 {
 	XMMATRIX rotationMatrix;
 

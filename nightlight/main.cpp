@@ -14,13 +14,8 @@
 
 /*
 
-
-
 Add Quad-tree culling: http://www.rastertek.com/tertut05.html
-
 Add small body of water
-
-
 
 */
 

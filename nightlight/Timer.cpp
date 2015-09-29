@@ -34,8 +34,6 @@ void Timer::Update()
 	startTime = currentTime; 									//Restart the timer
 
 	gameTime += frameTime;
-
-	framesPerSecond.Update();
 }
 
 double Timer::GetFrameTime()
@@ -46,11 +44,6 @@ double Timer::GetFrameTime()
 double Timer::GetGameTime()
 {
 	return gameTime;
-}
-
-int Timer::GetFPS()
-{
-	return framesPerSecond.fps;
 }
 
 void Timer::Reset()

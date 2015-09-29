@@ -6,7 +6,7 @@ PhysicsObject::PhysicsObject(int id, RenderObject* renderObject, XMFLOAT3 positi
 {
 	isAlive = false;
 	timeAlive = 0;
-	velocity = XMFLOAT3(0, 0, 0);
+	velocity = XMFLOAT3(0, 50, 0);
 	acceleration = XMFLOAT3(0, 0, 0);
 }
 
@@ -16,7 +16,7 @@ PhysicsObject::~PhysicsObject()
 
 void PhysicsObject::Update(double gameTime)
 {
-
+	SetPosition(XMFLOAT3(position.x, position.y + gameTime / 10000.0f, position.z));
 }
 
 void PhysicsObject::WakePhysics()

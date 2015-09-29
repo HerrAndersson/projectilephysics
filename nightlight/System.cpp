@@ -13,6 +13,7 @@ System::System(bool fullscreen, bool showCursor, int windowWidth, int windowHeig
 
 	timer = new Timer();
 	cpuUsage = new Cpu();
+	fps = FPS();
 
 	game = new Game(hinstance, hwnd, this->windowWidth, this->windowHeight, fullscreen);
 }
@@ -65,7 +66,7 @@ bool System::Update()
 	timer->Update();
 	cpuUsage->Update();
 
-	if (timer->GetGameTime() > MS_PER_FRAME)
+	if (timer->GetGameTime() >= MS_PER_FRAME)
 	{
 		//if (GetFocus() == hwnd)
 		//{
@@ -76,12 +77,14 @@ bool System::Update()
 		result = game->Render();
 		if (!result) { return false; }
 
+		fps.Update();
+
 		std::string s = "Physics";
 		if (debugShowFps)
 		{
-			s   += " - CPU% : " + std::to_string(cpuUsage->GetCpuPercentage())
-				+ "    msPerFrame: " + std::to_string(timer->GetGameTime())
-				+ "    SystemUpdatePerSecond : " + std::to_string(timer->GetFPS());
+			s   += " - CPU%: " + std::to_string(cpuUsage->GetCpuPercentage())
+				+ "    Milliseconds/frame: " + std::to_string(timer->GetGameTime())
+				+ "    FPS: " + std::to_string(fps.fps);
 		}
 
 		timer->Reset();

@@ -4,7 +4,10 @@
 #include <math.h>
 #include "InputManager.h"
 #include "Camera.h"
+#include "GameObject.h"
+#include "PhysicsObject.h"
 
+using namespace std;
 
 class GameLogic
 {
@@ -25,7 +28,6 @@ public:
 	GameLogic(InputManager* Input);
 	~GameLogic();
 
-	//Should receive GameTime
-	bool Update();
+	bool Update(double gameTime, vector<GameObject*> gameObjects, Camera* camera);
 };
 
