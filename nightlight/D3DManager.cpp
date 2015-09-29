@@ -136,16 +136,14 @@ D3DManager::D3DManager(HWND hwnd, int screenWidth, int screenHeight, bool fullsc
 	if (FAILED(result))
 		throw std::runtime_error("D3DManager: Error creating raster state BACK");
 
-	rasterDesc.CullMode = D3D11_CULL_FRONT;
-
 	//Create raster state FRONT
+	rasterDesc.CullMode = D3D11_CULL_FRONT;
 	result = device->CreateRasterizerState(&rasterDesc, &rsFrontCulling);
 	if (FAILED(result))
 		throw std::runtime_error("D3DManager: Error creating raster state FRONT");
 
-	rasterDesc.CullMode = D3D11_CULL_NONE;
-
 	//Create raster state FRONT
+	rasterDesc.CullMode = D3D11_CULL_NONE;
 	result = device->CreateRasterizerState(&rasterDesc, &rsNoCulling);
 	if (FAILED(result))
 		throw std::runtime_error("D3DManager: Error creating raster state NONE");

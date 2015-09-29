@@ -5,7 +5,7 @@ Game::Game(HINSTANCE hInstance, HWND hwnd, int screenWidth, int screenHeight, bo
 	this->screenWidth = screenWidth;
 	this->screenHeight = screenHeight;
 
-	camera = new Camera(XM_PI / 3, screenWidth, screenHeight, 0.1f, 1000.0f);
+	camera = new Camera(XM_PI / 2.2f, screenWidth, screenHeight, 0.1f, 1000.0f);
 
 	Renderer = new RenderModule(hwnd, screenWidth, screenHeight, fullscreen, shadowMapSize);
 	Assets = new AssetManager(Renderer->GetDevice());
@@ -13,7 +13,7 @@ Game::Game(HINSTANCE hInstance, HWND hwnd, int screenWidth, int screenHeight, bo
 
 	Logic = new GameLogic(Input);
 
-	GameObject* sphere = new GameObject(1, XMFLOAT3(0, 0, 0), 0.0f, Assets->GetRenderObject(3));
+	GameObject* sphere = new GameObject(1, Assets->GetRenderObject(2), XMFLOAT3(0, 0, 0), XMFLOAT3(3.0f, 3.0f, 3.0f), XMFLOAT3(0, 90, 0));
 
 	gameObjects.push_back(sphere);
 }
@@ -32,7 +32,7 @@ bool Game::Update(double gameTime)
 	bool result = true;
 
 	XMFLOAT3 pos = gameObjects.at(0)->GetPosition();
-	gameObjects.at(0)->SetPosition(XMFLOAT3(pos.x, pos.y + 0.2f, pos.z));
+	gameObjects.at(0)->SetPosition(XMFLOAT3(pos.x + gameTime / 10000.0f, pos.y + gameTime / 10000.0f, pos.z));
 
 	result = Logic->Update();
 	
@@ -64,7 +64,7 @@ bool Game::Render()
 	Renderer->UseDefaultShader();
 	
 	for (int i = 0; i < (signed)gameObjects.size(); i++)
-		Renderer->RenderShadow(gameObjects.at(i));
+		Renderer->Render(gameObjects.at(i));
 
 	Renderer->EndScene();
 

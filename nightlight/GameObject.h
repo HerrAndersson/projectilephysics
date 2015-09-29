@@ -13,7 +13,8 @@ protected:
 	int id;
 
 	XMFLOAT3		position;
-	XMFLOAT3		rotation = XMFLOAT3(0, 0, 0);
+	XMFLOAT3		rotation;
+	XMFLOAT3		scale;
 	XMFLOAT3		colorModifier = XMFLOAT3(0, 0, 0);
 	XMVECTOR		forwardVector;
 
@@ -22,7 +23,7 @@ protected:
 
 public:
 
-	GameObject(int id, XMFLOAT3 position, float rotation, RenderObject* renderObject);
+	GameObject(int id, RenderObject* renderObject, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);
 	virtual ~GameObject();
 
 	XMMATRIX GetWorldMatrix();

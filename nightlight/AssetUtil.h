@@ -44,9 +44,11 @@ namespace AssetUtility
 	{
 		size_t pos = 0;
 		std::string token;
-		while ( ( pos = input.find ( delimiter ) ) != std::string::npos ) {
+		while ( ( pos = input.find ( delimiter ) ) != std::string::npos ) 
+		{
 			token = input.substr ( 0, pos );
-			if ( !token.empty ( ) ) {
+			if (!token.empty()) 
+			{
 				output.push_back ( token );
 			}
 			input.erase ( 0, pos + delimiter.length ( ) );
@@ -75,8 +77,10 @@ namespace AssetUtility
 		std::vector<int> output;
 		int from = 0;
 
-		for ( int to = 0; to < ( signed )input.size ( ); to++ ) {
-			if ( input[ to ] == ',' ) {
+		for ( int to = 0; to < ( signed )input.size ( ); to++ ) 
+		{
+			if ( input[ to ] == ',' ) 
+			{
 				output.push_back ( std::stoi ( input.substr ( from, to - from ) ) );
 				from = to + 1;
 			}

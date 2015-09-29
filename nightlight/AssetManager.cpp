@@ -19,7 +19,7 @@ AssetManager::AssetManager(ID3D11Device* device)
 	for (int i = 0; i < (signed)renderObjectIDs.size(); i++)
 	{
 		vector<int> IDs = StringToIntArray(renderObjectIDs[i]);
-		CreateRenderObject(IDs[0], IDs[1]);
+		CreateRenderObject(IDs.at(0), IDs.at(1));
 	}
 };
 
@@ -151,7 +151,7 @@ void AssetManager::CreateRenderObject(int modelID, int diffuseID)
 
 	renderObject->model = models[modelID];
 
-	if (diffuseID!=-1)
+	if (diffuseID != -1)
 		renderObject->diffuseTexture = textures[diffuseID];
 
 	renderObjects.push_back(renderObject);

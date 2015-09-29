@@ -60,19 +60,17 @@ XMFLOAT3 Camera::GetRotation()
 
 void Camera::UpdateCamera()
 {
-	XMVECTOR up, position;
 	XMMATRIX rotationMatrix;
 
-	position = XMVectorSet(positionX, positionY, positionZ, 1.0f);
+	XMVECTOR position = XMVectorSet(positionX, positionY, positionZ, 1.0f);
 
 	rotationMatrix = XMMatrixRotationRollPitchYaw(XMConvertToRadians(rotationX), XMConvertToRadians(rotationY), XMConvertToRadians(rotationZ));
 	
-	up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-	up = XMVector3TransformCoord(up, rotationMatrix);
-	camUp = up;
+	camUp = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+	camUp = XMVector3TransformCoord(camUp, rotationMatrix);
 
 	//Create the view matrix from the updated vectors.
-	viewMatrix = XMMatrixLookAtLH(position, camLookAt, up);
+	viewMatrix = XMMatrixLookAtLH(position, camLookAt, camUp);
 }
 
 void Camera::SetLookAt(float x, float y, float z)

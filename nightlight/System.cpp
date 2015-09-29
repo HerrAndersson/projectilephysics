@@ -79,7 +79,7 @@ bool System::Update()
 		std::string s = "Physics";
 		if (debugShowFps)
 		{
-			s += " - CPU% : " + std::to_string(cpuUsage->GetCpuPercentage())
+			s   += " - CPU% : " + std::to_string(cpuUsage->GetCpuPercentage())
 				+ "    msPerFrame: " + std::to_string(timer->GetGameTime())
 				+ "    SystemUpdatePerSecond : " + std::to_string(timer->GetFPS());
 		}

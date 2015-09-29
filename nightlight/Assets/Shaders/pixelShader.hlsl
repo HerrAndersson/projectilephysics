@@ -92,5 +92,6 @@ float4 pixelShader(pixelInputType input) : SV_TARGET
 	//	}
 	//}
 
-	return float4(finalColor += input.colorModifier, diffuse.a);
+	return diffuse;
+	//return float4(finalColor += input.colorModifier, diffuse.a);
 }

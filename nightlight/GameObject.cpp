@@ -1,10 +1,12 @@
 #include "GameObject.h"
 
-GameObject::GameObject(int id, XMFLOAT3 position, float rotation, RenderObject* renderObject)
+GameObject::GameObject(int id, RenderObject* renderObject, XMFLOAT3 position = XMFLOAT3(0, 0, 0), XMFLOAT3 scale = XMFLOAT3(1, 1, 1), XMFLOAT3 rotation = XMFLOAT3(0, 0, 0))
 {
 	this->id = id;
 	this->position = position;
-	this->rotation.y = XMConvertToDegrees(rotation);
+	this->rotation = rotation;
+	this->scale = scale;
+	//this->rotation.y = XMConvertToDegrees(rotation);
 	this->renderObject = renderObject;
 	forwardVector = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
 }
@@ -16,7 +18,9 @@ GameObject::~GameObject()
 
 XMMATRIX GameObject::GetWorldMatrix()
 {
-	return XMMatrixRotationRollPitchYaw(XMConvertToRadians(rotation.x), XMConvertToRadians(rotation.y), XMConvertToRadians(rotation.z))*XMMatrixTranslation(position.x, position.y, position.z);
+	return XMMatrixRotationRollPitchYaw(XMConvertToRadians(rotation.x), XMConvertToRadians(rotation.y), XMConvertToRadians(rotation.z))
+		 * XMMatrixTranslation(position.x, position.y, position.z)
+		 * XMMatrixScaling(scale.x, scale.y, scale.z);
 }
 RenderObject* GameObject::GetRenderObject()
 {

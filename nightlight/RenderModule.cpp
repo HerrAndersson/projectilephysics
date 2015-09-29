@@ -234,7 +234,6 @@ bool RenderModule::SetDataPerObject(XMMATRIX& worldMatrix, RenderObject* renderO
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	ID3D11DeviceContext* deviceContext = d3d->GetDeviceContext();
 
-
 	UINT32 vertexSize;
 	vertexSize = sizeof(Vertex);
 
@@ -299,7 +298,7 @@ void RenderModule::UseDefaultShader()
 
 	deviceContext->IASetInputLayout(layoutPosUvNorm);
 
-	d3d->SetCullingState(2);
+	d3d->SetCullingState(1);
 
 	deviceContext->VSSetShader(vertexShader, NULL, 0);
 	deviceContext->PSSetShader(pixelShader, NULL, 0);
@@ -319,7 +318,6 @@ bool RenderModule::Render(GameObject* gameObject)
 	UseDefaultShader();
 	result = SetDataPerObject(gameObject->GetWorldMatrix(), renderObject, gameObject->GetColorModifier());
 		
-
 	if (!result)
 		return false;
 
