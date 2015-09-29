@@ -1,6 +1,4 @@
-bear.png
 camel.png
-house.png
 blendmap.png
 grass.png
 sand.png

@@ -1,5 +1,3 @@
 ball.obj
-bear.obj
 camel.obj
-house.obj
 sphere.obj
