@@ -13,9 +13,14 @@ Game::Game(HINSTANCE hInstance, HWND hwnd, int screenWidth, int screenHeight, bo
 
 	Logic = new GameLogic(Input);
 
-	GameObject* sphere = new GameObject(1, Assets->GetRenderObject(2), XMFLOAT3(0, 0, 0), XMFLOAT3(3.0f, 3.0f, 3.0f), XMFLOAT3(0, 90, 0));
-
+	PhysicsObject* sphere = new PhysicsObject(1, Assets->GetRenderObject(2), XMFLOAT3(0, 0, 0), XMFLOAT3(3.0f, 3.0f, 3.0f), XMFLOAT3(0, 90, 0));
 	gameObjects.push_back(sphere);
+
+	terrain = new Terrain(Renderer->GetDevice(), "Assets/Textures/heightmap01.bmp", 10.0f,
+		Assets->LoadTexture("Assets/Textures/blendmap.png"),
+		Assets->LoadTexture("Assets/Textures/grass.png"),
+		Assets->LoadTexture("Assets/Textures/stone.png"),
+		Assets->LoadTexture("Assets/Textures/sand.png"));
 }
 
 Game::~Game()
@@ -25,6 +30,7 @@ Game::~Game()
 	delete Assets;
 	delete Input;
 	delete camera;
+	delete terrain;
 }
 
 bool Game::Update(double gameTime)
@@ -62,6 +68,8 @@ bool Game::Render()
 
 	Renderer->SetDataPerFrame(viewMatrix, projectionMatrix, camera->GetPosition());
 	Renderer->UseDefaultShader();
+
+	terrain->Render(Renderer->GetDeviceContext());
 	
 	for (int i = 0; i < (signed)gameObjects.size(); i++)
 		Renderer->Render(gameObjects.at(i));

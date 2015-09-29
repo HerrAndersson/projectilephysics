@@ -20,7 +20,6 @@ protected:
 
 	RenderObject*	renderObject;
 
-
 public:
 
 	GameObject(int id, RenderObject* renderObject, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);

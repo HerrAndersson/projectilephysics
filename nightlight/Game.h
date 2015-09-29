@@ -9,8 +9,10 @@
 
 #include "AssetUtil.h"
 #include "GameObject.h"
+#include "PhysicsObject.h"
 #include "Camera.h"
 #include "DirectionalLight.h"
+#include "Terrain.h"
 
 using namespace DirectX;
 using std::vector;
@@ -29,6 +31,7 @@ private:
 	InputManager*			Input;
 
 	vector<GameObject*>		gameObjects;
+	Terrain*                terrain;
 
 public:
 

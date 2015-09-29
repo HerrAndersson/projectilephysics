@@ -12,7 +12,7 @@ AssetManager::AssetManager(ID3D11Device* device)
 	vector<string> textureNames;
 	FileToStrings("Assets/textures.txt", textureNames);
 	for (int i = 0; i < (signed)textureNames.size(); i++)
-		LoadTexture("Assets/Textures/" + textureNames[i]);
+		textures.push_back(LoadTexture("Assets/Textures/" + textureNames[i]));
 
 	vector<string> renderObjectIDs;
 	FileToStrings("Assets/renderObjects.txt", renderObjectIDs);
@@ -157,12 +157,13 @@ void AssetManager::CreateRenderObject(int modelID, int diffuseID)
 	renderObjects.push_back(renderObject);
 }
 
-void AssetManager::LoadTexture(string file_path)
+ID3D11ShaderResourceView* AssetManager::LoadTexture(string file_path)
 {
 	ID3D11ShaderResourceView* texture;
 	wstring widestr = wstring(file_path.begin(), file_path.end());
 	DirectX::CreateWICTextureFromFile(device, widestr.c_str(), nullptr, &texture, 0);
-	textures.push_back(texture);
+
+	return texture;
 }
 
 RenderObject* AssetManager::GetRenderObject(int id)
