@@ -76,6 +76,7 @@ void Camera::Update()
 void Camera::SetLookAt(float x, float y, float z)
 {
 	camLookAt = XMVectorSet(x, y, z, 1);
+	Update();
 }
 
 XMVECTOR Camera::GetCamUp()

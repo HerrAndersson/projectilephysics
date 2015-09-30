@@ -67,11 +67,6 @@ ID3D11ShaderResourceView* GameObject::GetDiffuseTexture()
 	return renderObject->diffuseTexture;
 }
 
-ID3D11ShaderResourceView* GameObject::GetSpecularTexture()
-{
-	return renderObject->specularTexture;
-}
-
 void* GameObject::operator new(size_t i)
 {
 	return _mm_malloc(i, 16);

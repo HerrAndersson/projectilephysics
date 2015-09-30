@@ -6,15 +6,14 @@ using namespace std;
 
 RenderModule::RenderModule(HWND hwnd, int screenWidth, int screenHeight, bool fullscreen, int shadowMapSize)
 {
-	vertexShader = NULL;
-	pixelShader = NULL;
-	skeletalVertexShader = NULL;
-	blendVertexShader = NULL;
-	sampleStateWrap = NULL;
-	sampleStateClamp = NULL;
-	matrixBufferPerObject = NULL;
-	matrixBufferPerFrame = NULL;
-	lightBuffer = NULL;
+	vsDefault = nullptr;
+	psDefault = nullptr;
+	psTerrain = nullptr;
+	sampleStateWrap = nullptr;
+	sampleStateClamp = nullptr;
+	matrixBufferPerObject = nullptr;
+	matrixBufferPerFrame = nullptr;
+	lightBuffer = nullptr;
 	this->hwnd = hwnd;
 
 	d3d = new D3DManager(hwnd, screenWidth, screenHeight, fullscreen);
@@ -25,7 +24,7 @@ RenderModule::RenderModule(HWND hwnd, int screenWidth, int screenHeight, bool fu
 	InitializeSamplers();
 	InitializeConstantBuffers();
 
-	result = InitializeShader(L"Assets/Shaders/vertexShader.hlsl", L"Assets/Shaders/pixelShader.hlsl");
+	result = InitializeShaders(L"Assets/Shaders/DefaultVS.hlsl", L"Assets/Shaders/DefaultPS.hlsl", L"Assets/Shaders/TerrainPS.hlsl");
 }
 
 bool RenderModule::InitializeSamplers()
@@ -125,15 +124,16 @@ RenderModule::~RenderModule()
 	matrixBufferPerObject->Release();
 	matrixBufferPerFrame->Release();
 
-	pixelShader->Release();
-	vertexShader->Release();
+	psDefault->Release();
+	psTerrain->Release();
+	vsDefault->Release();
 
 	sampleStateClamp->Release();
 	sampleStateWrap->Release();
 	sampleStateComparison->Release();
 }
 
-bool RenderModule::InitializeShader(WCHAR* vsFilename, WCHAR* psFilename)
+bool RenderModule::InitializeShaders(WCHAR* vsDefaultName, WCHAR* psDefaultName, WCHAR* psTerrainName)
 {
 	HRESULT result;
 	ID3D10Blob* errorMessage = nullptr;
@@ -145,9 +145,9 @@ bool RenderModule::InitializeShader(WCHAR* vsFilename, WCHAR* psFilename)
 	ID3D11Device* device = d3d->GetDevice();
 
 	/////////////////////////////////////////////////////////////////////////// Shaders ///////////////////////////////////////////////////////////////////////////
-	if (!vertexShader)
+	if (!vsDefault)
 	{
-		result = D3DCompileFromFile(vsFilename, NULL, NULL, "vertexShader", "vs_4_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, &vertexShaderBuffer, &errorMessage);
+		result = D3DCompileFromFile(vsDefaultName, NULL, NULL, "main", "vs_4_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, &vertexShaderBuffer, &errorMessage);
 		if (FAILED(result))
 		{
 			if (errorMessage)
@@ -158,14 +158,14 @@ bool RenderModule::InitializeShader(WCHAR* vsFilename, WCHAR* psFilename)
 			return false;
 		}
 
-		result = device->CreateVertexShader(vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), NULL, &vertexShader);
+		result = device->CreateVertexShader(vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), NULL, &vsDefault);
 		if (FAILED(result))
 			return false;
 	}
 
-	if (!pixelShader)
+	if (!psDefault)
 	{
-		result = D3DCompileFromFile(psFilename, NULL, NULL, "pixelShader", "ps_4_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, &pixelShaderBuffer, &errorMessage);
+		result = D3DCompileFromFile(psDefaultName, NULL, NULL, "main", "ps_4_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, &pixelShaderBuffer, &errorMessage);
 		if (FAILED(result))
 		{
 			if (errorMessage)
@@ -176,7 +176,26 @@ bool RenderModule::InitializeShader(WCHAR* vsFilename, WCHAR* psFilename)
 			return false;
 		}
 
-		result = device->CreatePixelShader(pixelShaderBuffer->GetBufferPointer(), pixelShaderBuffer->GetBufferSize(), NULL, &pixelShader);
+		result = device->CreatePixelShader(pixelShaderBuffer->GetBufferPointer(), pixelShaderBuffer->GetBufferSize(), NULL, &psDefault);
+		if (FAILED(result))
+			return false;
+
+	}
+
+	if (!psTerrain)
+	{
+		result = D3DCompileFromFile(psTerrainName, NULL, NULL, "main", "ps_4_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, &pixelShaderBuffer, &errorMessage);
+		if (FAILED(result))
+		{
+			if (errorMessage)
+				throw runtime_error("RenderModule(InitializeShader) :" + string(static_cast<const char*>(errorMessage->GetBufferPointer()), errorMessage->GetBufferSize()));
+			else
+				throw std::runtime_error("RenderModule(InitializeShader): Terrainshader not found");
+
+			return false;
+		}
+
+		result = device->CreatePixelShader(pixelShaderBuffer->GetBufferPointer(), pixelShaderBuffer->GetBufferSize(), NULL, &psTerrain);
 		if (FAILED(result))
 			return false;
 
@@ -300,8 +319,24 @@ void RenderModule::UseDefaultShader()
 
 	d3d->SetCullingState(1);
 
-	deviceContext->VSSetShader(vertexShader, NULL, 0);
-	deviceContext->PSSetShader(pixelShader, NULL, 0);
+	deviceContext->VSSetShader(vsDefault, NULL, 0);
+	deviceContext->PSSetShader(psDefault, NULL, 0);
+
+	deviceContext->PSSetSamplers(0, 1, &sampleStateClamp);
+	deviceContext->PSSetSamplers(1, 1, &sampleStateWrap);
+	deviceContext->PSSetSamplers(2, 1, &sampleStateComparison);
+}
+
+void RenderModule::UseTerrainShader()
+{
+	ID3D11DeviceContext* deviceContext = d3d->GetDeviceContext();
+
+	deviceContext->IASetInputLayout(layoutPosUvNorm);
+
+	d3d->SetCullingState(1);
+
+	deviceContext->VSSetShader(vsDefault, NULL, 0);
+	deviceContext->PSSetShader(psTerrain, NULL, 0);
 
 	deviceContext->PSSetSamplers(0, 1, &sampleStateClamp);
 	deviceContext->PSSetSamplers(1, 1, &sampleStateWrap);
@@ -356,9 +391,47 @@ bool RenderModule::RenderShadow(GameObject* gameObject)
 	return result;
 }
 
+bool RenderModule::SetTerrainData(XMMATRIX& worldMatrix, XMFLOAT3 colorModifier, Terrain* terrain)
+{
+	HRESULT result;
+	D3D11_MAPPED_SUBRESOURCE mappedResource;
+	ID3D11DeviceContext* deviceContext = d3d->GetDeviceContext();
+
+	UINT32 vertexSize = sizeof(Vertex);;
+	UINT32 offset = 0;
+
+	ID3D11Buffer* vertexBuffer = nullptr;
+	ID3D11Buffer* indexBuffer = nullptr;
+
+	terrain->GetBuffers(vertexBuffer, indexBuffer);
+	ID3D11ShaderResourceView** textures = terrain->GetTextures();
+
+	deviceContext->IASetVertexBuffers(0, 1, &vertexBuffer, &vertexSize, &offset);
+	deviceContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	deviceContext->PSSetShaderResources(0, 4, textures);
+
+	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	XMMATRIX worldMatrixC;
+	worldMatrixC = XMMatrixTranspose(worldMatrix);
+
+	result = deviceContext->Map(matrixBufferPerObject, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	if (FAILED(result)) { return false; }
+
+	MatrixBufferPerObject* dataPtr = (MatrixBufferPerObject*)mappedResource.pData;
+
+	dataPtr->world = worldMatrixC;
+	dataPtr->colorModifier = colorModifier;
+
+	deviceContext->Unmap(matrixBufferPerObject, 0);
+
+	deviceContext->VSSetConstantBuffers(0, 1, &matrixBufferPerObject);
+	return true;
+}
+
 bool RenderModule::RenderTerrain(Terrain* terrain)
 {
-	terrain->Render(d3d->GetDeviceContext());
+	d3d->GetDeviceContext()->DrawIndexed(terrain->GetVertexCount(), 0, 0);
 	return true;
 }
 

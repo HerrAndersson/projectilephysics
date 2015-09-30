@@ -145,14 +145,17 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\Shaders\pixelShader.hlsl">
+    <FxCompile Include="Assets\Shaders\TerrainPS.hlsl">
       <Filter>Render\Shaders</Filter>
-    </None>
-    <None Include="Assets\Shaders\vertexShader.hlsl">
+    </FxCompile>
+    <FxCompile Include="Assets\Shaders\DefaultPS.hlsl">
       <Filter>Render\Shaders</Filter>
-    </None>
-    <None Include="Assets\Shaders\ShadowVS.hlsl">
+    </FxCompile>
+    <FxCompile Include="Assets\Shaders\ShadowVS.hlsl">
       <Filter>Render\Shaders</Filter>
-    </None>
+    </FxCompile>
+    <FxCompile Include="Assets\Shaders\DefaultVS.hlsl">
+      <Filter>Render\Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

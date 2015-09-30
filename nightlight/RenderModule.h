@@ -43,12 +43,11 @@ private:
 	ShadowMap*				shadowMap;
 
 	//Vertex shaders
-	ID3D11VertexShader*		vertexShader;
-	ID3D11VertexShader*		skeletalVertexShader;
-	ID3D11VertexShader*		blendVertexShader;
+	ID3D11VertexShader*		vsDefault;
 
 	//Pixel shaders
-	ID3D11PixelShader*		pixelShader;
+	ID3D11PixelShader*		psDefault;
+	ID3D11PixelShader*		psTerrain;
 
 	//Sampler states
 	ID3D11SamplerState*		sampleStateWrap;
@@ -69,12 +68,14 @@ public:
 
 	bool InitializeSamplers();
 	bool InitializeConstantBuffers();
-	bool InitializeShader(WCHAR* vsFilename, WCHAR* psFilename);
+	bool InitializeShaders(WCHAR* vsDefaultName, WCHAR* psDefaultName, WCHAR* psTerrainName);
 
 	bool SetDataPerFrame(XMMATRIX& viewMatrix, XMMATRIX& projectionMatrix, XMFLOAT3& camPos);
 	bool SetDataPerObject(XMMATRIX& worldMatrix, RenderObject* renderObject, XMFLOAT3 colorModifier);
+	bool SetTerrainData(XMMATRIX& worldMatrix, XMFLOAT3 colorModifier, Terrain* terrain);
 
 	void UseDefaultShader();
+	void UseTerrainShader();
 	void ActivateShadowRendering(XMMATRIX& viewMatrix, XMMATRIX& projectionMatrix);
 
 	void BeginScene(float red, float green, float blue, float alpha);

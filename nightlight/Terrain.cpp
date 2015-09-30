@@ -32,7 +32,6 @@ Terrain::Terrain(ID3D11Device* device, char* heightMapName, float normalizeFacto
 }
 Terrain::~Terrain()
 {
-
 	indexBuffer->Release();
 	vertexBuffer->Release();
 
@@ -42,15 +41,15 @@ Terrain::~Terrain()
 	delete[] heightMap;
 }
 
-void Terrain::Render(ID3D11DeviceContext* deviceContext)
+int Terrain::GetVertexCount()
 {
-	SetBuffers(deviceContext);
-	deviceContext->DrawIndexed(vertexCount, 0, 0);
+	return vertexCount;
 }
 
-int Terrain::GetIndexCount()
+void Terrain::GetBuffers(ID3D11Buffer*& vertexBuffer, ID3D11Buffer*& indexBuffer)
 {
-	return indexCount;
+	vertexBuffer = this->vertexBuffer;
+	indexBuffer = this->indexBuffer;
 }
 
 float Terrain::GetY(float x, float z)
@@ -108,6 +107,10 @@ bool Terrain::LoadHeightMap(char* filename)
 
 	//Read file and info headers
 	count = fread(&bitmapFileHeader, sizeof(BITMAPFILEHEADER), 1, filePtr);
+	if (count != 1)
+		throw runtime_error("Terrain(LoadHeightMap): Error reading file headers");
+
+	count = fread(&bitmapInfoHeader, sizeof(BITMAPINFOHEADER), 1, filePtr);
 	if (count != 1)
 		throw runtime_error("Terrain(LoadHeightMap): Error reading file headers");
 
@@ -477,15 +480,4 @@ void Terrain::InitializeBuffers(ID3D11Device* device)
 	vertices = nullptr;
 	delete[] indices;
 	indices = nullptr;
-}
-
-void Terrain::SetBuffers(ID3D11DeviceContext* deviceContext)
-{
-	UINT32 vertexSize = sizeof(Vertex);
-	UINT32 offset = 0;
-
-	deviceContext->IASetVertexBuffers(0, 1, &vertexBuffer, &vertexSize, &offset);
-	deviceContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
-
-	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }

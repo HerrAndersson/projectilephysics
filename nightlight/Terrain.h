@@ -5,6 +5,7 @@
 #include <stdexcept>
 #include <windows.h>
 #include "AssetUtil.h"
+#include "AssetManager.h"
 
 using namespace std;
 using namespace AssetUtility;
@@ -42,12 +43,12 @@ private:
 	ID3D11ShaderResourceView* textureArray[4];
 
 	void InitializeBuffers(ID3D11Device* device);
-	void SetBuffers(ID3D11DeviceContext* deviceContext);
 
 	bool LoadHeightMap(char* filename);
 	void NormalizeHeightMap(float factor);
 	void CalculateNormals();
 	void CalculateTextureCoordinates();
+
 
 	float GetHeightAt(int x, int z);
 
@@ -56,10 +57,10 @@ public:
 	Terrain(ID3D11Device* device, char* heightMapName, float normalizeFactor, ID3D11ShaderResourceView* blendMap, ID3D11ShaderResourceView* grass, ID3D11ShaderResourceView* stone, ID3D11ShaderResourceView* sand);
 	~Terrain();
 
-	void Render(ID3D11DeviceContext* deviceContext);
-
 	float GetY(float x, float z);
 
-	int GetIndexCount();
+	int GetVertexCount();
+
+	void GetBuffers(ID3D11Buffer*& vertexBuffer, ID3D11Buffer*& indexBuffer);
 	ID3D11ShaderResourceView** GetTextures();
 };

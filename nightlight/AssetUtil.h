@@ -37,7 +37,6 @@ namespace AssetUtility
 	{
 		Model* model;
 		ID3D11ShaderResourceView* diffuseTexture = nullptr;
-		ID3D11ShaderResourceView* specularTexture = nullptr;
 	};
 
 	static void SplitStringToVector ( std::string input, std::vector<std::string> &output, std::string delimiter ) 

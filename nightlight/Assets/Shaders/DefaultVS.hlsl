@@ -29,7 +29,7 @@ struct vertexOutput
 	float3 colorModifier: COLORMODIFIER;
 };
 
-vertexOutput vertexShader(vertexInputType input)
+vertexOutput main(vertexInputType input)
 {
 	vertexOutput output;
 
@@ -38,6 +38,7 @@ vertexOutput vertexShader(vertexInputType input)
 	output.position = mul(input.position, worldMatrix);
 
 	output.worldPos = output.position;
+
 	output.viewDir = camPos.xyz - output.worldPos.xyz;
 	output.viewDir = normalize(output.viewDir);
 
@@ -45,7 +46,8 @@ vertexOutput vertexShader(vertexInputType input)
 	output.position = mul(output.position, projectionMatrix);
 
 	output.tex = input.tex;
-	output.normal = mul(input.normal, worldMatrix);
+
+	output.normal = mul(float4(input.normal, 1.0f), worldMatrix);
 	output.normal = normalize(output.normal);
 
 	output.colorModifier = colorModifier;

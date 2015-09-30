@@ -16,7 +16,7 @@ struct pixelInputType
 	float3 colorModifier : COLORMODIFIER;
 };
 
-float4 pixelShader(pixelInputType input) : SV_TARGET
+float4 main(pixelInputType input) : SV_TARGET
 {
 	input.normal = normalize(input.normal);
 	

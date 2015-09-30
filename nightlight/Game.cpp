@@ -6,6 +6,8 @@ Game::Game(HINSTANCE hInstance, HWND hwnd, int screenWidth, int screenHeight, bo
 	this->screenHeight = screenHeight;
 
 	camera = new Camera(XM_PI / 2.2f, screenWidth, screenHeight, 0.1f, 1000.0f);
+	camera->SetPosition(512, 20, 20);
+	camera->SetLookAt(512, 10, 512);
 
 	Renderer = new RenderModule(hwnd, screenWidth, screenHeight, fullscreen, shadowMapSize);
 	Assets = new AssetManager(Renderer->GetDevice());
@@ -13,14 +15,17 @@ Game::Game(HINSTANCE hInstance, HWND hwnd, int screenWidth, int screenHeight, bo
 
 	Logic = new GameLogic(Input);
 
-	PhysicsObject* sphere = new PhysicsObject(1, Assets->GetRenderObject(2), XMFLOAT3(0, 0, 0), XMFLOAT3(3.0f, 3.0f, 3.0f), XMFLOAT3(0, 90, 0));
+
+	//Position blir fel
+	PhysicsObject* sphere = new PhysicsObject(1, Assets->GetRenderObject(2), XMFLOAT3(256.0f, 50.0f, 256.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0, 0, 0));
 	gameObjects.push_back(sphere);
 
-	terrain = new Terrain(Renderer->GetDevice(), "Assets/Textures/heightmap01.bmp", 10.0f,
+	terrain = new Terrain(Renderer->GetDevice(), "Assets/Textures/heightmap01b.bmp", 5.0f,
 		Assets->LoadTexture("Assets/Textures/blendmap.png"),
-		Assets->LoadTexture("Assets/Textures/grass.png"),
-		Assets->LoadTexture("Assets/Textures/stone.png"),
+		Assets->LoadTexture("Assets/Textures/grass1.png"),
+		Assets->LoadTexture("Assets/Textures/stone1.png"),
 		Assets->LoadTexture("Assets/Textures/sand.png"));
+
 }
 
 Game::~Game()
@@ -64,15 +69,14 @@ bool Game::Render()
 	Renderer->BeginScene(0.05f, 0.05f, 0.05f, 1.0f);
 	Renderer->SetDataPerFrame(viewMatrix, projectionMatrix, camera->GetPosition());
 
-	//UseTerrainShader
-	//RenderTerrain
+	Renderer->UseTerrainShader();
+	Renderer->SetTerrainData(worldMatrix, XMFLOAT3(0, 0, 0), terrain);
+	Renderer->RenderTerrain(terrain);
 
 	Renderer->UseDefaultShader();
 	
 	for (int i = 0; i < (signed)gameObjects.size(); i++)
 		Renderer->Render(gameObjects.at(i));
-
-	Renderer->RenderTerrain(terrain);
 
 	Renderer->EndScene();
 
