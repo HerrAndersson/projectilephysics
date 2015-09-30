@@ -15,9 +15,7 @@ Game::Game(HINSTANCE hInstance, HWND hwnd, int screenWidth, int screenHeight, bo
 
 	Logic = new GameLogic(Input);
 
-
-	//Position blir fel
-	PhysicsObject* sphere = new PhysicsObject(1, Assets->GetRenderObject(2), XMFLOAT3(256.0f, 50.0f, 256.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0, 0, 0));
+	PhysicsObject* sphere = new PhysicsObject(1, Assets->GetRenderObject(3), XMFLOAT3(256.0f, 50.0f, 256.0f), XMFLOAT3(200.0f, 50.0f, 50.0f), XMFLOAT3(0, 0, 45));
 	gameObjects.push_back(sphere);
 
 	terrain = new Terrain(Renderer->GetDevice(), "Assets/Textures/heightmap01b.bmp", 5.0f,

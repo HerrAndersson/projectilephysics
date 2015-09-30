@@ -1,3 +1,4 @@
 ball.obj
 camel.obj
 sphere.obj
+cube.obj

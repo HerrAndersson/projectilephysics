@@ -18,9 +18,18 @@ GameObject::~GameObject()
 
 XMMATRIX GameObject::GetWorldMatrix()
 {
-	return XMMatrixRotationRollPitchYaw(XMConvertToRadians(rotation.x), XMConvertToRadians(rotation.y), XMConvertToRadians(rotation.z))
-		 * XMMatrixTranslation(position.x, position.y, position.z)
-		 * XMMatrixScaling(scale.x, scale.y, scale.z);
+
+	/*Usually it is scale * rotation * translation.
+	However, if you want to rotate an object around a certain point, then it is scale * point_translation * rotation * object_translation.*/
+	//R = translate(-P) * rotate(a, r) * translate(P) för att translatera runt en annan punkt p
+	//R = translationMatrix(-(p.x, p.y, p.z)) * rotationMatrix((0,0,45) * translationMatrix(p.x, p.y, p.z)
+
+
+	XMMATRIX rotationMatrix = XMMatrixRotationRollPitchYaw(XMConvertToRadians(rotation.x), XMConvertToRadians(rotation.y), XMConvertToRadians(rotation.z));
+	XMMATRIX translationMatrix = XMMatrixTranslation(position.x, position.y, position.z);
+	XMMATRIX scalingMatrix = XMMatrixScaling(scale.x, scale.y, scale.z);
+
+	return scalingMatrix * rotationMatrix * translationMatrix;
 }
 RenderObject* GameObject::GetRenderObject()
 {
