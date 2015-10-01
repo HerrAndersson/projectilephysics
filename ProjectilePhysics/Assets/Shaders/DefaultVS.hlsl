@@ -47,7 +47,7 @@ vertexOutput main(vertexInputType input)
 
 	output.tex = input.tex;
 
-	output.normal = mul(float4(input.normal, 1.0f), worldMatrix);
+	output.normal = mul(float4(input.normal, 1.0f), worldMatrix).xyz;
 	output.normal = normalize(output.normal);
 
 	output.colorModifier = colorModifier;

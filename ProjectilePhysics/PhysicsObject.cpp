@@ -16,7 +16,9 @@ PhysicsObject::~PhysicsObject()
 
 void PhysicsObject::Update(double gameTime)
 {
-	SetPosition(XMFLOAT3(position.x, position.y + gameTime / 10000.0f, position.z));
+	SetPosition(XMFLOAT3(512 + sin(float(timeAlive/1000.0f))* 100, 200 + cos(float(timeAlive / 1000.0f)) * 100, position.z));
+
+	timeAlive += gameTime;
 }
 
 void PhysicsObject::WakePhysics()
