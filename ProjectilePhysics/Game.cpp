@@ -5,9 +5,8 @@ Game::Game(HINSTANCE hInstance, HWND hwnd, int screenWidth, int screenHeight, bo
 	this->screenWidth = screenWidth;
 	this->screenHeight = screenHeight;
 
-	camera = new Camera(XM_PI / 2.2f, screenWidth, screenHeight, 0.1f, 1000.0f);
-	camera->SetPosition(512, 20, 20);
-	camera->SetLookAt(512, 10, 512);
+	camera = new Camera(XM_PI / 2.2f, screenWidth, screenHeight, 0.1f, 2000.0f);
+	camera->SetPosition(XMFLOAT3(512, 50, 20));
 
 	Renderer = new RenderModule(hwnd, screenWidth, screenHeight, fullscreen, shadowMapSize);
 	Assets = new AssetManager(Renderer->GetDevice());
@@ -15,7 +14,10 @@ Game::Game(HINSTANCE hInstance, HWND hwnd, int screenWidth, int screenHeight, bo
 
 	Logic = new GameLogic(Input);
 
-	PhysicsObject* sphere = new PhysicsObject(1, Assets->GetRenderObject(3), XMFLOAT3(256.0f, 50.0f, 256.0f), XMFLOAT3(50.0f, 50.0f, 50.0f), XMFLOAT3(0, 0, 0));
+	skySphere = new GameObject(1, Assets->GetRenderObject(0), XMFLOAT3(512, 100, 512), XMFLOAT3(650, 650, 650), XMFLOAT3(0, 0, 0));
+	uglyFix = new GameObject(1, Assets->GetRenderObject(4), XMFLOAT3(-150, 700, -150), XMFLOAT3(30, 30, 30), XMFLOAT3(90, 0, 0));
+
+	PhysicsObject* sphere = new PhysicsObject(1, Assets->GetRenderObject(2), XMFLOAT3(256.0f, 50.0f, 256.0f), XMFLOAT3(60.0f, 60.0f, 60.0f), XMFLOAT3(0, 0, 0));
 	sphere->WakePhysics();
 	gameObjects.push_back(sphere);
 
@@ -35,20 +37,20 @@ Game::~Game()
 	delete Input;
 	delete camera;
 	delete terrain;
+	delete skySphere;
+	delete uglyFix;
+
+	for (auto go : gameObjects) 
+		delete go;
 }
 
-bool Game::Update(double gameTime)
+bool Game::Update(double frameTime, double gameTime)
 {
-	bool result = true;
 
-	result = Logic->Update(gameTime, gameObjects, camera);
-	
-	if (!result)
-	{
+	if (!Logic->Update(frameTime, gameTime, gameObjects, camera, skySphere, terrain))
+		return false;
 
-	}
-
-	return result;
+	return true;
 }
 
 bool Game::Render()
@@ -76,6 +78,10 @@ bool Game::Render()
 	
 	for (int i = 0; i < (signed)gameObjects.size(); i++)
 		Renderer->Render(gameObjects.at(i));
+
+	Renderer->Render(uglyFix);
+	Renderer->SetCullingState(2);
+	Renderer->Render(skySphere);
 
 	Renderer->EndScene();
 

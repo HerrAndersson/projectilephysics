@@ -2,13 +2,9 @@
 
 Camera::Camera(float fovAngleY, int width, int height, float viewNear, float viewFar)
 {
-	positionX = 0.0f;
-	positionY = 0.0f;
-	positionZ = -20.0f;
 
-	rotationX = 0.0f;
-	rotationY = 0.0f;
-	rotationZ = 0.0f;
+	position = XMFLOAT3(0, 0, -20);
+	rotation = XMFLOAT3(0, 0, 0);
 
 	this->width = width;
 	this->height = height;
@@ -26,19 +22,15 @@ Camera::Camera(float fovAngleY, int width, int height, float viewNear, float vie
 Camera::~Camera()
 {}
 
-void Camera::SetPosition(float x, float y, float z)
+void Camera::SetPosition(XMFLOAT3 position)
 {
-	positionX = x;
-	positionY = y;
-	positionZ = z;
+	this->position = position;
 	Update();
 }
 
-void Camera::SetRotation(float x, float y, float z)
+void Camera::SetRotation(XMFLOAT3 rotation)
 {
-	rotationX = x;
-	rotationY = y; 
-	rotationZ = z;
+	this->rotation = rotation;
 	Update();
 }
 
@@ -49,28 +41,32 @@ XMVECTOR Camera::GetLookAt()
 
 XMFLOAT3 Camera::GetPosition()
 {
-	return XMFLOAT3(positionX, positionY, positionZ);
+	return position;
 }
-
 
 XMFLOAT3 Camera::GetRotation()
 {
-	return XMFLOAT3(rotationX, rotationY, rotationZ);
+	return rotation;
 }
 
 void Camera::Update()
 {
+
 	XMMATRIX rotationMatrix;
 
-	XMVECTOR position = XMVectorSet(positionX, positionY, positionZ, 1.0f);
+	XMVECTOR up = XMVectorSet(0, 1, 0, 0);
+	XMVECTOR pos = XMVectorSet(position.x, position.y, position.z, 0);
+	XMVECTOR lookAt = XMVectorSet(0, 0, 1, 0);
 
-	rotationMatrix = XMMatrixRotationRollPitchYaw(XMConvertToRadians(rotationX), XMConvertToRadians(rotationY), XMConvertToRadians(rotationZ));
-	
-	camUp = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-	camUp = XMVector3TransformCoord(camUp, rotationMatrix);
+	rotationMatrix = XMMatrixRotationRollPitchYaw(XMConvertToRadians(rotation.x), XMConvertToRadians(rotation.y), 0);
 
-	//Create the view matrix from the updated vectors.
-	viewMatrix = XMMatrixLookAtLH(position, camLookAt, camUp);
+	lookAt = XMVector3TransformCoord(lookAt, rotationMatrix);
+	up = XMVector3TransformCoord(up, rotationMatrix);
+
+	lookAt = pos + lookAt;
+
+	viewMatrix = XMMatrixLookAtLH(pos, lookAt, up);
+
 }
 
 void Camera::SetLookAt(float x, float y, float z)

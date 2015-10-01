@@ -1,6 +1,7 @@
 #pragma once
 #include <Windows.h>
 #include <DirectXMath.h>
+#include <string>
 using namespace DirectX;
 
 struct Key
@@ -29,6 +30,7 @@ private:
 	Key esc = Key(VK_ESCAPE);
 
 	XMFLOAT2 mousePos;
+	XMFLOAT2 lastMousePos;
 
 public:
 
@@ -40,6 +42,8 @@ public:
 	void HandleMouse();
 	XMFLOAT2 GetMousePos();
 	XMFLOAT2 GetMousePosScreenSpace();
+
+	bool MouseMoved(XMFLOAT2& difference);
 
 	bool KeyDown(char key);
 	bool EscDown();

@@ -7,14 +7,16 @@ class Camera
 {
 private:
 
-	float positionX, positionY, positionZ;
-	float rotationX, rotationY, rotationZ;
+	XMFLOAT3 position;
+	XMFLOAT3 rotation;
+
 	float aspectRatioWbyH;
 	int width, height;
 	float viewNear, viewFar;
 
 	XMMATRIX viewMatrix;
 	XMMATRIX projectionMatrix;
+
 	XMVECTOR camUp;
 	XMVECTOR camLookAt;
 
@@ -23,8 +25,8 @@ public:
 	Camera(float fovAngleY, int width, int height, float viewNear, float viewFar);
 	~Camera();
 
-	void SetPosition(float x, float y, float z);
-	void SetRotation(float x, float y, float z);
+	void SetPosition(XMFLOAT3 position);
+	void SetRotation(XMFLOAT3 rotation);
 	void SetLookAt(float x, float y, float z);
 
 	XMFLOAT3 GetPosition();

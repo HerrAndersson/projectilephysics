@@ -6,7 +6,7 @@ PhysicsObject::PhysicsObject(int id, RenderObject* renderObject, XMFLOAT3 positi
 {
 	isAlive = false;
 	timeAlive = 0;
-	velocity = XMFLOAT3(0, 50, 0);
+	velocity = XMFLOAT3(0, 0, 0);
 	acceleration = XMFLOAT3(0, 0, 0);
 }
 
@@ -14,11 +14,10 @@ PhysicsObject::~PhysicsObject()
 {
 }
 
-void PhysicsObject::Update(double gameTime)
+void PhysicsObject::Update(double frameTime)
 {
-	SetPosition(XMFLOAT3(512 + sin(float(timeAlive/1000.0f))* 100, 200 + cos(float(timeAlive / 1000.0f)) * 100, position.z));
-
-	timeAlive += gameTime;
+	//SetPosition(XMFLOAT3(512 + sin(float(timeAlive/1000.0f))* 100, 200 + cos(float(timeAlive / 1000.0f)) * 100, position.z));
+	timeAlive += frameTime;
 }
 
 void PhysicsObject::WakePhysics()
@@ -29,6 +28,11 @@ void PhysicsObject::WakePhysics()
 void PhysicsObject::KillPhysics()
 {
 	isAlive = false;
+}
+
+bool PhysicsObject::IsAlive()
+{
+	return isAlive;
 }
 
 void PhysicsObject::SetVelocity(XMFLOAT3 velocity)
@@ -47,4 +51,9 @@ XMFLOAT3 PhysicsObject::GetVelocity()
 XMFLOAT3 PhysicsObject::GetAcceleration()
 {
 	return acceleration;
+}
+
+float PhysicsObject::GetTimeAlive()
+{
+	return timeAlive;
 }

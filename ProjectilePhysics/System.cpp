@@ -66,11 +66,11 @@ bool System::Update()
 	timer->Update();
 	cpuUsage->Update();
 
-	if (timer->GetGameTime() >= MS_PER_FRAME)
+	if (timer->GetFrameTime() >= MS_PER_FRAME)
 	{
 		//if (GetFocus() == hwnd)
 		//{
-		result = game->Update(timer->GetGameTime());
+		result = game->Update(timer->GetFrameTime(), timer->GetGameTime());
 		if (!result) { return false; }
 		//}
 
@@ -82,9 +82,10 @@ bool System::Update()
 		std::string s = "Physics";
 		if (debugShowFps)
 		{
-			s   += " - CPU%: " + std::to_string(cpuUsage->GetCpuPercentage())
-				+ "    Milliseconds/frame: " + std::to_string(timer->GetGameTime())
-				+ "    FPS: " + std::to_string(fps.fps);
+			s += " - CPU%: " + std::to_string(cpuUsage->GetCpuPercentage())
+				+ "    Milliseconds/frame: " + std::to_string(timer->GetFrameTime())
+				+ "    FPS: " + std::to_string(fps.fps)
+				+ "    Total time(ms): " + std::to_string(int(timer->GetGameTime()));
 		}
 
 		timer->Reset();

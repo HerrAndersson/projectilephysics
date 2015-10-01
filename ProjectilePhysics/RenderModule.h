@@ -77,6 +77,7 @@ public:
 	void UseDefaultShader();
 	void UseTerrainShader();
 	void ActivateShadowRendering(XMMATRIX& viewMatrix, XMMATRIX& projectionMatrix);
+	void SetCullingState(int type);
 
 	void BeginScene(float red, float green, float blue, float alpha);
 

@@ -350,7 +350,6 @@ bool RenderModule::Render(GameObject* gameObject)
 	ID3D11DeviceContext* deviceContext = d3d->GetDeviceContext();
 	RenderObject* renderObject = gameObject->GetRenderObject();
 
-	UseDefaultShader();
 	result = SetDataPerObject(gameObject->GetWorldMatrix(), renderObject, gameObject->GetColorModifier());
 		
 	if (!result)
@@ -367,6 +366,11 @@ void RenderModule::ActivateShadowRendering(XMMATRIX& viewMatrix, XMMATRIX& proje
 	d3d->SetCullingState(2);
 	shadowMap->SetDataPerFrame(d3d->GetDeviceContext(), viewMatrix, projectionMatrix);
 	shadowMap->ActivateShadowRendering(d3d->GetDeviceContext());
+}
+
+void RenderModule::SetCullingState(int type)
+{
+	d3d->SetCullingState(type);
 }
 
 bool RenderModule::RenderShadow(GameObject* gameObject)

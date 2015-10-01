@@ -6,8 +6,18 @@
 #include "Camera.h"
 #include "GameObject.h"
 #include "PhysicsObject.h"
+#include "Constants.h"
+#include "Terrain.h"
 
 using namespace std;
+
+struct Movement
+{
+	float forwardSpeed = 0.0f;
+	float backwardSpeed = 0.0f;
+	float leftSpeed = 0.0f;
+	float rightSpeed = 0.0f;
+};
 
 class GameLogic
 {
@@ -21,13 +31,16 @@ private:
 	int screenWidth;
 	int screenHeight;
 
-	bool leftMouseLastState = false;
+	Movement movement;
 
 public:
 
 	GameLogic(InputManager* Input);
 	~GameLogic();
 
-	bool Update(double gameTime, vector<GameObject*> gameObjects, Camera* camera);
+	bool Update(double frameTime, double gameTime, vector<GameObject*> gameObjects, Camera* camera, GameObject* skySphere, Terrain* terrain);
+	bool UpdateCamera(double frameTime, Camera* camera, Terrain* terrain);
+	bool UpdatePhysicsObjects(double frameTime, vector<GameObject*> gameObjects);
+	bool UpdateSky(double gameTime, GameObject* skySphere);
 };
 

@@ -92,6 +92,6 @@ float4 main(pixelInputType input) : SV_TARGET
 	//	}
 	//}
 
-	return diffuse;
+	return float4(diffuse -= float4(input.colorModifier, 1.0f));
 	//return float4(finalColor += input.colorModifier, diffuse.a);
 }

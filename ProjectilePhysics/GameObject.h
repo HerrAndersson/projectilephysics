@@ -33,13 +33,12 @@ public:
 
 	int GetId()											const { return id; }
 	XMFLOAT3 GetPosition();
-	XMFLOAT3 GetRotationDeg();
-	XMFLOAT3 GetRotationRad();
+	XMFLOAT3 GetRotation();
 	XMVECTOR GetForwardVector();
 	ID3D11ShaderResourceView* GetDiffuseTexture();
 
 	void SetPosition(XMFLOAT3 pos);
-	void SetRotationDeg(XMFLOAT3 rot);
+	void SetRotation(XMFLOAT3 rot);
 
 	//Overloading these guarantees 16B alignment of XMMATRIX
 	void* operator new(size_t i);

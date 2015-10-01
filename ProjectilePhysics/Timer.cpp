@@ -16,6 +16,7 @@ Timer::Timer()
 
 	QueryPerformanceCounter((LARGE_INTEGER*)&startTime);
 
+	frameTime = 0;
 	gameTime = 0;
 }
 
@@ -30,10 +31,11 @@ void Timer::Update()
 
 	QueryPerformanceCounter((LARGE_INTEGER*)&currentTime);		//Query the current time
 	timeDifference = (double)(currentTime - startTime); 		//Difference in time since the last time-query 
-	frameTime = timeDifference / ticksPerMs;					//Time difference over the timer speed resolution give frameTime
+	tempTime = timeDifference / ticksPerMs;					//Time difference over the timer speed resolution give frameTime
 	startTime = currentTime; 									//Restart the timer
 
-	gameTime += frameTime;
+	frameTime += tempTime;
+	gameTime += tempTime;
 }
 
 double Timer::GetFrameTime()
@@ -48,6 +50,6 @@ double Timer::GetGameTime()
 
 void Timer::Reset()
 {
-	gameTime = 0;
+	frameTime = 0;
 }
 

@@ -21,6 +21,8 @@ void InputManager::Update()
 
 void InputManager::HandleMouse()
 {
+	lastMousePos = mousePos;
+
 	LPPOINT point = new POINT();
 	GetCursorPos(point);
 
@@ -35,6 +37,25 @@ void InputManager::HandleMouse()
 	if (mousePos.y  > screenHeight) { mousePos.y = (float)screenHeight; }
 
 	delete point;
+}
+
+bool InputManager::MouseMoved(XMFLOAT2& difference)
+{
+
+	if ((lastMousePos.x == mousePos.x) && (lastMousePos.y == mousePos.y))
+	{
+		difference.x = 0;
+		difference.y = 0;
+
+		return false;
+	}
+	else
+	{
+		difference.x = mousePos.x - lastMousePos.x;
+		difference.y = mousePos.y - lastMousePos.y;
+
+		return true;
+	}
 }
 
 XMFLOAT2 InputManager::GetMousePos()

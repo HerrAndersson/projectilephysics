@@ -6,7 +6,6 @@ GameObject::GameObject(int id, RenderObject* renderObject, XMFLOAT3 position = X
 	this->position = position;
 	this->rotation = rotation;
 	this->scale = scale;
-	//this->rotation.y = XMConvertToDegrees(rotation);
 	this->renderObject = renderObject;
 	forwardVector = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
 }
@@ -46,20 +45,25 @@ XMFLOAT3 GameObject::GetPosition()
 	return position;
 }
 
-void GameObject::SetRotationDeg(XMFLOAT3 rot)
+void GameObject::SetRotation(XMFLOAT3 rot)
 {
-	rotation = XMFLOAT3((float)((int)rot.x % 360), (float)((int)rot.y % 360), (float)((int)rot.z % 360));
+	/*rotation = XMFLOAT3((float)((int)rot.x % 360), (float)((int)rot.y % 360), (float)((int)rot.z % 360));*/
+
+	if (rot.x > 360)
+		rot.x -= 360;
+
+	if (rot.y > 360)
+		rot.y -= 360;
+
+	if (rot.z > 360)
+		rot.z -= 360;
+
+	rotation = rot;
 }
 
-XMFLOAT3 GameObject::GetRotationDeg()
+XMFLOAT3 GameObject::GetRotation()
 {
 	return rotation;
-}
-
-XMFLOAT3 GameObject::GetRotationRad()
-{
-	float degToRad = XM_PI / 180.0f;
-	return XMFLOAT3(rotation.x * degToRad, rotation.y * degToRad, rotation.z * degToRad);
 }
 
 XMVECTOR GameObject::GetForwardVector()

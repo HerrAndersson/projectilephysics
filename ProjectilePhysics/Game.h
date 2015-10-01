@@ -32,13 +32,15 @@ private:
 
 	vector<GameObject*>		gameObjects;
 	Terrain*                terrain;
+	GameObject*             skySphere;
+	GameObject*				uglyFix;
 
 public:
 
 	Game(HINSTANCE hInstance, HWND hwnd, int screenWidth, int screenHeight, bool fullscreen);
 	~Game();
 
-	bool Update(double gameTime);
+	bool Update(double frameTime, double gameTime);
 	bool Render();
 
 	//Overloading these guarantees 16B alignment of XMMATRIX
