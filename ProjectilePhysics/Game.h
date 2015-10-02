@@ -33,7 +33,8 @@ private:
 	vector<GameObject*>		gameObjects;
 	Terrain*                terrain;
 	GameObject*             skySphere;
-	GameObject*				uglyFix;
+	GameObject*			    sun;
+	DirectionalLight*		sunLight;
 
 public:
 

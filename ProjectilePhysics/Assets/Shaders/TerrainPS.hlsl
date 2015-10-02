@@ -1,5 +1,19 @@
 SamplerState SampleType : register(s1);
+
+Texture2D ShadowMap : register(t0);
 Texture2D shaderTexture[4];
+
+SamplerState sampleStateClamp : register(s0);
+SamplerState sampleStateWrap : register(s1);
+SamplerComparisonState sampleStateComparison : register(s2);
+
+cbuffer lightBuffer : register(b0)
+{
+	matrix lightView;
+	matrix lightProj;
+	float3 lightPos;
+	int shadowMapSize;
+};
 
 struct VS_OUT
 {
@@ -21,14 +35,13 @@ float4 main(VS_OUT input) : SV_TARGET
 	textureColor += shaderTexture[2].Sample(SampleType, input.tex * repeat) * blendMapColor.g;
 	textureColor += shaderTexture[3].Sample(SampleType, input.tex * repeat) * blendMapColor.b;
 
+	float4 finalColor = textureColor;
+
 	//Get local illumination from the "sun" on the whole scene
-	//Moving in circle:
-	//X: = originX + sin(angle)*radius;
-	//Y: = originY + cos(angle)*radius;
+	float3 lightDir = normalize(lightPos - float3(512, 0, 512));	
+	float lightIntensity = saturate(dot(input.normal.xyz, lightDir)) + 0.35f;
+	finalColor = saturate(finalColor * lightIntensity);
 
-	float3 lightDir = normalize(float3(512, 256, -100) - float3(512, 0, 512));						
-	float lightIntensity = saturate(dot(input.normal.xyz, lightDir)) + 0.35;		 // Calculate the amount of light on this pixel.
-	float4 outputColor = saturate(textureColor * lightIntensity);					 // Determine the final amount of diffuse color based on the color of the pixel combined with the light intensity.
+	return finalColor;
 
-	return outputColor;
 }

@@ -5,6 +5,14 @@ SamplerState sampleStateClamp : register(s0);
 SamplerState sampleStateWrap : register(s1);
 SamplerComparisonState sampleStateComparison : register(s2);
 
+cbuffer lightBuffer : register(b0)
+{
+	matrix lightView;
+	matrix lightProj;
+	float3 lightPos;
+	int shadowMapSize;
+};
+
 struct pixelInputType
 {
 	float4 position : SV_POSITION;
@@ -19,16 +27,18 @@ struct pixelInputType
 float4 main(pixelInputType input) : SV_TARGET
 {
 	input.normal = normalize(input.normal);
-	
+
 	float3 wp = input.worldPos.xyz;
 	float3 reflection;
 	float4 specular = float4(0.0f, 1.0f, 0.0f, 1.0f);
-	float3 finalColor = float3(0.0f, 1.0f, 0.0f);
+	float4 finalColor = float4(0.0f, 1.0f, 0.0f, 1.0f);
 
 	float4 diffuse = AssetTexture.Sample(sampleStateClamp, input.tex);
+	finalColor = diffuse;
+
 
 	////calculate light to pixel vector for spotlight
-	//float3 lightToPixelVec = lightPosSpot - wp;;
+	//float3 lightToPixelVec = lightPos - wp;
 	//float d = length(lightToPixelVec);
 	//lightToPixelVec /= d;
 
@@ -59,39 +69,54 @@ float4 main(pixelInputType input) : SV_TARGET
 	//	float2 lerps = frac(texelPos);
 	//	float shadowCoeff = lerp(lerp(s0, s1, lerps.x), lerp(s2, s3, lerps.x), lerps.y);
 
-	//	//More filtering
-	//	//float s0 = ShadowMap.Sample(sampleStateClamp, smTex).r;
-	//	//float s1 = ShadowMap.Sample(sampleStateClamp, smTex + float2(-dx, -dx)).r;
-	//	//float s2 = ShadowMap.Sample(sampleStateClamp, smTex + float2(-dx, 0.0f)).r;
-	//	//float s3 = ShadowMap.Sample(sampleStateClamp, smTex + float2(-dx, dx)).r;
-	//	//float s4 = ShadowMap.Sample(sampleStateClamp, smTex + float2(0.0f, -dx)).r;
-	//	//float s5 = ShadowMap.Sample(sampleStateClamp, smTex + float2(0.0f, dx)).r;
-	//	//float s6 = ShadowMap.Sample(sampleStateClamp, smTex + float2(dx, -dx)).r;
-	//	//float s7 = ShadowMap.Sample(sampleStateClamp, smTex + float2(dx, 0.0f)).r;
-	//	//float s8 = ShadowMap.Sample(sampleStateClamp, smTex + float2(dx, dx)).r;
-
-	//	//float2 texelPos = smTex * shadowMapSize;
-	//	//float2 lerps = frac(texelPos);
-
-	//	//float shadowCoeff0 = lerp(lerp(s0, s2, lerps.x), lerp(s1, s4, lerps.x), lerps.y);
-	//	//float shadowCoeff1 = lerp(lerp(s0, s7, lerps.x), lerp(s4, s6, lerps.x), lerps.y);
-	//	//float shadowCoeff2 = lerp(lerp(s0, s7, lerps.x), lerp(s5, s8, lerps.x), lerps.y);
-	//	//float shadowCoeff3 = lerp(lerp(s0, s2, lerps.x), lerp(s3, s5, lerps.x), lerps.y);
-
-	//	//float shadowCoeff = lerp(lerp(shadowCoeff0, shadowCoeff3, lerps.x), lerp(shadowCoeff2, shadowCoeff1, lerps.x), lerps.y);
-
 	//	if (shadowCoeff < depth - epsilon)
 	//	{
 	//		finalColor = saturate(finalColor * shadowCoeff);
+	//		return finalColor;
 	//	}
 	//	else
 	//	{
-	//		finalColor += (diffuse * lightDiffuseSpot).xyz;																			//Add light to the finalColor of the pixel
-	//		finalColor /= (lightAttSpot[0] + (lightAttSpot[1] * (d* d* d) / 4.5) + (lightAttSpot[2] * (d * d * d * d) / 4.5));		//Calculate Light's Distance Falloff factor
-	//		finalColor *= pow(max(dot(-lightToPixelVec, lightDirSpot), 0.0f), lightConeSpot);										//Calculate falloff from center to edge of pointlight cone
+	//		finalColor = diffuse;
+	//		return finalColor;
 	//	}
 	//}
 
-	return float4(diffuse -= float4(input.colorModifier, 1.0f));
-	//return float4(finalColor += input.colorModifier, diffuse.a);
+
+	////Get local illumination from the "sun" on the whole scene
+	//float3 lightDir = normalize(lightPos - float3(512, 0, 512));
+	//float lightIntensity = saturate(dot(input.normal.xyz, lightDir)) + 0.35f;
+	//finalColor = saturate(finalColor * lightIntensity);
+
+	return finalColor;
+
 }
+
+
+
+////return float4(finalColor -= input.colorModifier, 1.0f);
+////return float4(finalColor += input.colorModifier, diffuse.a);
+
+
+
+
+
+//More filtering
+//float s0 = ShadowMap.Sample(sampleStateClamp, smTex).r;
+//float s1 = ShadowMap.Sample(sampleStateClamp, smTex + float2(-dx, -dx)).r;
+//float s2 = ShadowMap.Sample(sampleStateClamp, smTex + float2(-dx, 0.0f)).r;
+//float s3 = ShadowMap.Sample(sampleStateClamp, smTex + float2(-dx, dx)).r;
+//float s4 = ShadowMap.Sample(sampleStateClamp, smTex + float2(0.0f, -dx)).r;
+//float s5 = ShadowMap.Sample(sampleStateClamp, smTex + float2(0.0f, dx)).r;
+//float s6 = ShadowMap.Sample(sampleStateClamp, smTex + float2(dx, -dx)).r;
+//float s7 = ShadowMap.Sample(sampleStateClamp, smTex + float2(dx, 0.0f)).r;
+//float s8 = ShadowMap.Sample(sampleStateClamp, smTex + float2(dx, dx)).r;
+
+//float2 texelPos = smTex * shadowMapSize;
+//float2 lerps = frac(texelPos);
+
+//float shadowCoeff0 = lerp(lerp(s0, s2, lerps.x), lerp(s1, s4, lerps.x), lerps.y);
+//float shadowCoeff1 = lerp(lerp(s0, s7, lerps.x), lerp(s4, s6, lerps.x), lerps.y);
+//float shadowCoeff2 = lerp(lerp(s0, s7, lerps.x), lerp(s5, s8, lerps.x), lerps.y);
+//float shadowCoeff3 = lerp(lerp(s0, s2, lerps.x), lerp(s3, s5, lerps.x), lerps.y);
+
+//float shadowCoeff = lerp(lerp(shadowCoeff0, shadowCoeff3, lerps.x), lerp(shadowCoeff2, shadowCoeff1, lerps.x), lerps.y);

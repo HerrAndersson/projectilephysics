@@ -108,8 +108,12 @@ bool RenderModule::InitializeConstantBuffers()
 	if (FAILED(result))
 		throw std::runtime_error("RenderModule(InitializeConstantBuffers): Failed to create MatrixBufferPerFrame");
 
+	matrixBufferDesc.ByteWidth = sizeof(LightBuffer);
+	result = device->CreateBuffer(&matrixBufferDesc, NULL, &lightBuffer);
+
 	if (FAILED(result))
-		throw std::runtime_error("RenderModule(InitializeConstantBuffers): Failed to create MatrixBufferPerBlendObject");
+		throw std::runtime_error("RenderModule: Failed to create LightBuffer");
+
 
 	return true;
 }
@@ -279,11 +283,12 @@ bool RenderModule::SetDataPerObject(XMMATRIX& worldMatrix, RenderObject* renderO
 	return true;
 }
 
-bool RenderModule::SetDataPerFrame(XMMATRIX& viewMatrix, XMMATRIX& projectionMatrix, XMFLOAT3& camPos)
+bool RenderModule::SetDataPerFrame(XMMATRIX& viewMatrix, XMMATRIX& projectionMatrix, XMFLOAT3 camPos, XMFLOAT3 lightPos, XMMATRIX& lightView, XMMATRIX& lightProjection)
 {
 	HRESULT result;
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	MatrixBufferPerFrame* dataPtr;
+	LightBuffer* lightPtr;
 	ID3D11DeviceContext* deviceContext = d3d->GetDeviceContext();
 
 	//View,Projection
@@ -305,8 +310,27 @@ bool RenderModule::SetDataPerFrame(XMMATRIX& viewMatrix, XMMATRIX& projectionMat
 
 	deviceContext->VSSetConstantBuffers(1, 1, &matrixBufferPerFrame);
 
+	//Light
+	XMMATRIX lvt, lpt;
+	lvt = XMMatrixTranspose(lightView);
+	lpt = XMMatrixTranspose(lightProjection);
+
+	result = deviceContext->Map(lightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	if (FAILED(result)) { return false; }
+
+	lightPtr = (LightBuffer*)mappedResource.pData;
+
+	lightPtr->lightView = lvt;
+	lightPtr->lightProjection = lpt;
+	lightPtr->lightPos = lightPos;
+	lightPtr->shadowMapSize = shadowMap->GetSize();
+
+	deviceContext->Unmap(lightBuffer, 0);
+	deviceContext->PSSetConstantBuffers(0, 1, &lightBuffer);
+
 	ID3D11ShaderResourceView* shadowMapSRV = shadowMap->GetShadowSRV();
 	deviceContext->PSSetShaderResources(1, 1, &shadowMapSRV);
+
 
 	return true;
 }
@@ -395,6 +419,34 @@ bool RenderModule::RenderShadow(GameObject* gameObject)
 	return result;
 }
 
+bool RenderModule::RenderShadow(Terrain* terrain)
+{
+	bool result = true;
+
+	XMMATRIX worldMatrix = XMMatrixIdentity();
+	ID3D11DeviceContext* deviceContext = d3d->GetDeviceContext();
+	UINT32 vertexSize = sizeof(Vertex);;
+	UINT32 offset = 0;
+
+	ID3D11Buffer* vertexBuffer = nullptr;
+	ID3D11Buffer* indexBuffer = nullptr;
+
+	terrain->GetBuffers(vertexBuffer, indexBuffer);
+	ID3D11ShaderResourceView** textures = terrain->GetTextures();
+
+	deviceContext->IASetVertexBuffers(0, 1, &vertexBuffer, &vertexSize, &offset);
+	deviceContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	deviceContext->PSSetShaderResources(1, 4, textures);
+
+	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	shadowMap->SetDataPerObject(deviceContext, worldMatrix);
+
+	//Now render the prepared buffers with the shader.
+	d3d->GetDeviceContext()->DrawIndexed(terrain->GetVertexCount(), 0, 0);
+
+	return true;
+}
+
 bool RenderModule::SetTerrainData(XMMATRIX& worldMatrix, XMFLOAT3 colorModifier, Terrain* terrain)
 {
 	HRESULT result;
@@ -412,7 +464,7 @@ bool RenderModule::SetTerrainData(XMMATRIX& worldMatrix, XMFLOAT3 colorModifier,
 
 	deviceContext->IASetVertexBuffers(0, 1, &vertexBuffer, &vertexSize, &offset);
 	deviceContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	deviceContext->PSSetShaderResources(0, 4, textures);
+	deviceContext->PSSetShaderResources(1, 4, textures);
 
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 

@@ -28,15 +28,20 @@ private:
 		float pad;
 	};
 
-
 	struct MatrixBufferPerFrame
 	{
 		XMMATRIX viewMatrix;
 		XMMATRIX projectionMatrix;
 		XMFLOAT3 camPos;
 		float pad;
-		//Put this in here
-		//int shadowMapSize;
+	};
+
+	struct LightBuffer
+	{
+		XMMATRIX lightView;
+		XMMATRIX lightProjection;
+		XMFLOAT3 lightPos;
+		int shadowMapSize;
 	};
 
 	D3DManager*				d3d;
@@ -70,7 +75,7 @@ public:
 	bool InitializeConstantBuffers();
 	bool InitializeShaders(WCHAR* vsDefaultName, WCHAR* psDefaultName, WCHAR* psTerrainName);
 
-	bool SetDataPerFrame(XMMATRIX& viewMatrix, XMMATRIX& projectionMatrix, XMFLOAT3& camPos);
+	bool SetDataPerFrame(XMMATRIX& viewMatrix, XMMATRIX& projectionMatrix, XMFLOAT3 camPos, XMFLOAT3 lightPos, XMMATRIX& lightView, XMMATRIX& lightProjection);
 	bool SetDataPerObject(XMMATRIX& worldMatrix, RenderObject* renderObject, XMFLOAT3 colorModifier);
 	bool SetTerrainData(XMMATRIX& worldMatrix, XMFLOAT3 colorModifier, Terrain* terrain);
 
@@ -83,6 +88,7 @@ public:
 
 	bool Render(GameObject* gameObject);
 	bool RenderShadow(GameObject* gameObject);
+	bool RenderShadow(Terrain* terrain);
 	bool RenderTerrain(Terrain* terrain);
 
 	void EndScene();

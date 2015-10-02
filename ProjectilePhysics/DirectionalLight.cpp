@@ -1,97 +1,41 @@
 #include "DirectionalLight.h"
 
-
-DirectionalLight::DirectionalLight()
+DirectionalLight::DirectionalLight(float fov, float aspect, float viewNear, float viewFar)
 {
-	spotRange = 15.0f;
-	spotCone = 30.0f;
-}
-
-DirectionalLight::DirectionalLight(float fov, float aspect, float viewNear, float viewFar, float spotCone, float spotRange)
-{
-	this->spotCone = spotCone;
-	this->spotRange = spotRange;
-
-	projMatrix = XMMatrixPerspectiveFovLH(fov, aspect, viewNear, viewFar);
+	this->fov = fov;
+	this->aspect = aspect;
+	this->viewNear = viewNear;
+	this->viewFar = viewFar;
+	
+	GenerateProjectionMatrix();
 }
 
 DirectionalLight::~DirectionalLight()
 {
 }
 
-//Setters
-void DirectionalLight::setAmbientColor(float red, float green, float blue, float alpha)
+void DirectionalLight::SetPosition(XMFLOAT3 position)
 {
-	ambientColor = XMFLOAT4(red, green, blue, alpha);
-}
-
-void DirectionalLight::setDiffuseColor(float red, float green, float blue, float alpha)
-{
-	diffuseColor = XMFLOAT4(red, green, blue, alpha);
+	this->position = position;
+	GenerateViewMatrix();
 }
 
 
-void DirectionalLight::setDirection(float x, float y, float z)
-{
-	direction = XMFLOAT3(x, y, z);
-}
-
-void DirectionalLight::setPosition(float x, float y, float z)
-{
-	position = XMFLOAT3(x, y, z);
-}
-
-void DirectionalLight::setRange(float range)
-{
-	spotRange = range;
-}
-
-float DirectionalLight::getRange()
-{
-	return spotRange;
-}
-
-
-void DirectionalLight::setCone(float cone)
-{
-	spotCone = cone;
-}
-
-float DirectionalLight::getCone()
-{
-	return spotCone;
-}
-
-//Getters
-XMFLOAT4 DirectionalLight::getAmbientColor()
-{
-	return ambientColor;
-}
-
-XMFLOAT4 DirectionalLight::getDiffuseColor()
-{
-	return diffuseColor;
-}
-
-XMFLOAT3 DirectionalLight::getDirection()
-{
-	return direction;
-}
-
-XMFLOAT3 DirectionalLight::getPosition()
+XMFLOAT3 DirectionalLight::GetPosition()
 {
 	return position;
 }
 
-void DirectionalLight::setLookAt(XMFLOAT3 lookAt)
+void DirectionalLight::SetLookAt(XMFLOAT3 lookAt)
 {
 	this->lookAt = lookAt;
+	GenerateViewMatrix();
 }
 
-void DirectionalLight::generateViewMatrix()
+void DirectionalLight::GenerateViewMatrix()
 {
 	//setting up a perspective-based view matrix
-	XMFLOAT3 up(0.0f, -1.0f, 0.0f);
+	XMFLOAT3 up(0.0f, 1.0f, 0.0f);
 
 	DirectX::XMVECTOR posVec = DirectX::XMLoadFloat3(&position);
 	DirectX::XMVECTOR upVec = DirectX::XMLoadFloat3(&up);
@@ -101,34 +45,19 @@ void DirectionalLight::generateViewMatrix()
 	viewMatrix = XMMatrixLookAtLH(posVec, lookVec, upVec);
 }
 
-void DirectionalLight::generateOrthoMatrix(float width, float screenDepth, float screenNear)
+void DirectionalLight::GenerateProjectionMatrix()
 {
-	orthoMatrix = XMMatrixOrthographicLH(width, width, screenNear, screenDepth);
+	projectionMatrix = XMMatrixPerspectiveFovLH(fov, aspect, viewNear, viewFar);
 }
 
-void DirectionalLight::generateProjMatrix(float screenDepth, float screenNear)
+void DirectionalLight::GetProjectionMatrix(XMMATRIX& projectionMatrix)
 {
-	float fieldOfView, screenAspect;
-
-	fieldOfView = (float)XM_PI / 2.0f;
-	screenAspect = 1.0f;
-
-	projMatrix = XMMatrixPerspectiveFovLH(fieldOfView, screenAspect, screenNear, screenDepth);
+	projectionMatrix = this->projectionMatrix;
 }
 
-void DirectionalLight::getProjMatrix(XMMATRIX& projMatrix)
-{
-	projMatrix = this->projMatrix;
-}
-
-void DirectionalLight::getViewMatrix(XMMATRIX& viewMatrix)
+void DirectionalLight::GetViewMatrix(XMMATRIX& viewMatrix)
 {
 	viewMatrix = this->viewMatrix;
-}
-
-void DirectionalLight::getOrthoMatrix(XMMATRIX& projectionMatrix)
-{
-	projectionMatrix = orthoMatrix;
 }
 
 void* DirectionalLight::operator new(size_t i)
