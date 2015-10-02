@@ -24,9 +24,6 @@ bool GameLogic::Update(double frameTime, double gameTime, vector<GameObject*> ga
 	if (!UpdateSky(gameTime, skySphere))
 		return false;
 
-
-
-
 	if (Input->EscDown())
 		return false;
 
@@ -165,7 +162,35 @@ bool GameLogic::UpdateCamera(double frameTime, Camera* camera, Terrain* terrain)
 
 bool GameLogic::UpdatePhysicsObjects(double frameTime, vector<GameObject*> gameObjects)
 {
-	((PhysicsObject*)(gameObjects.at(0)))->Update(frameTime);
+
+	if (Input->SpaceClicked())
+	{
+		for (auto go : gameObjects)
+		{
+			if (go->GetId() == 2)
+			{
+				if (!((PhysicsObject*)go)->IsAlive())
+				{
+					((PhysicsObject*)go)->SetAcceleration(XMFLOAT3(0, 0, 10));
+					((PhysicsObject*)go)->SetVelocity(XMFLOAT3(0, 10, 10));
+					((PhysicsObject*)go)->WakePhysics();
+				}
+			}
+		}
+	}
+
+	for (auto go : gameObjects)
+	{
+		if (go->GetId() == 2)
+		{
+			if (((PhysicsObject*)go)->IsAlive())
+			{
+
+
+				((PhysicsObject*)(gameObjects.at(0)))->Update(frameTime);
+			}
+		}
+	}
 
 	return true;
 }

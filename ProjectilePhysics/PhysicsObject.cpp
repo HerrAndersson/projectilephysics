@@ -1,11 +1,12 @@
 #include "PhysicsObject.h"
 
 
-PhysicsObject::PhysicsObject(int id, RenderObject* renderObject, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
+PhysicsObject::PhysicsObject(int id, RenderObject* renderObject, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, float mass)
 			 : GameObject(id, renderObject, position, scale, rotation)
 {
 	isAlive = false;
 	timeAlive = 0;
+	this->mass = mass;
 	velocity = XMFLOAT3(0, 0, 0);
 	acceleration = XMFLOAT3(0, 0, 0);
 }
@@ -16,12 +17,12 @@ PhysicsObject::~PhysicsObject()
 
 void PhysicsObject::Update(double frameTime)
 {
-	//SetPosition(XMFLOAT3(512 + sin(float(timeAlive/1000.0f))* 100, 200 + cos(float(timeAlive / 1000.0f)) * 100, position.z));
 	timeAlive += frameTime;
 }
 
 void PhysicsObject::WakePhysics()
 {
+	timeAlive = 0;
 	isAlive = true;
 }
 
@@ -44,6 +45,11 @@ void PhysicsObject::SetAcceleration(XMFLOAT3 acceleration)
 	this->acceleration = acceleration;
 }
 
+void PhysicsObject::SetAngle(float angle)
+{
+	this->angle = angle;
+}
+
 XMFLOAT3 PhysicsObject::GetVelocity()
 {
 	return velocity;
@@ -56,4 +62,9 @@ XMFLOAT3 PhysicsObject::GetAcceleration()
 float PhysicsObject::GetTimeAlive()
 {
 	return timeAlive;
+}
+
+float PhysicsObject::GetAngle()
+{
+	return angle;
 }

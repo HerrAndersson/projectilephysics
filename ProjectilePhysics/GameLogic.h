@@ -11,6 +11,8 @@
 
 using namespace std;
 
+enum ObjectTypes { STATIC, PHYSICS, CANNON };
+
 struct Movement
 {
 	float forwardSpeed = 0.0f;

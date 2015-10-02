@@ -10,8 +10,13 @@ struct Key
 	char key;
 	int lastState = UP;
 
-	Key(char key){ this->key = key; }
-	void Update(){
+	Key(char key)
+	{ 
+		this->key = key; 
+	}
+
+	void Update()
+	{
 		if (GetAsyncKeyState(key) != 0)
 			lastState = DOWN;
 		else
@@ -27,7 +32,9 @@ private:
 	int screenWidth, screenHeight;
 
 	Key leftMouse = Key(VK_LBUTTON);
+	Key rightMouse = Key(VK_RBUTTON);
 	Key esc = Key(VK_ESCAPE);
+	Key space = Key(VK_SPACE);
 
 	XMFLOAT2 mousePos;
 	XMFLOAT2 lastMousePos;
@@ -46,11 +53,17 @@ public:
 	bool MouseMoved(XMFLOAT2& difference);
 
 	bool KeyDown(char key);
+
 	bool EscDown();
 	bool EscClicked();
+
 	bool LeftMouseDown();
 	bool LeftMouseClicked();
-	bool RightMouse();
-	bool Space();
+
+	bool RightMouseDown();
+	bool RightMouseClicked();
+
+	bool SpaceDown();
+	bool SpaceClicked();
 };
 

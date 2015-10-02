@@ -16,31 +16,30 @@ Game::Game(HINSTANCE hInstance, HWND hwnd, int screenWidth, int screenHeight, bo
 
 
 	//Objects
-	skySphere = new GameObject(1, Assets->GetRenderObject(0), XMFLOAT3(512, 100, 512), XMFLOAT3(650, 650, 650), XMFLOAT3(0, 0, 0));
-	sun = new GameObject(1, Assets->GetRenderObject(4), XMFLOAT3(-150, 700, -150), XMFLOAT3(30, 30, 30), XMFLOAT3(90, 0, 0));
+	skySphere = new GameObject(ObjectTypes::STATIC, Assets->GetRenderObject(0), XMFLOAT3(512, 100, 512), XMFLOAT3(650, 650, 650), XMFLOAT3(0, 0, 0));
+	sun = new GameObject(ObjectTypes::STATIC, Assets->GetRenderObject(4), XMFLOAT3(-150, 700, -150), XMFLOAT3(30, 30, 30), XMFLOAT3(90, 0, 0));
 	sunLight = new DirectionalLight(XM_PI / 2, 1.0f, 0.1, 2000.0f);
 	sunLight->SetLookAt(XMFLOAT3(512, 0, 512));
 	sunLight->SetPosition(sun->GetPosition());
 
-	PhysicsObject* sphere = new PhysicsObject(1, Assets->GetRenderObject(1), XMFLOAT3(512.0f, 50.0f, 128.0f), XMFLOAT3(3.0f, 3.0f, 3.0f), XMFLOAT3(0, 0, 0));
-	sphere->WakePhysics();
+	PhysicsObject* sphere = new PhysicsObject(ObjectTypes::PHYSICS, Assets->GetRenderObject(2), XMFLOAT3(512.0f, 10.0f, 128.0f), XMFLOAT3(10.0f, 10.0f, 10.0f), XMFLOAT3(90, 0, 0), 10);
 	gameObjects.push_back(sphere);
 
-	for (size_t i = 0; i < 20; i++)
-	{
-		int x = rand() % 12 + 5;
-		int y = rand() % 12 + 5;
-		int z = rand() % 10 + 5;
-		int m = rand() % 19 + 1;
-		int n = rand() % 19 + 1;
-		int o = rand() % 19 + 1;
+	//for (size_t i = 0; i < 20; i++)
+	//{
+	//	int x = rand() % 12 + 5;
+	//	int y = rand() % 12 + 5;
+	//	int z = rand() % 10 + 5;
+	//	int m = rand() % 19 + 1;
+	//	int n = rand() % 19 + 1;
+	//	int o = rand() % 19 + 1;
 
-		PhysicsObject* sphere = new PhysicsObject(1, Assets->GetRenderObject(2), XMFLOAT3(600 + x * m, y * n, 600 + z * o), XMFLOAT3(30.0f, 30.0f, 30.0f), XMFLOAT3(0, 0, 0));
-		sphere->WakePhysics();
-		gameObjects.push_back(sphere);
-	}
+	//	PhysicsObject* sphere = new PhysicsObject(2, Assets->GetRenderObject(2), XMFLOAT3(600 + x * m, y * n, 600 + z * o), XMFLOAT3(30.0f, 30.0f, 30.0f), XMFLOAT3(0, 0, 0), 10);
+	//	sphere->WakePhysics();
+	//	gameObjects.push_back(sphere);
+	//}
 
-	terrain = new Terrain(Renderer->GetDevice(), "Assets/Textures/heightmap01b.bmp", 5.0f,
+	terrain = new Terrain(Renderer->GetDevice(), "Assets/Textures/heightmap01d.bmp", 5.0f,
 		Assets->LoadTexture("Assets/Textures/blendmap.png"),
 		Assets->LoadTexture("Assets/Textures/grass1.png"),
 		Assets->LoadTexture("Assets/Textures/stone1.png"),

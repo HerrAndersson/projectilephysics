@@ -17,6 +17,8 @@ void InputManager::Update()
 {
 	leftMouse.Update();
 	esc.Update();
+	rightMouse.Update();
+	space.Update();
 }
 
 void InputManager::HandleMouse()
@@ -122,10 +124,12 @@ bool InputManager::KeyDown(char key)
 	else
 		return false;
 }
+
 bool InputManager::EscDown()
 {
 	return GetAsyncKeyState(VK_ESCAPE) != 0;
 }
+
 bool InputManager::EscClicked()
 {
 	if (esc.lastState == Key::KeyStates::DOWN && GetAsyncKeyState(esc.key) == 0)
@@ -133,10 +137,12 @@ bool InputManager::EscClicked()
 
 	return false;
 }
+
 bool InputManager::LeftMouseDown()
 {
 	return GetAsyncKeyState(VK_LBUTTON) != 0;
 }
+
 bool InputManager::LeftMouseClicked()
 {
 	if (leftMouse.lastState == Key::KeyStates::DOWN && GetAsyncKeyState(leftMouse.key) == 0)
@@ -144,11 +150,29 @@ bool InputManager::LeftMouseClicked()
 
 	return false;
 }
-bool InputManager::RightMouse()
+
+bool InputManager::RightMouseDown()
 {
 	return GetAsyncKeyState(VK_RBUTTON) != 0;
 }
-bool InputManager::Space()
+
+bool InputManager::RightMouseClicked()
+{
+	if (rightMouse.lastState == Key::KeyStates::DOWN && GetAsyncKeyState(rightMouse.key) == 0)
+		return true;
+
+	return false;
+}
+
+bool InputManager::SpaceDown()
 {
 	return GetAsyncKeyState(VK_SPACE) != 0;
+}
+
+bool InputManager::SpaceClicked()
+{
+	if (space.lastState == Key::KeyStates::DOWN && GetAsyncKeyState(space.key) == 0)
+		return true;
+
+	return false;
 }
