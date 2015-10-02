@@ -10,15 +10,17 @@ GameLogic::~GameLogic()
 
 }
 
-bool GameLogic::Update(double frameTime, double gameTime, vector<GameObject*> gameObjects, Camera* camera, GameObject* skySphere, Terrain* terrain)
+bool GameLogic::Update(double frameTime, double gameTime, vector<GameObject*> gameObjects, Camera* camera, GameObject* skySphere, Terrain* terrain, GameObject* cannon)
 {
 	Input->HandleMouse();
-	Input->Update();
 
 	if (!UpdateCamera(frameTime, camera, terrain))
 		return false;
 
-	if (!UpdatePhysicsObjects(frameTime, gameObjects))
+	if (!UpdateCannon(cannon))
+		return false;
+
+	if (!UpdatePhysicsObjects(frameTime, gameObjects, cannon->GetRotation()))
 		return false;
 
 	if (!UpdateSky(gameTime, skySphere))
@@ -26,6 +28,8 @@ bool GameLogic::Update(double frameTime, double gameTime, vector<GameObject*> ga
 
 	if (Input->EscDown())
 		return false;
+
+	Input->Update();
 
 	return true;
 }
@@ -46,24 +50,17 @@ bool GameLogic::UpdateCamera(double frameTime, Camera* camera, Terrain* terrain)
 
 		////Keep y-rotation within 360-bounds
 		if (rotation.y < 0.0f)
-		{
 			rotation.y += 360.0f;
-		}
 		else if (rotation.y > 360.0f)
-		{
 			rotation.y = 0;
-		}
-		//Lock x-rotation to given bounds otherwise the camera can be turned upside-down
-		if (rotation.x < -75.0f)
-		{
-			rotation.x = -75.0f;
-		}
-		else if (rotation.x > 75.0f)
-		{
-			rotation.x = 75.0f;
-		}
-	}
 
+		//Lock x-rotation to given bounds otherwise the camera can be turned upside-down
+		if (rotation.x < -VIEW_BOUNDS)
+			rotation.x = -VIEW_BOUNDS;
+		else if (rotation.x > VIEW_BOUNDS)
+			rotation.x = VIEW_BOUNDS;
+
+	}
 
 	///////////////////////////////////////////////  Move forward  ///////////////////////////////////////////////
 	if (Input->KeyDown('w'))
@@ -85,7 +82,6 @@ bool GameLogic::UpdateCamera(double frameTime, Camera* camera, Terrain* terrain)
 	position.x += sinf(radians) * movement.forwardSpeed;
 	position.z += cosf(radians) * movement.forwardSpeed;
 
-
 	///////////////////////////////////////////////  Move backward  ///////////////////////////////////////////////
 	if (Input->KeyDown('s'))
 	{
@@ -105,7 +101,6 @@ bool GameLogic::UpdateCamera(double frameTime, Camera* camera, Terrain* terrain)
 	radians = XMConvertToRadians(rotation.y);
 	position.x -= sinf(radians) * movement.backwardSpeed;
 	position.z -= cosf(radians) * movement.backwardSpeed;
-
 
 	///////////////////////////////////////////////  Move left  ///////////////////////////////////////////////
 	if (Input->KeyDown('a'))
@@ -127,7 +122,6 @@ bool GameLogic::UpdateCamera(double frameTime, Camera* camera, Terrain* terrain)
 	radians = XMConvertToRadians(rotation.y - 90.0f);
 	position.x += sinf(radians) * movement.leftSpeed;
 	position.z += cosf(radians) * movement.leftSpeed;
-
 
 	///////////////////////////////////////////////  Move right  ///////////////////////////////////////////////
 	if (Input->KeyDown('d'))
@@ -160,34 +154,49 @@ bool GameLogic::UpdateCamera(double frameTime, Camera* camera, Terrain* terrain)
 	return true;
 }
 
-bool GameLogic::UpdatePhysicsObjects(double frameTime, vector<GameObject*> gameObjects)
+bool GameLogic::UpdatePhysicsObjects(double frameTime, vector<GameObject*> gameObjects, XMFLOAT3 cannonRotation)
 {
-
+	
 	if (Input->SpaceClicked())
 	{
+		bool found = false;
+
 		for (auto go : gameObjects)
 		{
-			if (go->GetId() == 2)
+			if (go->GetId() == ObjectTypes::PHYSICS)
 			{
 				if (!((PhysicsObject*)go)->IsAlive())
 				{
 					((PhysicsObject*)go)->SetAcceleration(XMFLOAT3(0, 0, 10));
 					((PhysicsObject*)go)->SetVelocity(XMFLOAT3(0, 10, 10));
 					((PhysicsObject*)go)->WakePhysics();
+					found = true;
+					break;
 				}
 			}
+		}
+
+		if (!found)
+		{
+			//Create new object
 		}
 	}
 
 	for (auto go : gameObjects)
 	{
-		if (go->GetId() == 2)
+		if (go->GetId() == ObjectTypes::PHYSICS)
 		{
 			if (((PhysicsObject*)go)->IsAlive())
 			{
+				if (go->GetPosition().y < 10.0f)
+					((PhysicsObject*)go)->KillPhysics();
 
 
-				((PhysicsObject*)(gameObjects.at(0)))->Update(frameTime);
+				//Perform physics calculations here
+
+
+
+				((PhysicsObject*)go)->Update(frameTime);
 			}
 		}
 	}
@@ -203,6 +212,30 @@ bool GameLogic::UpdateSky(double gameTime, GameObject* skySphere)
 
 	XMFLOAT3 colorModifier = XMFLOAT3((float)sin(gameTime / 100000), (float)sin(gameTime / 100000), (float)sin(gameTime / 100000));
 	skySphere->SetColorModifier(colorModifier);
+
+	return true;
+}
+
+bool GameLogic::UpdateCannon(GameObject* cannon)
+{
+	if (Input->UpArrowDown())
+	{
+		XMFLOAT3 cannonRotation = cannon->GetRotation();
+
+		if (cannonRotation.x > 315 || cannonRotation.x < 5)
+			cannonRotation.x -= CANNON_PITCH_SPEED;
+
+		cannon->SetRotation(cannonRotation);
+	}
+	else if (Input->DownArrowDown())
+	{
+		XMFLOAT3 cannonRotation = cannon->GetRotation();
+
+		if (cannonRotation.x > 5)
+			cannonRotation.x += CANNON_PITCH_SPEED;
+
+		cannon->SetRotation(cannonRotation);
+	}
 
 	return true;
 }

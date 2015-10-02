@@ -34,6 +34,7 @@ private:
 	Terrain*                terrain;
 	GameObject*             skySphere;
 	GameObject*			    sun;
+	GameObject*				cannon;
 	DirectionalLight*		sunLight;
 
 public:

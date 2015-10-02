@@ -28,7 +28,14 @@ AssetManager::~AssetManager()
 	for (auto m : models) delete m;
 	models.clear();
 
-	for (auto t : textures) t->Release();
+	for (auto t : textures)
+	{
+		if (t)
+		{
+			t->Release();
+		}
+	}
+
 	textures.clear();
 
 	for (auto ro : renderObjects) delete ro;

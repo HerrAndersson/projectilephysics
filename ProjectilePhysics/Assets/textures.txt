@@ -3,5 +3,7 @@ blendmap.png
 grass.png
 sand.png
 stone.png
-clouds.png
+clouds2b.png
 fire.png
+iron.png
+wood.png

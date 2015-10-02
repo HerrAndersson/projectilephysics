@@ -18,26 +18,20 @@ Game::Game(HINSTANCE hInstance, HWND hwnd, int screenWidth, int screenHeight, bo
 	//Objects
 	skySphere = new GameObject(ObjectTypes::STATIC, Assets->GetRenderObject(0), XMFLOAT3(512, 100, 512), XMFLOAT3(650, 650, 650), XMFLOAT3(0, 0, 0));
 	sun = new GameObject(ObjectTypes::STATIC, Assets->GetRenderObject(4), XMFLOAT3(-150, 700, -150), XMFLOAT3(30, 30, 30), XMFLOAT3(90, 0, 0));
-	sunLight = new DirectionalLight(XM_PI / 2, 1.0f, 0.1, 2000.0f);
+	sunLight = new DirectionalLight(XM_PI / 2, 1.0f, 0.1f, 2000.0f);
 	sunLight->SetLookAt(XMFLOAT3(512, 0, 512));
 	sunLight->SetPosition(sun->GetPosition());
 
-	PhysicsObject* sphere = new PhysicsObject(ObjectTypes::PHYSICS, Assets->GetRenderObject(2), XMFLOAT3(512.0f, 10.0f, 128.0f), XMFLOAT3(10.0f, 10.0f, 10.0f), XMFLOAT3(90, 0, 0), 10);
-	gameObjects.push_back(sphere);
+	GameObject* cannonBase = new GameObject(ObjectTypes::STATIC, Assets->GetRenderObject(5), XMFLOAT3(480, 20, 128), XMFLOAT3(35, 35, 35), XMFLOAT3(0, 0, 0));
+	gameObjects.push_back(cannonBase);
 
-	//for (size_t i = 0; i < 20; i++)
-	//{
-	//	int x = rand() % 12 + 5;
-	//	int y = rand() % 12 + 5;
-	//	int z = rand() % 10 + 5;
-	//	int m = rand() % 19 + 1;
-	//	int n = rand() % 19 + 1;
-	//	int o = rand() % 19 + 1;
+	cannon = new GameObject(ObjectTypes::CANNON, Assets->GetRenderObject(3), XMFLOAT3(480, 20, 142), XMFLOAT3(10, 10, 60), XMFLOAT3(-45, 0, 0));
 
-	//	PhysicsObject* sphere = new PhysicsObject(2, Assets->GetRenderObject(2), XMFLOAT3(600 + x * m, y * n, 600 + z * o), XMFLOAT3(30.0f, 30.0f, 30.0f), XMFLOAT3(0, 0, 0), 10);
-	//	sphere->WakePhysics();
-	//	gameObjects.push_back(sphere);
-	//}
+	for (size_t i = 0; i < 20; i++)
+	{
+		PhysicsObject* sphere = new PhysicsObject(ObjectTypes::PHYSICS, Assets->GetRenderObject(2), XMFLOAT3(480, 20, 135), XMFLOAT3(5.0f, 5.0f, 5.0f), XMFLOAT3(0, 0, 0), 10);
+		gameObjects.push_back(sphere);
+	}
 
 	terrain = new Terrain(Renderer->GetDevice(), "Assets/Textures/heightmap01d.bmp", 5.0f,
 		Assets->LoadTexture("Assets/Textures/blendmap.png"),
@@ -58,6 +52,7 @@ Game::~Game()
 	delete skySphere;
 	delete sun;
 	delete sunLight;
+	delete cannon;
 
 	for (auto go : gameObjects) 
 		delete go;
@@ -66,7 +61,7 @@ Game::~Game()
 bool Game::Update(double frameTime, double gameTime)
 {
 
-	if (!Logic->Update(frameTime, gameTime, gameObjects, camera, skySphere, terrain))
+	if (!Logic->Update(frameTime, gameTime, gameObjects, camera, skySphere, terrain, cannon))
 		return false;
 
 	XMFLOAT3 pos = sun->GetPosition();
@@ -115,6 +110,8 @@ bool Game::Render()
 		Renderer->Render(gameObjects.at(i));
 
 	Renderer->Render(sun);
+	Renderer->Render(cannon);
+
 	Renderer->SetCullingState(2);
 	Renderer->Render(skySphere);
 

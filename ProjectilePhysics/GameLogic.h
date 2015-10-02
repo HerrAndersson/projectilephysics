@@ -40,9 +40,10 @@ public:
 	GameLogic(InputManager* Input);
 	~GameLogic();
 
-	bool Update(double frameTime, double gameTime, vector<GameObject*> gameObjects, Camera* camera, GameObject* skySphere, Terrain* terrain);
+	bool Update(double frameTime, double gameTime, vector<GameObject*> gameObjects, Camera* camera, GameObject* skySphere, Terrain* terrain, GameObject* cannon);
 	bool UpdateCamera(double frameTime, Camera* camera, Terrain* terrain);
-	bool UpdatePhysicsObjects(double frameTime, vector<GameObject*> gameObjects);
+	bool UpdatePhysicsObjects(double frameTime, vector<GameObject*> gameObjects, XMFLOAT3 cannonRotation);
 	bool UpdateSky(double gameTime, GameObject* skySphere);
+	bool UpdateCannon(GameObject* cannon);
 };
 

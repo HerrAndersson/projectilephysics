@@ -65,5 +65,8 @@ public:
 
 	bool SpaceDown();
 	bool SpaceClicked();
+
+	bool UpArrowDown();
+	bool DownArrowDown();
 };
 

@@ -51,12 +51,18 @@ void GameObject::SetRotation(XMFLOAT3 rot)
 
 	if (rot.x > 360)
 		rot.x -= 360;
+	else if (rot.x < 0)
+		rot.x = 360 + rot.x;
 
 	if (rot.y > 360)
 		rot.y -= 360;
+	else if (rot.y < 0)
+		rot.y = 360 + rot.y;
 
 	if (rot.z > 360)
 		rot.z -= 360;
+	else if (rot.z < 0)
+		rot.z = 360 + rot.z;
 
 	rotation = rot;
 }

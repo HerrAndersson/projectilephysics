@@ -176,3 +176,13 @@ bool InputManager::SpaceClicked()
 
 	return false;
 }
+
+bool InputManager::UpArrowDown()
+{
+	return GetAsyncKeyState(VK_UP) != 0;
+}
+
+bool InputManager::DownArrowDown()
+{
+	return GetAsyncKeyState(VK_DOWN) != 0;
+}
