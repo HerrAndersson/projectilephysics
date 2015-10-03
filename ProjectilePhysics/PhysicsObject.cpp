@@ -11,6 +11,15 @@ PhysicsObject::PhysicsObject(int id, RenderObject* renderObject, XMFLOAT3 positi
 	acceleration = XMFLOAT3(0, 0, 0);
 }
 
+PhysicsObject::PhysicsObject(const PhysicsObject& other) : GameObject(other)			 
+{
+	isAlive = false;
+	timeAlive = 0;
+	this->mass = other.mass;
+	velocity = XMFLOAT3(0, 0, 0);
+	acceleration = XMFLOAT3(0, 0, 0);
+}
+
 PhysicsObject::~PhysicsObject()
 {
 }

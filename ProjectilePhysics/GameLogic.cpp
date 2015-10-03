@@ -55,24 +55,24 @@ bool GameLogic::UpdateCamera(double frameTime, Camera* camera, Terrain* terrain)
 			rotation.y = 0;
 
 		//Lock x-rotation to given bounds otherwise the camera can be turned upside-down
-		if (rotation.x < -VIEW_BOUNDS)
-			rotation.x = -VIEW_BOUNDS;
-		else if (rotation.x > VIEW_BOUNDS)
-			rotation.x = VIEW_BOUNDS;
+		if (rotation.x < -Movement::VIEW_BOUNDS)
+			rotation.x = -Movement::VIEW_BOUNDS;
+		else if (rotation.x > Movement::VIEW_BOUNDS)
+			rotation.x = Movement::VIEW_BOUNDS;
 
 	}
 
 	///////////////////////////////////////////////  Move forward  ///////////////////////////////////////////////
 	if (Input->KeyDown('w'))
 	{
-		movement.forwardSpeed += float(frameTime * ACCELERATION);
+		movement.forwardSpeed += float(frameTime * Movement::ACCELERATION);
 
-		if (movement.forwardSpeed > (float(frameTime * SPEED_MULTIPLIER)))
-			movement.forwardSpeed = float(frameTime * SPEED_MULTIPLIER);
+		if (movement.forwardSpeed > (float(frameTime * Movement::SPEED_MULTIPLIER)))
+			movement.forwardSpeed = float(frameTime * Movement::SPEED_MULTIPLIER);
 	}
 	else //If the key is not down, decelerate.
 	{
-		movement.forwardSpeed -= float(frameTime * DECELERATION);
+		movement.forwardSpeed -= float(frameTime * Movement::DECELERATION);
 
 		if (movement.forwardSpeed < 0.0f)
 			movement.forwardSpeed = 0.0f;
@@ -85,14 +85,14 @@ bool GameLogic::UpdateCamera(double frameTime, Camera* camera, Terrain* terrain)
 	///////////////////////////////////////////////  Move backward  ///////////////////////////////////////////////
 	if (Input->KeyDown('s'))
 	{
-		movement.backwardSpeed += float(frameTime * ACCELERATION);
+		movement.backwardSpeed += float(frameTime * Movement::ACCELERATION);
 
-		if (movement.backwardSpeed > (float(frameTime * SPEED_MULTIPLIER)))
-			movement.backwardSpeed = float(frameTime * SPEED_MULTIPLIER);
+		if (movement.backwardSpeed > (float(frameTime * Movement::SPEED_MULTIPLIER)))
+			movement.backwardSpeed = float(frameTime * Movement::SPEED_MULTIPLIER);
 	}
 	else //If the key is not down, decelerate.
 	{
-		movement.backwardSpeed -= float(frameTime * DECELERATION);
+		movement.backwardSpeed -= float(frameTime * Movement::DECELERATION);
 
 		if (movement.backwardSpeed < 0.0f)
 			movement.backwardSpeed = 0.0f;
@@ -105,14 +105,14 @@ bool GameLogic::UpdateCamera(double frameTime, Camera* camera, Terrain* terrain)
 	///////////////////////////////////////////////  Move left  ///////////////////////////////////////////////
 	if (Input->KeyDown('a'))
 	{
-		movement.leftSpeed += float(frameTime * ACCELERATION);
+		movement.leftSpeed += float(frameTime * Movement::ACCELERATION);
 
-		if (movement.leftSpeed > (float(frameTime * SPEED_MULTIPLIER)))
-			movement.leftSpeed = float(frameTime * SPEED_MULTIPLIER);
+		if (movement.leftSpeed > (float(frameTime * Movement::SPEED_MULTIPLIER)))
+			movement.leftSpeed = float(frameTime * Movement::SPEED_MULTIPLIER);
 	}
 	else //If the key is not down, decelerate.
 	{
-		movement.leftSpeed -= float(frameTime * DECELERATION);
+		movement.leftSpeed -= float(frameTime * Movement::DECELERATION);
 
 		if (movement.leftSpeed < 0.0f)
 			movement.leftSpeed = 0.0f;
@@ -126,14 +126,14 @@ bool GameLogic::UpdateCamera(double frameTime, Camera* camera, Terrain* terrain)
 	///////////////////////////////////////////////  Move right  ///////////////////////////////////////////////
 	if (Input->KeyDown('d'))
 	{
-		movement.rightSpeed += float(frameTime * ACCELERATION);
+		movement.rightSpeed += float(frameTime * Movement::ACCELERATION);
 
-		if (movement.rightSpeed > (float(frameTime * SPEED_MULTIPLIER)))
-			movement.rightSpeed = float(frameTime * SPEED_MULTIPLIER);
+		if (movement.rightSpeed > (float(frameTime * Movement::SPEED_MULTIPLIER)))
+			movement.rightSpeed = float(frameTime * Movement::SPEED_MULTIPLIER);
 	}
 	else //If the key is not down, decelerate.
 	{
-		movement.rightSpeed -= float(frameTime * DECELERATION);
+		movement.rightSpeed -= float(frameTime * Movement::DECELERATION);
 
 		if (movement.rightSpeed < 0.0f)
 			movement.rightSpeed = 0.0f;
@@ -147,7 +147,7 @@ bool GameLogic::UpdateCamera(double frameTime, Camera* camera, Terrain* terrain)
 
 	///////////////////////////////////////////////////  Done  ///////////////////////////////////////////////////
 
-	position.y = terrain->GetY(position.x, position.z) + CAMERA_HEIGHT_OFFSET;
+	position.y = terrain->GetY(position.x, position.z) + Movement::CAMERA_HEIGHT_OFFSET;
 	camera->SetRotation(rotation);
 	camera->SetPosition(position);
 
@@ -156,7 +156,8 @@ bool GameLogic::UpdateCamera(double frameTime, Camera* camera, Terrain* terrain)
 
 bool GameLogic::UpdatePhysicsObjects(double frameTime, vector<GameObject*> gameObjects, XMFLOAT3 cannonRotation)
 {
-	
+	PhysicsObject* copy = nullptr;
+
 	if (Input->SpaceClicked())
 	{
 		bool found = false;
@@ -165,6 +166,8 @@ bool GameLogic::UpdatePhysicsObjects(double frameTime, vector<GameObject*> gameO
 		{
 			if (go->GetId() == ObjectTypes::PHYSICS)
 			{
+				copy = (PhysicsObject*)go;
+
 				if (!((PhysicsObject*)go)->IsAlive())
 				{
 					((PhysicsObject*)go)->SetAcceleration(XMFLOAT3(0, 0, 10));
@@ -178,7 +181,14 @@ bool GameLogic::UpdatePhysicsObjects(double frameTime, vector<GameObject*> gameO
 
 		if (!found)
 		{
-			//Create new object
+			PhysicsObject* newObj = new PhysicsObject(*copy);
+			newObj->SetPosition(GameConstants::CANNONBALL_START_POS);
+
+			newObj->SetAcceleration(XMFLOAT3(0, 0, 10));
+			newObj->SetVelocity(XMFLOAT3(0, 10, 10));
+			newObj->WakePhysics();
+
+			gameObjects.push_back(newObj);
 		}
 	}
 
@@ -193,7 +203,6 @@ bool GameLogic::UpdatePhysicsObjects(double frameTime, vector<GameObject*> gameO
 
 
 				//Perform physics calculations here
-
 
 
 				((PhysicsObject*)go)->Update(frameTime);

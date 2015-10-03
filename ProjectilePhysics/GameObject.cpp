@@ -10,6 +10,16 @@ GameObject::GameObject(int id, RenderObject* renderObject, XMFLOAT3 position = X
 	forwardVector = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
 }
 
+GameObject::GameObject(const GameObject& other)
+{
+	this->id = other.id;
+	this->position = other.position;
+	this->rotation = other.rotation;
+	this->scale = other.scale;
+	this->renderObject = other.renderObject;
+	this->forwardVector = other.forwardVector;
+}
+
 GameObject::~GameObject()
 {
 	renderObject = nullptr;

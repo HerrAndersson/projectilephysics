@@ -23,6 +23,7 @@ protected:
 public:
 
 	GameObject(int id, RenderObject* renderObject, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);
+	GameObject(const GameObject& other);
 	virtual ~GameObject();
 
 	XMMATRIX GetWorldMatrix();

@@ -29,7 +29,7 @@ Game::Game(HINSTANCE hInstance, HWND hwnd, int screenWidth, int screenHeight, bo
 
 	for (size_t i = 0; i < 20; i++)
 	{
-		PhysicsObject* sphere = new PhysicsObject(ObjectTypes::PHYSICS, Assets->GetRenderObject(2), XMFLOAT3(480, 20, 135), XMFLOAT3(5.0f, 5.0f, 5.0f), XMFLOAT3(0, 0, 0), 10);
+		PhysicsObject* sphere = new PhysicsObject(ObjectTypes::PHYSICS, Assets->GetRenderObject(2), GameConstants::CANNONBALL_START_POS, XMFLOAT3(5.0f, 5.0f, 5.0f), XMFLOAT3(0, 0, 0), 10);
 		gameObjects.push_back(sphere);
 	}
 

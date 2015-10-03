@@ -16,6 +16,7 @@ private:
 public:
 
 	PhysicsObject(int id, RenderObject* renderObject, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, float mass);
+	PhysicsObject(const PhysicsObject& other);
 	virtual ~PhysicsObject();
 
 	void Update(double frameTime);
