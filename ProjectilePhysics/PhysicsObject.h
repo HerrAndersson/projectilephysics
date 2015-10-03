@@ -33,7 +33,7 @@ public:
 	XMFLOAT3 GetVelocity();
 	XMFLOAT3 GetAcceleration();
 	float GetMass();
-	float GetTimeAlive();
+	double GetTimeAlive();
 	float GetAngle();
 
 };

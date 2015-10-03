@@ -29,11 +29,12 @@ Game::Game(HINSTANCE hInstance, HWND hwnd, int screenWidth, int screenHeight, bo
 
 	for (size_t i = 0; i < 20; i++)
 	{
-		PhysicsObject* sphere = new PhysicsObject(ObjectTypes::PHYSICS, Assets->GetRenderObject(2), GameConstants::CANNONBALL_START_POS, XMFLOAT3(5.0f, 5.0f, 5.0f), XMFLOAT3(0, 0, 0), 10);
+		/*PhysicsObject* sphere = new PhysicsObject(ObjectTypes::PHYSICS, Assets->GetRenderObject(2), GameConstants::CANNONBALL_START_POS, XMFLOAT3(5.0f, 5.0f, 5.0f), XMFLOAT3(0, 0, 0), 10);*/
+		PhysicsObject* sphere = new PhysicsObject(ObjectTypes::PHYSICS, Assets->GetRenderObject(2), XMFLOAT3(480, 20, 180), XMFLOAT3(5.0f, 5.0f, 5.0f), XMFLOAT3(0, 0, 0), 10);
 		gameObjects.push_back(sphere);
 	}
 
-	terrain = new Terrain(Renderer->GetDevice(), "Assets/Textures/heightmap01d.bmp", 5.0f,
+	terrain = new Terrain(Renderer->GetDevice(), "Assets/Textures/heightmap01f.bmp", 3.0f,
 		Assets->LoadTexture("Assets/Textures/blendmap.png"),
 		Assets->LoadTexture("Assets/Textures/grass1.png"),
 		Assets->LoadTexture("Assets/Textures/stone1.png"),

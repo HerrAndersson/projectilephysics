@@ -2,7 +2,7 @@
 #include <DirectXMath.h>
 using DirectX::XMFLOAT3;
 
-namespace Movement
+namespace MovementConstants
 {
 	const float ACCELERATION = 0.005f;
 	const float DECELERATION = 0.0007f;
@@ -14,7 +14,7 @@ namespace Movement
 	const float CANNON_PITCH_SPEED = 0.4f;
 }
 
-namespace Physics
+namespace PhysicsConstants
 {
 	const XMFLOAT3 GRAVITY = XMFLOAT3(0, -9.82114f, 0); //Karlskrona
 	const float IRON_DENSITY = 7874; //kg/m3

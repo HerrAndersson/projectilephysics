@@ -68,7 +68,7 @@ XMFLOAT3 PhysicsObject::GetAcceleration()
 	return acceleration;
 }
 
-float PhysicsObject::GetTimeAlive()
+double PhysicsObject::GetTimeAlive()
 {
 	return timeAlive;
 }
