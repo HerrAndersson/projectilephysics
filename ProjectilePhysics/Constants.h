@@ -10,8 +10,6 @@ namespace MovementConstants
 	const float LOOK_SPEED = 0.5f;
 	const float VIEW_BOUNDS = 75.0f;
 	const float CAMERA_HEIGHT_OFFSET = 8.0f;
-
-	const float CANNON_PITCH_SPEED = 0.4f;
 }
 
 namespace PhysicsConstants
@@ -24,4 +22,5 @@ namespace PhysicsConstants
 namespace GameConstants
 {
 	const XMFLOAT3 CANNONBALL_START_POS = XMFLOAT3(480, 20, 135);
+	const float CANNON_PITCH_SPEED = 0.4f;
 }

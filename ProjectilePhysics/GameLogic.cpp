@@ -236,7 +236,7 @@ bool GameLogic::UpdateCannon(GameObject* cannon)
 		XMFLOAT3 cannonRotation = cannon->GetRotation();
 
 		if (cannonRotation.x > 315 || cannonRotation.x < 5)
-			cannonRotation.x -= MovementConstants::CANNON_PITCH_SPEED;
+			cannonRotation.x -= GameConstants::CANNON_PITCH_SPEED;
 
 		cannon->SetRotation(cannonRotation);
 	}
@@ -245,7 +245,7 @@ bool GameLogic::UpdateCannon(GameObject* cannon)
 		XMFLOAT3 cannonRotation = cannon->GetRotation();
 
 		if (cannonRotation.x > 5)
-			cannonRotation.x += MovementConstants::CANNON_PITCH_SPEED;
+			cannonRotation.x += GameConstants::CANNON_PITCH_SPEED;
 
 		cannon->SetRotation(cannonRotation);
 	}
