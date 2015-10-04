@@ -1,5 +1,5 @@
-Texture2D AssetTexture : register(t0);
-Texture2D ShadowMap : register(t1);
+Texture2D ShadowMap : register(t0);
+Texture2D AssetTexture : register(t1);
 
 SamplerState sampleStateClamp : register(s0);
 SamplerState sampleStateWrap : register(s1);
@@ -29,22 +29,15 @@ float4 main(pixelInputType input) : SV_TARGET
 	input.normal = normalize(input.normal);
 
 	float3 wp = input.worldPos.xyz;
-	float3 reflection;
-	float4 specular = float4(0.0f, 1.0f, 0.0f, 1.0f);
-	float4 finalColor = float4(0.0f, 1.0f, 0.0f, 1.0f);
-
-	float4 diffuse = AssetTexture.Sample(sampleStateClamp, input.tex);
-	finalColor = diffuse;
-
+	float4 finalColor = AssetTexture.Sample(sampleStateClamp, input.tex);
 
 	////calculate light to pixel vector for spotlight
-	//float3 lightToPixelVec = lightPos - wp;
-	//float d = length(lightToPixelVec);
-	//lightToPixelVec /= d;
+	///*float3 lightToPixelVec = lightPos - wp;*/ //original
+	//float3 lightToPixelVec = normalize(wp - lightPos);
+
 
 	////Sample and add shadows for the shadow map.
-	//float4 lightSpacePos = input.worldPos;
-	//lightSpacePos = mul(lightSpacePos, lightView);
+	//float4 lightSpacePos = mul(input.worldPos, lightView);
 	//lightSpacePos = mul(lightSpacePos, lightProj);
 
 	//float howMuchLight = dot(lightToPixelVec, input.normal);
@@ -72,12 +65,6 @@ float4 main(pixelInputType input) : SV_TARGET
 	//	if (shadowCoeff < depth - epsilon)
 	//	{
 	//		finalColor = saturate(finalColor * shadowCoeff);
-	//		return finalColor;
-	//	}
-	//	else
-	//	{
-	//		finalColor = diffuse;
-	//		return finalColor;
 	//	}
 	//}
 

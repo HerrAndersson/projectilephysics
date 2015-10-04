@@ -207,21 +207,21 @@ ID3D11DeviceContext* D3DManager::GetDeviceContext()
 	return deviceContext;
 }
 
-void D3DManager::SetCullingState(int num) //1 = back, 2 = front, 3 = none
+void D3DManager::SetCullingState(CullingState state)
 {
-	switch (num)
+	switch (state)
 	{
-		case 1:
+		case CullingState::BACK:
 		{
 			deviceContext->RSSetState(rsBackCulling);
 			break;
 		}
-		case 2:
+		case CullingState::FRONT:
 		{
 			deviceContext->RSSetState(rsFrontCulling);
 			break;
 		}
-		case 3:
+		case CullingState::NONE:
 		{
 			deviceContext->RSSetState(rsNoCulling);
 			break;

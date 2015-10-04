@@ -7,6 +7,8 @@
 #pragma comment (lib, "d3d11.lib")
 #pragma comment (lib, "d3dcompiler.lib")
 
+enum CullingState { BACK, FRONT, NONE };
+
 class D3DManager
 {
 private:
@@ -39,8 +41,7 @@ public:
 	ID3D11Device* GetDevice();
 	ID3D11DeviceContext* GetDeviceContext();
 
-	//1 = back, 2 = front, 3 = none
-	void SetCullingState(int num);
+	void SetCullingState(CullingState state);
 	void DisableDepth();
 	void EnableDepth();
 

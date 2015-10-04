@@ -42,6 +42,13 @@ bool GameLogic::UpdateCamera(double frameTime, Camera* camera, Terrain* terrain)
 	XMFLOAT3 position = camera->GetPosition();
 	float radians;
 
+	float speedMultiplier;
+
+	if (Input->ShiftDown())
+		speedMultiplier = MovementConstants::SHIFT_SPEED_MULTIPLIER;
+	else
+		speedMultiplier = MovementConstants::SPEED_MULTIPLIER;
+
 	///////////////////////////////////////////////  Look around  ///////////////////////////////////////////////
 	if (Input->MouseMoved(difference))
 	{
@@ -67,8 +74,8 @@ bool GameLogic::UpdateCamera(double frameTime, Camera* camera, Terrain* terrain)
 	{
 		movement.forwardSpeed += float(frameTime * MovementConstants::ACCELERATION);
 
-		if (movement.forwardSpeed > (float(frameTime * MovementConstants::SPEED_MULTIPLIER)))
-			movement.forwardSpeed = float(frameTime * MovementConstants::SPEED_MULTIPLIER);
+		if (movement.forwardSpeed > (float(frameTime * speedMultiplier)))
+			movement.forwardSpeed = float(frameTime * speedMultiplier);
 	}
 	else //If the key is not down, decelerate.
 	{
@@ -87,8 +94,8 @@ bool GameLogic::UpdateCamera(double frameTime, Camera* camera, Terrain* terrain)
 	{
 		movement.backwardSpeed += float(frameTime * MovementConstants::ACCELERATION);
 
-		if (movement.backwardSpeed > (float(frameTime * MovementConstants::SPEED_MULTIPLIER)))
-			movement.backwardSpeed = float(frameTime * MovementConstants::SPEED_MULTIPLIER);
+		if (movement.backwardSpeed > (float(frameTime * speedMultiplier)))
+			movement.backwardSpeed = float(frameTime * speedMultiplier);
 	}
 	else //If the key is not down, decelerate.
 	{
@@ -107,8 +114,8 @@ bool GameLogic::UpdateCamera(double frameTime, Camera* camera, Terrain* terrain)
 	{
 		movement.leftSpeed += float(frameTime * MovementConstants::ACCELERATION);
 
-		if (movement.leftSpeed > (float(frameTime * MovementConstants::SPEED_MULTIPLIER)))
-			movement.leftSpeed = float(frameTime * MovementConstants::SPEED_MULTIPLIER);
+		if (movement.leftSpeed > (float(frameTime * speedMultiplier)))
+			movement.leftSpeed = float(frameTime * speedMultiplier);
 	}
 	else //If the key is not down, decelerate.
 	{
@@ -128,8 +135,8 @@ bool GameLogic::UpdateCamera(double frameTime, Camera* camera, Terrain* terrain)
 	{
 		movement.rightSpeed += float(frameTime * MovementConstants::ACCELERATION);
 
-		if (movement.rightSpeed > (float(frameTime * MovementConstants::SPEED_MULTIPLIER)))
-			movement.rightSpeed = float(frameTime * MovementConstants::SPEED_MULTIPLIER);
+		if (movement.rightSpeed > (float(frameTime * speedMultiplier)))
+			movement.rightSpeed = float(frameTime * speedMultiplier);
 	}
 	else //If the key is not down, decelerate.
 	{
@@ -143,11 +150,20 @@ bool GameLogic::UpdateCamera(double frameTime, Camera* camera, Terrain* terrain)
 	radians = XMConvertToRadians(rotation.y + 90.0f);
 	position.x += sinf(radians) * movement.rightSpeed;
 	position.z += cosf(radians) * movement.rightSpeed;
-
-
+	
 	///////////////////////////////////////////////////  Done  ///////////////////////////////////////////////////
 
 	position.y = terrain->GetY(position.x, position.z) + MovementConstants::CAMERA_HEIGHT_OFFSET;
+
+	if (position.x < 35)
+		position.x = 35;
+	if (position.x > GameConstants::WORLD_SIZE - 35)
+		position.x = GameConstants::WORLD_SIZE - 35;
+	if (position.z < 35)
+		position.z = 35;
+	if (position.z > GameConstants::WORLD_SIZE - 35)
+		position.z = GameConstants::WORLD_SIZE - 35;
+
 	camera->SetRotation(rotation);
 	camera->SetPosition(position);
 
@@ -157,7 +173,7 @@ bool GameLogic::UpdateCamera(double frameTime, Camera* camera, Terrain* terrain)
 bool GameLogic::UpdatePhysicsObjects(double frameTime, vector<GameObject*>& gameObjects, XMFLOAT3 cannonRotation)
 {
 
-	//PhysicsObject* copy = nullptr;
+	/*PhysicsObject* copy = nullptr;*/
 	//for (auto go : gameObjects)
 	//{
 	//	if (go->GetId() == ObjectTypes::PHYSICS)
@@ -178,7 +194,7 @@ bool GameLogic::UpdatePhysicsObjects(double frameTime, vector<GameObject*>& game
 	if (Input->SpaceClicked())
 	{
 		bool found = false;
-
+		PhysicsObject* copy = nullptr;
 		for (auto go : gameObjects)
 		{
 			if (go->GetId() == ObjectTypes::PHYSICS)
@@ -228,7 +244,8 @@ bool GameLogic::UpdatePhysicsObjects(double frameTime, vector<GameObject*>& game
 				float mass = po->GetMass();
 
 				pos.x = pos.x + vel.x*timeInSeconds;
-				pos.y = pos.y + vel.y*timeInSeconds;
+				/*pos.y = pos.y + vel.y*timeInSeconds;*/
+				pos.y = pos.y + vel.y * timeInSeconds - 0.5f * PhysicsConstants::GRAVITY.y * pow(timeInSeconds,2);
 				pos.z = pos.z + vel.z*timeInSeconds;
 
 				vel.x = vel.x + PhysicsConstants::GRAVITY.x * timeInSeconds;
@@ -240,6 +257,11 @@ bool GameLogic::UpdatePhysicsObjects(double frameTime, vector<GameObject*>& game
 
 
 				//Perform physics calculations here
+				//http://stackoverflow.com/questions/25065676/a-c-function-to-calculate-and-sample-the-trajectory-of-a-projectile-in-3d-spac
+				//http://www.physics.buffalo.edu/phy410-505-2008/chapter2/ch2-lec1.pdf
+				//http://www.splung.com/content/sid/2/page/projectiles
+				//http://www.ingvet.kau.se/juerfuch/kurs/amek/prst/06_simu.pdf
+				//http://wps.aw.com/wps/media/objects/877/898586/topics/topic01.pdf
 
 				//Vxz = v0xz * cos(Alpha) * t
 				//Vy = v0 * sin(Alpha) - g * t

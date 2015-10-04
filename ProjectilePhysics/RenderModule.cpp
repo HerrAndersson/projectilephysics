@@ -263,7 +263,7 @@ bool RenderModule::SetDataPerObject(XMMATRIX& worldMatrix, RenderObject* renderO
 	UINT32 offset = 0;
 
 	deviceContext->IASetVertexBuffers(0, 1, &renderObject->model->vertexBuffer, &vertexSize, &offset);
-	deviceContext->PSSetShaderResources(0, 1, &renderObject->diffuseTexture);
+	deviceContext->PSSetShaderResources(1, 1, &renderObject->diffuseTexture);
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	XMMATRIX worldMatrixC;
@@ -329,7 +329,7 @@ bool RenderModule::SetDataPerFrame(XMMATRIX& viewMatrix, XMMATRIX& projectionMat
 	deviceContext->PSSetConstantBuffers(0, 1, &lightBuffer);
 
 	ID3D11ShaderResourceView* shadowMapSRV = shadowMap->GetShadowSRV();
-	deviceContext->PSSetShaderResources(1, 1, &shadowMapSRV);
+	deviceContext->PSSetShaderResources(0, 1, &shadowMapSRV);
 
 
 	return true;
@@ -341,7 +341,7 @@ void RenderModule::UseDefaultShader()
 
 	deviceContext->IASetInputLayout(layoutPosUvNorm);
 
-	d3d->SetCullingState(1);
+	d3d->SetCullingState(CullingState::BACK);
 
 	deviceContext->VSSetShader(vsDefault, NULL, 0);
 	deviceContext->PSSetShader(psDefault, NULL, 0);
@@ -357,7 +357,7 @@ void RenderModule::UseTerrainShader()
 
 	deviceContext->IASetInputLayout(layoutPosUvNorm);
 
-	d3d->SetCullingState(1);
+	d3d->SetCullingState(CullingState::BACK);
 
 	deviceContext->VSSetShader(vsDefault, NULL, 0);
 	deviceContext->PSSetShader(psTerrain, NULL, 0);
@@ -387,14 +387,14 @@ bool RenderModule::Render(GameObject* gameObject)
 
 void RenderModule::ActivateShadowRendering(XMMATRIX& viewMatrix, XMMATRIX& projectionMatrix)
 {
-	d3d->SetCullingState(2);
+	d3d->SetCullingState(CullingState::FRONT);
 	shadowMap->SetDataPerFrame(d3d->GetDeviceContext(), viewMatrix, projectionMatrix);
 	shadowMap->ActivateShadowRendering(d3d->GetDeviceContext());
 }
 
-void RenderModule::SetCullingState(int type)
+void RenderModule::SetCullingState(CullingState state)
 {
-	d3d->SetCullingState(type);
+	d3d->SetCullingState(state);
 }
 
 bool RenderModule::RenderShadow(GameObject* gameObject)
@@ -432,11 +432,9 @@ bool RenderModule::RenderShadow(Terrain* terrain)
 	ID3D11Buffer* indexBuffer = nullptr;
 
 	terrain->GetBuffers(vertexBuffer, indexBuffer);
-	ID3D11ShaderResourceView** textures = terrain->GetTextures();
 
 	deviceContext->IASetVertexBuffers(0, 1, &vertexBuffer, &vertexSize, &offset);
 	deviceContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	deviceContext->PSSetShaderResources(1, 4, textures);
 
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	shadowMap->SetDataPerObject(deviceContext, worldMatrix);
