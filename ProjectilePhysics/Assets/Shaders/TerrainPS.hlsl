@@ -40,43 +40,48 @@ float4 main(VS_OUT input) : SV_TARGET
 	float4 finalColor = textureColor;
 
 
-	////Calculate light to pixel vector 
-	//float3 wp = input.worldPos.xyz;
-	///*float3 lightToPixelVec = lightPos - wp;*/ //original
-	//float3 lightToPixelVec = wp - lightPos;
-	//lightToPixelVec = normalize(lightToPixelVec);
+	//Calculate light to pixel vector 
+	float3 wp = input.worldPos.xyz;
+	/*float3 lightToPixelVec = lightPos - wp;*/ //original
+	float3 lightToPixelVec = wp - lightPos;
+	lightToPixelVec = normalize(lightToPixelVec);
 
-	////Sample and add shadows for the shadow map.
-	//float4 lightSpacePos = mul(input.worldPos, lightView);
-	//lightSpacePos = mul(lightSpacePos, lightProj);
+	//Sample and add shadows for the shadow map.
+	float4 lightSpacePos = mul(input.worldPos, lightView);
+	lightSpacePos = mul(lightSpacePos, lightProj);
 
-	//float howMuchLight = dot(lightToPixelVec, input.normal);
-	//if (howMuchLight > 0.0f)
-	//{
-	//	float2 smTex;
-	//	smTex.x = 0.5f + (lightSpacePos.x / lightSpacePos.w * 0.5f);
-	//	smTex.y = 0.5f - (lightSpacePos.y / lightSpacePos.w * 0.5f);
+	float howMuchLight = dot(lightToPixelVec, input.normal);
+	if (howMuchLight > 0.0f)
+	{
+		float2 smTex;
+		smTex.x = 0.5f + (lightSpacePos.x / lightSpacePos.w * 0.5f);
+		smTex.y = 0.5f - (lightSpacePos.y / lightSpacePos.w * 0.5f);
 
-	//	float depth = lightSpacePos.z / lightSpacePos.w;
+		float depth = lightSpacePos.z / lightSpacePos.w;
 
-	//	float epsilon = 0.0004f;
-	//	float dx = 1.0f / shadowMapSize;
+		float epsilon = 0.0004f;
+		float dx = 1.0f / shadowMapSize;
 
-	//	//Less filtering
-	//	float s0 = ShadowMap.Sample(sampleStateClamp, smTex).r;
-	//	float s1 = ShadowMap.Sample(sampleStateClamp, smTex + float2(dx, 0.0f)).r;
-	//	float s2 = ShadowMap.Sample(sampleStateClamp, smTex + float2(0.0f, dx)).r;
-	//	float s3 = ShadowMap.Sample(sampleStateClamp, smTex + float2(dx, dx)).r;
+		//Less filtering
+		float s0 = ShadowMap.Sample(sampleStateClamp, smTex).r;
+		float s1 = ShadowMap.Sample(sampleStateClamp, smTex + float2(dx, 0.0f)).r;
+		float s2 = ShadowMap.Sample(sampleStateClamp, smTex + float2(0.0f, dx)).r;
+		float s3 = ShadowMap.Sample(sampleStateClamp, smTex + float2(dx, dx)).r;
 
-	//	float2 texelPos = smTex * shadowMapSize;
-	//	float2 lerps = frac(texelPos);
-	//	float shadowCoeff = lerp(lerp(s0, s1, lerps.x), lerp(s2, s3, lerps.x), lerps.y);
+		//float s0 = float(ShadowMap.SampleCmpLevelZero(sampleStateComparison, smTex, depth + epsilon));
+		//float s1 = float(ShadowMap.SampleCmpLevelZero(sampleStateComparison, smTex + float2(dx, 0.0f), depth + epsilon));
+		//float s2 = float(ShadowMap.SampleCmpLevelZero(sampleStateComparison, smTex + float2(0.0f, dx), depth + epsilon));
+		//float s3 = float(ShadowMap.SampleCmpLevelZero(sampleStateComparison, smTex + float2(dx, dx), depth + epsilon));
 
-	//	if (shadowCoeff < depth - epsilon)
-	//	{
-	//		finalColor = saturate(finalColor * shadowCoeff);
-	//	}
-	//}
+		float2 texelPos = smTex * shadowMapSize;
+		float2 lerps = frac(texelPos);
+		float shadowCoeff = lerp(lerp(s0, s1, lerps.x), lerp(s2, s3, lerps.x), lerps.y);
+
+		if (shadowCoeff < depth - epsilon)
+		{
+			finalColor = saturate(finalColor * shadowCoeff);
+		}
+	}
 
 	//Get local illumination from the "sun" on the whole scene
 	float3 lightDir = normalize(lightPos - float3(512, 0, 512));	
