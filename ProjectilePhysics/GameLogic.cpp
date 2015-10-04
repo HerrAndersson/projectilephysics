@@ -10,7 +10,7 @@ GameLogic::~GameLogic()
 
 }
 
-bool GameLogic::Update(double frameTime, double gameTime, vector<GameObject*> gameObjects, Camera* camera, GameObject* skySphere, Terrain* terrain, GameObject* cannon)
+bool GameLogic::Update(double frameTime, double gameTime, vector<GameObject*>& gameObjects, Camera* camera, GameObject* skySphere, Terrain* terrain, GameObject* cannon)
 {
 	Input->HandleMouse();
 
@@ -154,9 +154,26 @@ bool GameLogic::UpdateCamera(double frameTime, Camera* camera, Terrain* terrain)
 	return true;
 }
 
-bool GameLogic::UpdatePhysicsObjects(double frameTime, vector<GameObject*> gameObjects, XMFLOAT3 cannonRotation)
+bool GameLogic::UpdatePhysicsObjects(double frameTime, vector<GameObject*>& gameObjects, XMFLOAT3 cannonRotation)
 {
-	PhysicsObject* copy = nullptr;
+
+	//PhysicsObject* copy = nullptr;
+	//for (auto go : gameObjects)
+	//{
+	//	if (go->GetId() == ObjectTypes::PHYSICS)
+	//	{
+	//		copy = (PhysicsObject*)go;
+	//	}
+	//}
+
+	//PhysicsObject* newObj = new PhysicsObject(*copy);
+	//newObj->SetPosition(GameConstants::CANNONBALL_START_POS);
+
+	//newObj->SetAcceleration(XMFLOAT3(0, 0, 1));
+	//newObj->SetVelocity(XMFLOAT3(0, 55, 55));
+	//newObj->WakePhysics();
+
+	//gameObjects.push_back(newObj);
 
 	if (Input->SpaceClicked())
 	{
@@ -168,10 +185,10 @@ bool GameLogic::UpdatePhysicsObjects(double frameTime, vector<GameObject*> gameO
 			{
 				copy = (PhysicsObject*)go;
 
-				if (!((PhysicsObject*)go)->IsAlive())
+				if (!((PhysicsObject*)go)->IsAlive() && !((PhysicsObject*)go)->IsUsed())
 				{
-					((PhysicsObject*)go)->SetAcceleration(XMFLOAT3(0, 0, 10));
-					((PhysicsObject*)go)->SetVelocity(XMFLOAT3(0, 10, 10));
+					((PhysicsObject*)go)->SetAcceleration(XMFLOAT3(0, 0, 1));
+					((PhysicsObject*)go)->SetVelocity(XMFLOAT3(0, 55, 55));
 					((PhysicsObject*)go)->WakePhysics();
 					found = true;
 					break;
@@ -184,8 +201,8 @@ bool GameLogic::UpdatePhysicsObjects(double frameTime, vector<GameObject*> gameO
 			PhysicsObject* newObj = new PhysicsObject(*copy);
 			newObj->SetPosition(GameConstants::CANNONBALL_START_POS);
 
-			newObj->SetAcceleration(XMFLOAT3(0, 0, 10));
-			newObj->SetVelocity(XMFLOAT3(0, 10, 10));
+			newObj->SetAcceleration(XMFLOAT3(0, 0, 1));
+			newObj->SetVelocity(XMFLOAT3(0, 55, 55));
 			newObj->WakePhysics();
 
 			gameObjects.push_back(newObj);
@@ -201,15 +218,38 @@ bool GameLogic::UpdatePhysicsObjects(double frameTime, vector<GameObject*> gameO
 				if (go->GetPosition().y < 10.0f)
 					((PhysicsObject*)go)->KillPhysics();
 
+				
+				PhysicsObject* po = (PhysicsObject*)go;
+				float timeInSeconds = float(frameTime / 1000);
+				
+				XMFLOAT3 acc = po->GetAcceleration();
+				XMFLOAT3 pos = po->GetPosition();
+				XMFLOAT3 vel = po->GetVelocity();
+				float mass = po->GetMass();
+
+				pos.x = pos.x + vel.x*timeInSeconds;
+				pos.y = pos.y + vel.y*timeInSeconds;
+				pos.z = pos.z + vel.z*timeInSeconds;
+
+				vel.x = vel.x + PhysicsConstants::GRAVITY.x * timeInSeconds;
+				vel.y = vel.y + PhysicsConstants::GRAVITY.y * timeInSeconds;
+				vel.z = vel.z + PhysicsConstants::GRAVITY.z * timeInSeconds;
+
+				po->SetPosition(pos);
+				po->SetVelocity(vel);
+
 
 				//Perform physics calculations here
+
+				//Vxz = v0xz * cos(Alpha) * t
+				//Vy = v0 * sin(Alpha) - g * t
 
 
 				//Ta fram ny hastighet genom v = v0 + a ??t .
 				//Ta fram en ny position genom s = s0 + v0 ??t
 
 
-				((PhysicsObject*)go)->Update(frameTime);
+				po->Update(frameTime);
 			}
 		}
 	}
@@ -235,7 +275,7 @@ bool GameLogic::UpdateCannon(GameObject* cannon)
 	{
 		XMFLOAT3 cannonRotation = cannon->GetRotation();
 
-		if (cannonRotation.x > 315 || cannonRotation.x < 5)
+		if (cannonRotation.x > 315)
 			cannonRotation.x -= GameConstants::CANNON_PITCH_SPEED;
 
 		cannon->SetRotation(cannonRotation);
@@ -244,7 +284,7 @@ bool GameLogic::UpdateCannon(GameObject* cannon)
 	{
 		XMFLOAT3 cannonRotation = cannon->GetRotation();
 
-		if (cannonRotation.x > 5)
+		if (cannonRotation.x < 359 && cannonRotation.x >= 315)
 			cannonRotation.x += GameConstants::CANNON_PITCH_SPEED;
 
 		cannon->SetRotation(cannonRotation);

@@ -5,7 +5,7 @@ Game::Game(HINSTANCE hInstance, HWND hwnd, int screenWidth, int screenHeight, bo
 	this->screenWidth = screenWidth;
 	this->screenHeight = screenHeight;
 
-	camera = new Camera(XM_PI / 2.2f, screenWidth, screenHeight, 0.1f, 2000.0f);
+	camera = new Camera(XM_PI / 2.2f, screenWidth, screenHeight, 0.1f, 3000.0f);
 	camera->SetPosition(XMFLOAT3(512, 50, 20));
 
 	Renderer = new RenderModule(hwnd, screenWidth, screenHeight, fullscreen, shadowMapSize);
@@ -16,7 +16,7 @@ Game::Game(HINSTANCE hInstance, HWND hwnd, int screenWidth, int screenHeight, bo
 
 
 	//Objects
-	skySphere = new GameObject(ObjectTypes::STATIC, Assets->GetRenderObject(0), XMFLOAT3(512, 100, 512), XMFLOAT3(650, 650, 650), XMFLOAT3(0, 0, 0));
+	skySphere = new GameObject(ObjectTypes::STATIC, Assets->GetRenderObject(0), XMFLOAT3(512, 100, 512), XMFLOAT3(850, 850, 850), XMFLOAT3(0, 0, 0));
 	sun = new GameObject(ObjectTypes::STATIC, Assets->GetRenderObject(4), XMFLOAT3(-150, 700, -150), XMFLOAT3(30, 30, 30), XMFLOAT3(90, 0, 0));
 	sunLight = new DirectionalLight(XM_PI / 2, 1.0f, 0.1f, 2000.0f);
 	sunLight->SetLookAt(XMFLOAT3(512, 0, 512));
@@ -27,7 +27,7 @@ Game::Game(HINSTANCE hInstance, HWND hwnd, int screenWidth, int screenHeight, bo
 
 	cannon = new GameObject(ObjectTypes::CANNON, Assets->GetRenderObject(3), XMFLOAT3(480, 20, 142), XMFLOAT3(10, 10, 60), XMFLOAT3(-45, 0, 0));
 
-	for (size_t i = 0; i < 20; i++)
+	for (size_t i = 0; i < 1; i++)
 	{
 		/*PhysicsObject* sphere = new PhysicsObject(ObjectTypes::PHYSICS, Assets->GetRenderObject(2), GameConstants::CANNONBALL_START_POS, XMFLOAT3(5.0f, 5.0f, 5.0f), XMFLOAT3(0, 0, 0), 10);*/
 		PhysicsObject* sphere = new PhysicsObject(ObjectTypes::PHYSICS, Assets->GetRenderObject(2), XMFLOAT3(480, 20, 180), XMFLOAT3(5.0f, 5.0f, 5.0f), XMFLOAT3(0, 0, 0), 10);

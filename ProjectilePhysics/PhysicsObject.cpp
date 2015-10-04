@@ -5,6 +5,7 @@ PhysicsObject::PhysicsObject(int id, RenderObject* renderObject, XMFLOAT3 positi
 			 : GameObject(id, renderObject, position, scale, rotation)
 {
 	isAlive = false;
+	used = false;
 	timeAlive = 0;
 	this->mass = mass;
 	velocity = XMFLOAT3(0, 0, 0);
@@ -14,6 +15,7 @@ PhysicsObject::PhysicsObject(int id, RenderObject* renderObject, XMFLOAT3 positi
 PhysicsObject::PhysicsObject(const PhysicsObject& other) : GameObject(other)			 
 {
 	isAlive = false;
+	used = false;
 	timeAlive = 0;
 	this->mass = other.mass;
 	velocity = XMFLOAT3(0, 0, 0);
@@ -38,11 +40,17 @@ void PhysicsObject::WakePhysics()
 void PhysicsObject::KillPhysics()
 {
 	isAlive = false;
+	used = true;
 }
 
 bool PhysicsObject::IsAlive()
 {
 	return isAlive;
+}
+
+bool PhysicsObject::IsUsed()
+{
+	return used;
 }
 
 void PhysicsObject::SetVelocity(XMFLOAT3 velocity)
@@ -76,4 +84,9 @@ double PhysicsObject::GetTimeAlive()
 float PhysicsObject::GetAngle()
 {
 	return angle;
+}
+
+float PhysicsObject::GetMass()
+{
+	return mass;
 }

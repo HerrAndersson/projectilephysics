@@ -11,6 +11,7 @@ private:
 	float angle;
 
 	bool isAlive;
+	bool used;
 	double timeAlive;
 
 public:
@@ -25,6 +26,7 @@ public:
 	void KillPhysics();
 
 	bool IsAlive();
+	bool IsUsed();
 
 	void SetVelocity(XMFLOAT3 velocity);
 	void SetAcceleration(XMFLOAT3 acceleration);

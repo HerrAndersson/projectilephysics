@@ -21,6 +21,8 @@ namespace PhysicsConstants
 
 namespace GameConstants
 {
+	const int NUMBER_OF_CANNONBALLS = 20;
+
 	const XMFLOAT3 CANNONBALL_START_POS = XMFLOAT3(480, 20, 135);
 	const float CANNON_PITCH_SPEED = 0.4f;
 }
