@@ -68,6 +68,8 @@ public:
 
 	bool UpArrowDown();
 	bool DownArrowDown();
+	bool LeftArrowDown();
+	bool RightArrowDown();
 
 	bool ShiftDown();
 };

@@ -148,6 +148,15 @@ D3DManager::D3DManager(HWND hwnd, int screenWidth, int screenHeight, bool fullsc
 	if (FAILED(result))
 		throw std::runtime_error("D3DManager: Error creating raster state NONE");
 
+	////////////////////////////////////////////////////////////////////////// FontWrapper ////////////////////////////////////////////////////////////////////////
+	result = FW1CreateFactory(FW1_VERSION, &FW1Factory);
+	if (FAILED(result))
+		throw std::runtime_error("D3DManager: Error creating FW1Factory");
+
+	result = FW1Factory->CreateFontWrapper(device, L"Arial", &fontWrapper);
+	if (FAILED(result))
+		throw std::runtime_error("D3DManager: Error creating FontWrapper");
+
 	///////////////////////////////////////////////////////////////////////////// Other ///////////////////////////////////////////////////////////////////////////
 
 	//Setup the viewport for rendering
@@ -178,6 +187,9 @@ D3DManager::~D3DManager()
 	rsBackCulling->Release();
 	rsFrontCulling->Release();
 	rsNoCulling->Release();
+
+	fontWrapper->Release();
+	FW1Factory->Release();
 }
 
 void D3DManager::BeginScene(float red, float green, float blue, float alpha)
@@ -195,6 +207,11 @@ void D3DManager::BeginScene(float red, float green, float blue, float alpha)
 void D3DManager::EndScene()
 {
 	swapChain->Present(0, 0);
+}
+
+void D3DManager::DrawString(wstring text, FLOAT fontSize, FLOAT posX, FLOAT posY, UINT32 color)
+{
+	fontWrapper->DrawString(deviceContext, text.c_str(), fontSize, posX, posY, color, FW1_RESTORESTATE);
 }
 
 ID3D11Device* D3DManager::GetDevice()

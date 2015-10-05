@@ -2,10 +2,14 @@
 #include <d3d11.h>
 #include <DirectXMath.h>
 #include <d3dcompiler.h>
+#include "FW1FontWrapper.h"
 #include <stdexcept>
 
 #pragma comment (lib, "d3d11.lib")
 #pragma comment (lib, "d3dcompiler.lib")
+#pragma comment (lib, "FW1FontWrapper.lib")
+
+using std::wstring;
 
 enum CullingState { BACK, FRONT, NONE };
 
@@ -28,7 +32,10 @@ private:
 
 	ID3D11RasterizerState*		rsBackCulling;
 	ID3D11RasterizerState*		rsFrontCulling; //Used for shadow mapping
-	ID3D11RasterizerState*      rsNoCulling;	//Used if we implements our own culling technique
+	ID3D11RasterizerState*      rsNoCulling;	//Used for manual culling techniques
+
+	IFW1Factory*				FW1Factory;
+	IFW1FontWrapper*            fontWrapper;
 
 public:
 
@@ -47,5 +54,7 @@ public:
 
 	void SetBackBufferRenderTarget();
 	void ResetViewport();
+
+	void DrawString(wstring text, FLOAT fontSize, FLOAT posX, FLOAT posY, UINT32 color);
 };
 

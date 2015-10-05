@@ -91,6 +91,8 @@ public:
 	bool RenderShadow(Terrain* terrain);
 	bool RenderTerrain(Terrain* terrain);
 
+	void DrawString(wstring text, FLOAT fontSize, FLOAT posX, FLOAT posY, UINT32 color);
+
 	void EndScene();
 
 	ID3D11Device* GetDevice();

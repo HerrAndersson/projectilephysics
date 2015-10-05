@@ -4,7 +4,7 @@ GameObject::GameObject(int id, RenderObject* renderObject, XMFLOAT3 position = X
 {
 	this->id = id;
 	this->position = position;
-	this->rotation = rotation;
+	SetRotation(rotation);
 	this->scale = scale;
 	this->renderObject = renderObject;
 	forwardVector = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);

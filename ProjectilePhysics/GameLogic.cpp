@@ -3,6 +3,7 @@
 GameLogic::GameLogic(InputManager* Input)
 {
 	this->Input = Input;
+	cannonLaunchSpeed = 80;
 }
 
 GameLogic::~GameLogic()
@@ -10,7 +11,12 @@ GameLogic::~GameLogic()
 
 }
 
-bool GameLogic::Update(double frameTime, double gameTime, vector<GameObject*>& gameObjects, Camera* camera, GameObject* skySphere, Terrain* terrain, GameObject* cannon)
+int GameLogic::GetLaunchSpeed()
+{
+	return cannonLaunchSpeed;
+}
+
+bool GameLogic::Update(double frameTime, double gameTime, vector<PhysicsObject*>& projectiles, Camera* camera, GameObject* skySphere, Terrain* terrain, GameObject* cannon)
 {
 	Input->HandleMouse();
 
@@ -20,7 +26,7 @@ bool GameLogic::Update(double frameTime, double gameTime, vector<GameObject*>& g
 	if (!UpdateCannon(cannon))
 		return false;
 
-	if (!UpdatePhysicsObjects(frameTime, gameObjects, cannon->GetRotation()))
+	if (!UpdatePhysicsObjects(frameTime, projectiles, cannon->GetRotation()))
 		return false;
 
 	if (!UpdateSky(gameTime, skySphere))
@@ -170,42 +176,56 @@ bool GameLogic::UpdateCamera(double frameTime, Camera* camera, Terrain* terrain)
 	return true;
 }
 
-bool GameLogic::UpdatePhysicsObjects(double frameTime, vector<GameObject*>& gameObjects, XMFLOAT3 cannonRotation)
+bool GameLogic::UpdatePhysicsObjects(double frameTime, vector<PhysicsObject*>& projectiles, XMFLOAT3 cannonRotation)
 {
 
-	/*PhysicsObject* copy = nullptr;*/
-	//for (auto go : gameObjects)
-	//{
-	//	if (go->GetId() == ObjectTypes::PHYSICS)
-	//	{
-	//		copy = (PhysicsObject*)go;
-	//	}
-	//}
+	PhysicsObject* copy2 = nullptr;
+	for (auto p : projectiles)
+	{
+		if (p->GetId() == ObjectTypes::PHYSICS)
+		{
+			copy2 = p;
+		}
+	}
 
-	//PhysicsObject* newObj = new PhysicsObject(*copy);
-	//newObj->SetPosition(GameConstants::CANNONBALL_START_POS);
+	PhysicsObject* newObj = new PhysicsObject(*copy2);
+	newObj->SetPosition(GameConstants::CANNONBALL_START_POS);
 
-	//newObj->SetAcceleration(XMFLOAT3(0, 0, 1));
-	//newObj->SetVelocity(XMFLOAT3(0, 55, 55));
-	//newObj->WakePhysics();
+	newObj->SetAcceleration(XMFLOAT3(0, 0, 100));
 
-	//gameObjects.push_back(newObj);
+	float b = sin(XMConvertToRadians(360 - cannonRotation.x));
+	float c = cos(XMConvertToRadians(360 - cannonRotation.x));
+
+	float velY = cannonLaunchSpeed * b;
+	float velZ = cannonLaunchSpeed * c;
+
+	newObj->SetVelocity(XMFLOAT3(0, velY, velZ));
+	newObj->WakePhysics();
+	projectiles.push_back(newObj);
 
 	if (Input->SpaceClicked())
 	{
 		bool found = false;
 		PhysicsObject* copy = nullptr;
-		for (auto go : gameObjects)
-		{
-			if (go->GetId() == ObjectTypes::PHYSICS)
-			{
-				copy = (PhysicsObject*)go;
 
-				if (!((PhysicsObject*)go)->IsAlive() && !((PhysicsObject*)go)->IsUsed())
+		for (auto p : projectiles)
+		{
+			if (p->GetId() == ObjectTypes::PHYSICS)
+			{
+				copy = p;
+
+				if (!p->IsAlive() && !p->IsUsed())
 				{
-					((PhysicsObject*)go)->SetAcceleration(XMFLOAT3(0, 0, 1));
-					((PhysicsObject*)go)->SetVelocity(XMFLOAT3(0, 55, 55));
-					((PhysicsObject*)go)->WakePhysics();
+					p->SetAcceleration(XMFLOAT3(0, 0, 100));
+
+					float b = sin(XMConvertToRadians(360 - cannonRotation.x));
+					float c = cos(XMConvertToRadians(360 - cannonRotation.x));
+
+					float velY = cannonLaunchSpeed * b;
+					float velZ = cannonLaunchSpeed * c;
+
+					p->SetVelocity(XMFLOAT3(0, velY, velZ));
+					p->WakePhysics();
 					found = true;
 					break;
 				}
@@ -217,43 +237,59 @@ bool GameLogic::UpdatePhysicsObjects(double frameTime, vector<GameObject*>& game
 			PhysicsObject* newObj = new PhysicsObject(*copy);
 			newObj->SetPosition(GameConstants::CANNONBALL_START_POS);
 
-			newObj->SetAcceleration(XMFLOAT3(0, 0, 1));
-			newObj->SetVelocity(XMFLOAT3(0, 55, 55));
+			newObj->SetAcceleration(XMFLOAT3(0, 0, 100));
+
+			float b = sin(XMConvertToRadians(360 - cannonRotation.x));
+			float c = cos(XMConvertToRadians(360 - cannonRotation.x));
+
+			float velY = cannonLaunchSpeed * b;
+			float velZ = cannonLaunchSpeed * c;
+
+			newObj->SetVelocity(XMFLOAT3(0, velY, velZ));
 			newObj->WakePhysics();
 
-			gameObjects.push_back(newObj);
+			projectiles.push_back(newObj);
 		}
 	}
 
-	for (auto go : gameObjects)
+	for (auto p : projectiles)
 	{
-		if (go->GetId() == ObjectTypes::PHYSICS)
+		if (p->GetId() == ObjectTypes::PHYSICS)
 		{
-			if (((PhysicsObject*)go)->IsAlive())
+			if (p->IsAlive())
 			{
-				if (go->GetPosition().y < 10.0f)
-					((PhysicsObject*)go)->KillPhysics();
+				if (p->GetPosition().y < 10.0f)
+					p->KillPhysics();
 
 				
-				PhysicsObject* po = (PhysicsObject*)go;
-				float timeInSeconds = float(frameTime / 1000);
+				float timeStep = float(frameTime / 100);
 				
-				XMFLOAT3 acc = po->GetAcceleration();
-				XMFLOAT3 pos = po->GetPosition();
-				XMFLOAT3 vel = po->GetVelocity();
-				float mass = po->GetMass();
+				XMFLOAT3 acc = p->GetAcceleration();
+				XMFLOAT3 pos = p->GetPosition();
+				XMFLOAT3 vel = p->GetVelocity();
+				float mass = p->GetMass();
+				float alpha = atan((pos.y - GameConstants::CANNONBALL_START_POS.y) / (pos.z - GameConstants::CANNONBALL_START_POS.z));
 
-				pos.x = pos.x + vel.x*timeInSeconds;
+
+				pos.x = pos.x + vel.x*timeStep;
+
+
 				/*pos.y = pos.y + vel.y*timeInSeconds;*/
-				pos.y = pos.y + vel.y * timeInSeconds - 0.5f * PhysicsConstants::GRAVITY.y * pow(timeInSeconds,2);
-				pos.z = pos.z + vel.z*timeInSeconds;
+				pos.y = pos.y + vel.y * timeStep - 0.5f * PhysicsConstants::GRAVITY.y * pow(timeStep,2);
+				//float cannonRotationY = XMConvertToRadians(cannonRotation.y);
+				//pos.y = pos.y * XMConvertToDegrees(cos(a)) * timeInSeconds;
 
-				vel.x = vel.x + PhysicsConstants::GRAVITY.x * timeInSeconds;
-				vel.y = vel.y + PhysicsConstants::GRAVITY.y * timeInSeconds;
-				vel.z = vel.z + PhysicsConstants::GRAVITY.z * timeInSeconds;
+				pos.z = pos.z + vel.z*timeStep;
 
-				po->SetPosition(pos);
-				po->SetVelocity(vel);
+				//Sideways gravity or air resistance
+				//pos.z = pos.z + vel.z * timeStep - 0.5f * DRAG * pow(timeStep, 2);
+
+				vel.x = vel.x + PhysicsConstants::GRAVITY.x * timeStep;
+				vel.y = vel.y + PhysicsConstants::GRAVITY.y * timeStep;
+				vel.z = vel.z + PhysicsConstants::GRAVITY.z * timeStep;
+
+				p->SetPosition(pos);
+				p->SetVelocity(vel);
 
 
 				//Perform physics calculations here
@@ -262,6 +298,7 @@ bool GameLogic::UpdatePhysicsObjects(double frameTime, vector<GameObject*>& game
 				//http://www.splung.com/content/sid/2/page/projectiles
 				//http://www.ingvet.kau.se/juerfuch/kurs/amek/prst/06_simu.pdf
 				//http://wps.aw.com/wps/media/objects/877/898586/topics/topic01.pdf
+				//http://www.codeproject.com/Articles/19107/Flight-of-a-projectile
 
 				//Vxz = v0xz * cos(Alpha) * t
 				//Vy = v0 * sin(Alpha) - g * t
@@ -271,7 +308,7 @@ bool GameLogic::UpdatePhysicsObjects(double frameTime, vector<GameObject*>& game
 				//Ta fram en ny position genom s = s0 + v0 ??t
 
 
-				po->Update(frameTime);
+				p->Update(frameTime);
 			}
 		}
 	}
@@ -297,7 +334,7 @@ bool GameLogic::UpdateCannon(GameObject* cannon)
 	{
 		XMFLOAT3 cannonRotation = cannon->GetRotation();
 
-		if (cannonRotation.x > 315)
+		if (cannonRotation.x > 295)
 			cannonRotation.x -= GameConstants::CANNON_PITCH_SPEED;
 
 		cannon->SetRotation(cannonRotation);
@@ -306,10 +343,21 @@ bool GameLogic::UpdateCannon(GameObject* cannon)
 	{
 		XMFLOAT3 cannonRotation = cannon->GetRotation();
 
-		if (cannonRotation.x < 359 && cannonRotation.x >= 315)
+		if (cannonRotation.x < 359)
 			cannonRotation.x += GameConstants::CANNON_PITCH_SPEED;
 
 		cannon->SetRotation(cannonRotation);
+	}
+
+	if (Input->LeftArrowDown())
+	{
+		if(cannonLaunchSpeed > 0)
+			cannonLaunchSpeed--;
+	}
+	else if (Input->RightArrowDown())
+	{
+		if(cannonLaunchSpeed < GameConstants::MAX_LAUNCH_SPEED)
+			cannonLaunchSpeed++;
 	}
 
 	return true;

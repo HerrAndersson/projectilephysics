@@ -187,6 +187,16 @@ bool InputManager::DownArrowDown()
 	return GetAsyncKeyState(VK_DOWN) != 0;
 }
 
+bool InputManager::LeftArrowDown() 
+{
+	return GetAsyncKeyState(VK_LEFT) != 0;
+}
+
+bool InputManager::RightArrowDown()
+{
+	return GetAsyncKeyState(VK_RIGHT) != 0;
+}
+
 bool InputManager::ShiftDown()
 {
 	return GetAsyncKeyState(VK_SHIFT) != 0;

@@ -143,6 +143,9 @@
     <ClInclude Include="Constants.h">
       <Filter>Game</Filter>
     </ClInclude>
+    <ClInclude Include="FW1FontWrapper.h">
+      <Filter>Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shaders\TerrainPS.hlsl">

@@ -22,10 +22,10 @@ Game::Game(HINSTANCE hInstance, HWND hwnd, int screenWidth, int screenHeight, bo
 	sunLight->SetLookAt(XMFLOAT3(512, 0, 512));
 	sunLight->SetPosition(sun->GetPosition());
 
-	GameObject* cannonBase = new GameObject(ObjectTypes::STATIC, Assets->GetRenderObject(5), XMFLOAT3(480, 20, 128), XMFLOAT3(35, 35, 35), XMFLOAT3(0, 0, 0));
+	GameObject* cannonBase = new GameObject(ObjectTypes::STATIC, Assets->GetRenderObject(5), XMFLOAT3(480, 10, 128), XMFLOAT3(25, 45, 38), XMFLOAT3(-20, 0, 0));
 	gameObjects.push_back(cannonBase);
 
-	cannon = new GameObject(ObjectTypes::CANNON, Assets->GetRenderObject(3), XMFLOAT3(480, 20, 142), XMFLOAT3(10, 10, 60), XMFLOAT3(-45, 0, 0));
+	cannon = new GameObject(ObjectTypes::CANNON, Assets->GetRenderObject(3), XMFLOAT3(480, 20, 140), XMFLOAT3(11, 11, 60), XMFLOAT3(-45, 0, 0));
 
 	//for (size_t i = 0; i < 2000; i++)
 	//{
@@ -42,7 +42,7 @@ Game::Game(HINSTANCE hInstance, HWND hwnd, int screenWidth, int screenHeight, bo
 	{
 		/*PhysicsObject* sphere = new PhysicsObject(ObjectTypes::PHYSICS, Assets->GetRenderObject(2), GameConstants::CANNONBALL_START_POS, XMFLOAT3(5.0f, 5.0f, 5.0f), XMFLOAT3(0, 0, 0), 10);*/
 		PhysicsObject* sphere = new PhysicsObject(ObjectTypes::PHYSICS, Assets->GetRenderObject(2), XMFLOAT3(480, 20, 180), XMFLOAT3(5.0f, 5.0f, 5.0f), XMFLOAT3(0, 0, 0), 10);
-		gameObjects.push_back(sphere);
+		projectiles.push_back(sphere);
 	}
 
 	terrain = new Terrain(Renderer->GetDevice(), "Assets/Textures/heightmap01f.bmp", 3.0f,
@@ -68,12 +68,15 @@ Game::~Game()
 
 	for (auto go : gameObjects) 
 		delete go;
+
+	for (auto p : projectiles)
+		delete p;
 }
 
 bool Game::Update(double frameTime, double gameTime)
 {
 
-	if (!Logic->Update(frameTime, gameTime, gameObjects, camera, skySphere, terrain, cannon))
+	if (!Logic->Update(frameTime, gameTime, projectiles, camera, skySphere, terrain, cannon))
 		return false;
 
 	XMFLOAT3 pos = sun->GetPosition();
@@ -106,6 +109,9 @@ bool Game::Render()
 	for (int i = 0; i < (signed)gameObjects.size(); i++) 
 		Renderer->RenderShadow(gameObjects.at(i));
 
+	for (int i = 0; i < (signed)projectiles.size(); i++)
+		Renderer->RenderShadow(projectiles.at(i));
+
 	Renderer->RenderShadow(cannon);
 
 	//Render last of all shadow objects
@@ -126,11 +132,19 @@ bool Game::Render()
 	for (int i = 0; i < (signed)gameObjects.size(); i++)
 		Renderer->Render(gameObjects.at(i));
 
+	for (int i = 0; i < (signed)projectiles.size(); i++)
+		Renderer->Render(projectiles.at(i));
+
 	Renderer->Render(sun);
 	Renderer->Render(cannon);
 
 	Renderer->SetCullingState(CullingState::FRONT);
 	Renderer->Render(skySphere);
+
+	////////////////////////////////////////////////////////////// Text //////////////////////////////////////////////////////////////
+	string s = "Angle: " + to_string((int)(360 - cannon->GetRotation().x)) + "\n" + "Launch speed: " + to_string(Logic->GetLaunchSpeed());;
+	Renderer->DrawString(wstring(s.begin(), s.end()), (FLOAT)20.0f, (FLOAT)5, (FLOAT)5, 0xff000000);
+	//0xff0099ff
 
 	Renderer->EndScene();
 

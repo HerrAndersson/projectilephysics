@@ -24,18 +24,19 @@ private:
 	int screenWidth, screenHeight;
 	const int shadowMapSize = 2048;
 
-	Camera*			        camera;
-	GameLogic*              Logic;
-	RenderModule*           Renderer;
-	AssetManager*			Assets;
-	InputManager*			Input;
+	Camera*						camera;
+	GameLogic*					Logic;
+	RenderModule*				Renderer;
+	AssetManager*				Assets;
+	InputManager*				Input;
 
-	vector<GameObject*>		gameObjects;
-	Terrain*                terrain;
-	GameObject*             skySphere;
-	GameObject*			    sun;
-	GameObject*				cannon;
-	DirectionalLight*		sunLight;
+	vector<GameObject*>			gameObjects;
+	vector<PhysicsObject*>		projectiles;
+	Terrain*					terrain;
+	GameObject*					skySphere;
+	GameObject*					sun;
+	GameObject*					cannon;
+	DirectionalLight*			sunLight;
 
 public:
 

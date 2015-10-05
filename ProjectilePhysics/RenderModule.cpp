@@ -489,10 +489,17 @@ bool RenderModule::RenderTerrain(Terrain* terrain)
 	return true;
 }
 
+void RenderModule::DrawString(wstring text, FLOAT fontSize, FLOAT posX, FLOAT posY, UINT32 color)
+{
+	d3d->DrawString(text, fontSize, posX, posY, color);
+
+}
+
 void RenderModule::BeginScene(float red, float green, float blue, float alpha)
 {
 	d3d->BeginScene(red, green, blue, alpha);
 }
+
 void RenderModule::EndScene()
 {
 	d3d->EndScene();
