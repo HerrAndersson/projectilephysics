@@ -44,7 +44,7 @@ public:
 
 	bool Update(double frameTime, double gameTime, vector<PhysicsObject*>& projectiles, Camera* camera, GameObject* skySphere, Terrain* terrain, GameObject* cannon);
 	bool UpdateCamera(double frameTime, Camera* camera, Terrain* terrain);
-	bool UpdatePhysicsObjects(double frameTime, vector<PhysicsObject*>& projectiles, XMFLOAT3 cannonRotation);
+	bool UpdatePhysicsObjects(double frameTime, double gameTime, vector<PhysicsObject*>& projectiles, XMFLOAT3 cannonRotation);
 	bool UpdateSky(double gameTime, GameObject* skySphere);
 	bool UpdateCannon(GameObject* cannon);
 

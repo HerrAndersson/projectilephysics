@@ -5,7 +5,7 @@ using DirectX::XMFLOAT3;
 namespace MovementConstants
 {
 	const float ACCELERATION = 0.005f;
-	const float DECELERATION = 0.0007f;
+	const float DECELERATION = 0.007f;
 	const float SPEED_MULTIPLIER = 0.07f;
 	const float SHIFT_SPEED_MULTIPLIER = 0.35f;
 	const float LOOK_SPEED = 0.5f;
@@ -16,8 +16,9 @@ namespace MovementConstants
 namespace PhysicsConstants
 {
 	const XMFLOAT3 GRAVITY = XMFLOAT3(0, -9.82114f, 0); //Karlskrona
-	const float IRON_DENSITY = 7874; //kg/m3
-	//const double AIR_RESISTANCE			= 
+	const float AIR_DENSITY = 1.204f; // Kg/m^3 in 20 celsius
+	const float DRAG_COEFF_SPHERE = 0.47f;
+	const float DRAG_COEFF_CUBE = 1.05f;
 }
 
 namespace GameConstants

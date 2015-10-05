@@ -26,7 +26,7 @@ bool GameLogic::Update(double frameTime, double gameTime, vector<PhysicsObject*>
 	if (!UpdateCannon(cannon))
 		return false;
 
-	if (!UpdatePhysicsObjects(frameTime, projectiles, cannon->GetRotation()))
+	if (!UpdatePhysicsObjects(frameTime, gameTime, projectiles, cannon->GetRotation()))
 		return false;
 
 	if (!UpdateSky(gameTime, skySphere))
@@ -176,32 +176,35 @@ bool GameLogic::UpdateCamera(double frameTime, Camera* camera, Terrain* terrain)
 	return true;
 }
 
-bool GameLogic::UpdatePhysicsObjects(double frameTime, vector<PhysicsObject*>& projectiles, XMFLOAT3 cannonRotation)
+bool GameLogic::UpdatePhysicsObjects(double frameTime, double gameTime, vector<PhysicsObject*>& projectiles, XMFLOAT3 cannonRotation)
 {
 
-	PhysicsObject* copy2 = nullptr;
-	for (auto p : projectiles)
-	{
-		if (p->GetId() == ObjectTypes::PHYSICS)
-		{
-			copy2 = p;
-		}
-	}
+	//if (int(gameTime) % int(frameTime) < 5)
+	//{
+	//	PhysicsObject* copy2 = nullptr;
+	//	for (auto p : projectiles)
+	//	{
+	//		if (p->GetId() == ObjectTypes::PHYSICS)
+	//		{
+	//			copy2 = p;
+	//		}
+	//	}
 
-	PhysicsObject* newObj = new PhysicsObject(*copy2);
-	newObj->SetPosition(GameConstants::CANNONBALL_START_POS);
+	//	PhysicsObject* newObj = new PhysicsObject(*copy2);
+	//	newObj->SetPosition(GameConstants::CANNONBALL_START_POS);
 
-	newObj->SetAcceleration(XMFLOAT3(0, 0, 100));
+	//	newObj->SetAcceleration(XMFLOAT3(0, 0, 100));
 
-	float b = sin(XMConvertToRadians(360 - cannonRotation.x));
-	float c = cos(XMConvertToRadians(360 - cannonRotation.x));
+	//	float b = sin(XMConvertToRadians(360 - cannonRotation.x));
+	//	float c = cos(XMConvertToRadians(360 - cannonRotation.x));
 
-	float velY = cannonLaunchSpeed * b;
-	float velZ = cannonLaunchSpeed * c;
+	//	float velY = cannonLaunchSpeed * b;
+	//	float velZ = cannonLaunchSpeed * c;
 
-	newObj->SetVelocity(XMFLOAT3(0, velY, velZ));
-	newObj->WakePhysics();
-	projectiles.push_back(newObj);
+	//	newObj->SetVelocity(XMFLOAT3(0, velY, velZ));
+	//	newObj->WakePhysics();
+	//	projectiles.push_back(newObj);
+	//}
 
 	if (Input->SpaceClicked())
 	{
@@ -272,6 +275,9 @@ bool GameLogic::UpdatePhysicsObjects(double frameTime, vector<PhysicsObject*>& p
 
 
 				pos.x = pos.x + vel.x*timeStep;
+
+
+				//ENHETEN I VELOCITY OSV BLIR UNITS/SECOND ISTÄLLET FÖR METERS/SECOND. ANGÄR HUR MÅNGA UNITS DET GÅR PÅ EN METER.
 
 
 				/*pos.y = pos.y + vel.y*timeInSeconds;*/

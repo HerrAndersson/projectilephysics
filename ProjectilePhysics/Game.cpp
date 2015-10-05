@@ -17,7 +17,7 @@ Game::Game(HINSTANCE hInstance, HWND hwnd, int screenWidth, int screenHeight, bo
 
 	//Objects
 	skySphere = new GameObject(ObjectTypes::STATIC, Assets->GetRenderObject(0), XMFLOAT3(512, 100, 512), XMFLOAT3(850, 850, 850), XMFLOAT3(0, 0, 0));
-	sun = new GameObject(ObjectTypes::STATIC, Assets->GetRenderObject(4), XMFLOAT3(-150, 700, -150), XMFLOAT3(30, 30, 30), XMFLOAT3(90, 0, 0));
+	sun = new GameObject(ObjectTypes::STATIC, Assets->GetRenderObject(4), XMFLOAT3(512, 150, -50), XMFLOAT3(20, 20, 20), XMFLOAT3(0, 0, 0));
 	sunLight = new DirectionalLight(XM_PI / 2, 1.0f, 0.1f, 3000.0f);
 	sunLight->SetLookAt(XMFLOAT3(512, 0, 512));
 	sunLight->SetPosition(sun->GetPosition());
@@ -79,13 +79,12 @@ bool Game::Update(double frameTime, double gameTime)
 	if (!Logic->Update(frameTime, gameTime, projectiles, camera, skySphere, terrain, cannon))
 		return false;
 
-	XMFLOAT3 pos = sun->GetPosition();
+	//XMFLOAT3 pos = sun->GetPosition();
+	//pos.x = 512 + sin(float(gameTime / 10000.0f)) * 500;
+	//pos.z = 512 + cos(float(gameTime / 10000.0f)) * 500;
 
-	pos.x = 512 + sin(float(gameTime / 10000.0f)) * 500;
-	pos.z = 512 + cos(float(gameTime / 10000.0f)) * 500;
-
-	sun->SetPosition(pos);
-	sunLight->SetPosition(pos);
+	//sun->SetPosition(pos);
+	//sunLight->SetPosition(pos);
 
 	return true;
 }
@@ -118,7 +117,7 @@ bool Game::Render()
 	Renderer->SetCullingState(CullingState::BACK);
 	Renderer->RenderShadow(terrain);
 
-	//Shadows funkar inte! Fel SRV som samplas ifrån?
+	//Shadows funkar inte!
 	////////////////////////////////////////////////////////////// Normal //////////////////////////////////////////////////////////////
 	Renderer->BeginScene(0.05f, 0.05f, 0.05f, 1.0f);
 	Renderer->SetDataPerFrame(viewMatrix, projectionMatrix, camera->GetPosition(), sunLight->GetPosition(), lightView, lightProjection);
@@ -142,9 +141,11 @@ bool Game::Render()
 	Renderer->Render(skySphere);
 
 	////////////////////////////////////////////////////////////// Text //////////////////////////////////////////////////////////////
-	string s = "Angle: " + to_string((int)(360 - cannon->GetRotation().x)) + "\n" + "Launch speed: " + to_string(Logic->GetLaunchSpeed());;
-	Renderer->DrawString(wstring(s.begin(), s.end()), (FLOAT)20.0f, (FLOAT)5, (FLOAT)5, 0xff000000);
-	//0xff0099ff
+	string s = "Angle: " + to_string((int)(360 - cannon->GetRotation().x)) 
+		+ "\n" 
+		+ "Launch speed: " + to_string(Logic->GetLaunchSpeed());
+
+	Renderer->DrawString(wstring(s.begin(), s.end()), (FLOAT)20.0f, (FLOAT)7, (FLOAT)5, 0xff000000);
 
 	Renderer->EndScene();
 

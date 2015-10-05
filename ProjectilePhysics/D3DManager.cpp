@@ -40,6 +40,7 @@ D3DManager::D3DManager(HWND hwnd, int screenWidth, int screenHeight, bool fullsc
 	swapChainDesc.Flags = 0;
 
 	//Create the swap chain, device, and device context
+	//result = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, D3D11_CREATE_DEVICE_DEBUG, &featureLevel, 1, D3D11_SDK_VERSION, &swapChainDesc, &swapChain, &device, NULL, &deviceContext);
 	result = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, 0, &featureLevel, 1, D3D11_SDK_VERSION, &swapChainDesc, &swapChain, &device, NULL, &deviceContext);
 	if (FAILED(result))
 		throw std::runtime_error("D3DManager: Error creating swap chain");
