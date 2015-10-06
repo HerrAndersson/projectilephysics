@@ -49,7 +49,6 @@ private:
 	void CalculateNormals();
 	void CalculateTextureCoordinates();
 
-
 	float GetHeightAt(int x, int z);
 
 public:
@@ -58,7 +57,7 @@ public:
 	~Terrain();
 
 	float GetY(float x, float z);
-	float GetAngleOfQuad(float x, float z);
+	XMFLOAT3 GetNormalAt(int x, int z);
 
 	int GetVertexCount();
 

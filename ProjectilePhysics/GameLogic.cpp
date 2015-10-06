@@ -300,12 +300,24 @@ bool GameLogic::UpdatePhysicsObjects(double frameTime, double gameTime, vector<P
 
 				if (pos.y < terrain->GetY(pos.x, pos.z) + MeterToUnits(p->GetRadius()))
 				{
+	
 					pos.y = terrain->GetY(pos.x, pos.z) + MeterToUnits(p->GetRadius() + 0.2f);
-					vel.y *= -0.2f;
-					vel.z *= 0.2f;
+
+					//vel.y *= -0.2f - float((rand() % 10) / 10.0f);
+					//vel.z *= 0.2f - float((rand() % 10) / 10.0f);
+
+					XMFLOAT3 normal = terrain->GetNormalAt((int)pos.x, (int)pos.z);
+					float dot = XMVectorGetX(XMVector3Dot(XMVector3Normalize(XMLoadFloat3(&vel)), XMLoadFloat3(&normal)));
+
+					vel.y *= dot - float((rand() % 10) / 100.0f);
+					vel.z *= -dot + float((rand() % 10) / 100.0f);
 
 					if(abs(vel.z) < 0.2f || abs(vel.y) < 0.3f)
 						p->KillPhysics();
+
+
+					//https://en.wikipedia.org/wiki/Collision_response
+					//http://stackoverflow.com/questions/9806630/calculating-the-vertex-normals-of-a-quad
 				}
 
 				p->SetPosition(pos);
@@ -358,7 +370,7 @@ bool GameLogic::UpdateCannon(GameObject* cannon)
 	{
 		XMFLOAT3 cannonRotation = cannon->GetRotation();
 
-		if (cannonRotation.x < 359)
+		if (cannonRotation.x < 358.9)
 			cannonRotation.x += GameConstants::CANNON_PITCH_SPEED;
 
 		cannon->SetRotation(cannonRotation);
@@ -366,7 +378,7 @@ bool GameLogic::UpdateCannon(GameObject* cannon)
 
 	if (Input->LeftArrowDown())
 	{
-		if (cannonLaunchSpeed > 0)
+		if (cannonLaunchSpeed > GameConstants::MIN_LAUNCH_SPEED)
 			cannonLaunchSpeed -= 0.1f;;
 	}
 	else if (Input->RightArrowDown())

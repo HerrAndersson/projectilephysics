@@ -201,7 +201,7 @@ bool Game::Render()
 		+ "\n"
 		+ "Last length: " + to_string(UnitsToMeter(length));
 
-	Renderer->DrawString(wstring(s.begin(), s.end()), (FLOAT)20.0f, (FLOAT)7, (FLOAT)5, 0xff000050);
+	Renderer->DrawString(wstring(s.begin(), s.end()), (FLOAT)20.0f, (FLOAT)7, (FLOAT)5, 0xff000000);
 
 	Renderer->EndScene();
 

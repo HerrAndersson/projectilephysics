@@ -49,7 +49,8 @@ namespace GameConstants
 {
 	const int WORLD_SIZE = 1024;
 
-	const float MAX_LAUNCH_SPEED = 250;
+	const float MAX_LAUNCH_SPEED = 250.0f;
+	const float MIN_LAUNCH_SPEED = 10.1f;
 	const float INITIAL_LAUNCH_SPEED = 20;
 	const int NUMBER_OF_CANNONBALLS = 20;
 	const XMFLOAT3 CANNONBALL_START_POS = XMFLOAT3(480, 15, 135);
