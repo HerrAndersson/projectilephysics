@@ -33,7 +33,7 @@ ShadowMap::ShadowMap(ID3D11Device* device, int dimensions, LPCWSTR vsFilename)
 	D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
 	ZeroMemory(&shaderResourceViewDesc, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
 	shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	/*shaderResourceViewDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;*/
+	//shaderResourceViewDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
 	shaderResourceViewDesc.Format = DXGI_FORMAT_R32_FLOAT;
 	shaderResourceViewDesc.Texture2D.MipLevels = 1;
 

@@ -28,13 +28,16 @@ float4 main(pixelInputType input) : SV_TARGET
 {
 	input.normal = normalize(input.normal);
 
-	float3 wp = input.worldPos.xyz;
 	float4 finalColor = AssetTexture.Sample(sampleStateClamp, input.tex);
 
+
+
+
+
+	//float3 wp = input.worldPos.xyz;
 	////calculate light to pixel vector for spotlight
 	///*float3 lightToPixelVec = lightPos - wp;*/ //original
 	//float3 lightToPixelVec = normalize(wp - lightPos);
-
 
 	////Sample and add shadows for the shadow map.
 	//float4 lightSpacePos = mul(input.worldPos, lightView);
@@ -68,7 +71,6 @@ float4 main(pixelInputType input) : SV_TARGET
 	//	}
 	//}
 
-
 	////Get local illumination from the "sun" on the whole scene
 	//float3 lightDir = normalize(lightPos - float3(512, 0, 512));
 	//float lightIntensity = saturate(dot(input.normal.xyz, lightDir)) + 0.35f;
@@ -77,13 +79,6 @@ float4 main(pixelInputType input) : SV_TARGET
 	return finalColor;
 
 }
-
-
-
-////return float4(finalColor -= input.colorModifier, 1.0f);
-////return float4(finalColor += input.colorModifier, diffuse.a);
-
-
 
 
 

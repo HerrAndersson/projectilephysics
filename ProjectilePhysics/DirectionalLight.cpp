@@ -34,14 +34,11 @@ void DirectionalLight::SetLookAt(XMFLOAT3 lookAt)
 
 void DirectionalLight::GenerateViewMatrix()
 {
-	//setting up a perspective-based view matrix
-	XMFLOAT3 up(0.0f, 1.0f, 0.0f);
 
 	DirectX::XMVECTOR posVec = DirectX::XMLoadFloat3(&position);
-	DirectX::XMVECTOR upVec = DirectX::XMLoadFloat3(&up);
+	DirectX::XMVECTOR upVec = XMVectorSet(0, 1, 0, 0);
 	DirectX::XMVECTOR lookVec = DirectX::XMLoadFloat3(&lookAt);
 
-	// Use the three loaded float3s as vectors for the view matrix
 	viewMatrix = XMMatrixLookAtLH(posVec, lookVec, upVec);
 }
 

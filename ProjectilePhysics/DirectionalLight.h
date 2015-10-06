@@ -13,6 +13,7 @@ private:
 
 	XMFLOAT3 position;
 	XMFLOAT3 lookAt;
+	XMFLOAT3 rotation;
 
 	float fov, aspect;
 	float viewNear, viewFar;
