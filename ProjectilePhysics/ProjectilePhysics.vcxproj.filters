@@ -140,11 +140,11 @@
     <ClInclude Include="Terrain.h">
       <Filter>Game\GameObjects</Filter>
     </ClInclude>
-    <ClInclude Include="Constants.h">
-      <Filter>Game</Filter>
-    </ClInclude>
     <ClInclude Include="FW1FontWrapper.h">
       <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="GameUtil.h">
+      <Filter>Game</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

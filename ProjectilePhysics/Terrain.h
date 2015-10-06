@@ -58,6 +58,7 @@ public:
 	~Terrain();
 
 	float GetY(float x, float z);
+	float GetAngleOfQuad(float x, float z);
 
 	int GetVertexCount();
 

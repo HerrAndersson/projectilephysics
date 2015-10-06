@@ -6,17 +6,18 @@ class PhysicsObject : public GameObject
 private:
 
 	XMFLOAT3 velocity;
-	XMFLOAT3 acceleration;
 	float mass;
 	float angle;
 
 	bool isAlive;
 	bool used;
 	double timeAlive;
+	float radius;
+	float crossSectionalArea;
 
 public:
 
-	PhysicsObject(int id, RenderObject* renderObject, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, float mass);
+	PhysicsObject(int id, RenderObject* renderObject, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, float density, float radius);
 	PhysicsObject(const PhysicsObject& other);
 	virtual ~PhysicsObject();
 
@@ -29,14 +30,12 @@ public:
 	bool IsUsed();
 
 	void SetVelocity(XMFLOAT3 velocity);
-	void SetAcceleration(XMFLOAT3 acceleration);
-	void SetAngle(float angle);
 
 	XMFLOAT3 GetVelocity();
-	XMFLOAT3 GetAcceleration();
 	float GetMass();
 	double GetTimeAlive();
-	float GetAngle();
+	float GetCrossSectionalArea();
+	float GetRadius();
 
 };
 

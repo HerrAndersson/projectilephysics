@@ -22,26 +22,42 @@ Game::Game(HINSTANCE hInstance, HWND hwnd, int screenWidth, int screenHeight, bo
 	sunLight->SetLookAt(XMFLOAT3(512, 0, 512));
 	sunLight->SetPosition(sun->GetPosition());
 
-	GameObject* cannonBase = new GameObject(ObjectTypes::STATIC, Assets->GetRenderObject(5), XMFLOAT3(480, 10, 128), XMFLOAT3(25, 45, 38), XMFLOAT3(-20, 0, 0));
+	GameObject* cannonBase = new GameObject(ObjectTypes::STATIC, Assets->GetRenderObject(5), XMFLOAT3(480, 10, 128), XMFLOAT3(MeterToUnits(1.5f), MeterToUnits(2.5f), MeterToUnits(1.8f)), XMFLOAT3(-20, 0, 0));
 	gameObjects.push_back(cannonBase);
 
-	cannon = new GameObject(ObjectTypes::CANNON, Assets->GetRenderObject(3), XMFLOAT3(480, 20, 140), XMFLOAT3(11, 11, 60), XMFLOAT3(-45, 0, 0));
-
-	//for (size_t i = 0; i < 2000; i++)
-	//{
-	//	float x = float(rand() % 1023 + 1);
-	//	float y = float(rand() % 50 + 5);
-	//	float z = float(rand() % 6 + 1);
 
 
-	//	PhysicsObject* sphere = new PhysicsObject(ObjectTypes::PHYSICS, Assets->GetRenderObject(2), XMFLOAT3(x, 10 + y, z * (i / 10)), XMFLOAT3(25.0f, 25.0f, 25.0f), XMFLOAT3(0, 0, 0), 10);
-	//	gameObjects.push_back(sphere);
-	//}
+	XMFLOAT3 pos = GameConstants::CANNONBALL_START_POS;
+	for (int i = 0; i < 1000; i++)
+	{
+		if (i % 100 == 0)
+		{
+			GameObject* a = new GameObject(ObjectTypes::STATIC, Assets->GetRenderObject(5), XMFLOAT3(pos.x - 40, 3, pos.z + i), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+			gameObjects.push_back(a);
+			GameObject* b = new GameObject(ObjectTypes::STATIC, Assets->GetRenderObject(2), XMFLOAT3(pos.x - 40, 4, pos.z + i), XMFLOAT3(0.5, 0.5, 0.5), XMFLOAT3(0, 0, 0));
+			gameObjects.push_back(b);
+		}
+
+		if (i < 10)
+		{
+			GameObject* a = new GameObject(ObjectTypes::STATIC, Assets->GetRenderObject(5), XMFLOAT3(pos.x - 41, 3, pos.z + i), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+			gameObjects.push_back(a);
+			GameObject* b = new GameObject(ObjectTypes::STATIC, Assets->GetRenderObject(2), XMFLOAT3(pos.x - 40, 3, pos.z + i), XMFLOAT3(0.5, 0.5, 0.5), XMFLOAT3(0, 0, 0));
+			gameObjects.push_back(b);
+
+			GameObject* c = new GameObject(ObjectTypes::STATIC, Assets->GetRenderObject(5), XMFLOAT3(pos.x - 41, (float)3 + i, pos.z), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+			gameObjects.push_back(c);
+			GameObject* d = new GameObject(ObjectTypes::STATIC, Assets->GetRenderObject(2), XMFLOAT3(pos.x - 40, (float)3 + i, pos.z), XMFLOAT3(0.5, 0.5, 0.5), XMFLOAT3(0, 0, 0));
+			gameObjects.push_back(d);
+		}
+		
+	}
+
+	cannon = new GameObject(ObjectTypes::CANNON, Assets->GetRenderObject(3), GameConstants::CANNONBALL_START_POS, XMFLOAT3(MeterToUnits(0.4f), MeterToUnits(0.4f), MeterToUnits(3.0f)), XMFLOAT3(-45, 0, 0));
 
 	for (size_t i = 0; i < 1; i++)
 	{
-		/*PhysicsObject* sphere = new PhysicsObject(ObjectTypes::PHYSICS, Assets->GetRenderObject(2), GameConstants::CANNONBALL_START_POS, XMFLOAT3(5.0f, 5.0f, 5.0f), XMFLOAT3(0, 0, 0), 10);*/
-		PhysicsObject* sphere = new PhysicsObject(ObjectTypes::PHYSICS, Assets->GetRenderObject(2), XMFLOAT3(480, 20, 180), XMFLOAT3(5.0f, 5.0f, 5.0f), XMFLOAT3(0, 0, 0), 10);
+		PhysicsObject* sphere = new PhysicsObject(ObjectTypes::PHYSICS, Assets->GetRenderObject(2), GameConstants::CANNONBALL_START_POS, XMFLOAT3(MeterToUnits(0.25f / 2), MeterToUnits(0.25f / 2), MeterToUnits(0.25f / 2)), XMFLOAT3(0, 0, 0), PhysicsConstants::IRON_DENSITY, UnitsToMeter(MeterToUnits(0.25f / 2) / 2));
 		projectiles.push_back(sphere);
 	}
 
@@ -147,11 +163,45 @@ bool Game::Render()
 	Renderer->Render(skySphere);
 
 	////////////////////////////////////////////////////////////// Text //////////////////////////////////////////////////////////////
-	string s = "Angle: " + to_string((int)(360 - cannon->GetRotation().x)) 
-		+ "\n" 
-		+ "Launch speed: " + to_string(Logic->GetLaunchSpeed());
+	//string s = "Angle: " + to_string(360 - cannon->GetRotation().x)
+	//	+ "\n" 
+	//	+ "Launch speed: " + to_string(Logic->GetLaunchSpeed());
 
-	Renderer->DrawString(wstring(s.begin(), s.end()), (FLOAT)20.0f, (FLOAT)7, (FLOAT)5, 0xff000000);
+	float length = 0;
+	bool found = false;
+	for (unsigned int i = 0; i < projectiles.size() - 1 && !found; i++)
+	{
+		if (projectiles.at(i)->IsUsed() && !projectiles.at(i + 1)->IsUsed())
+		{
+			length = projectiles.at(i)->GetPosition().z - GameConstants::CANNONBALL_START_POS.z;
+			found = true;
+		}
+	}
+
+	if (!found)
+		if (projectiles.at(projectiles.size() - 1)->IsUsed())
+			length = projectiles.at(projectiles.size() - 1)->GetPosition().z - GameConstants::CANNONBALL_START_POS.z;
+
+
+	int x1, x2 = 0;
+	int y1, y2 = 0;
+	TruncateOne(float(360 - cannon->GetRotation().x), x1, x2);
+	TruncateOne(Logic->GetLaunchSpeed(), y1, y2);
+	string s1;
+	if (Logic->AirResistanceOn())
+		s1 = "ON";
+	else
+		s1 = "OFF";
+
+	string s = "Angle: " + to_string(x1) + "." + to_string(x2)
+		+ "\n"
+		+ "Launch speed: " + to_string(y1) + "." + to_string(y2)
+		+ "\n"
+		+ "Air resistance: " + s1
+		+ "\n"
+		+ "Last length: " + to_string(UnitsToMeter(length));
+
+	Renderer->DrawString(wstring(s.begin(), s.end()), (FLOAT)20.0f, (FLOAT)7, (FLOAT)5, 0xff000050);
 
 	Renderer->EndScene();
 

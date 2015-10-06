@@ -6,7 +6,7 @@
 #include "Camera.h"
 #include "GameObject.h"
 #include "PhysicsObject.h"
-#include "Constants.h"
+#include "GameUtil.h"
 #include "Terrain.h"
 
 using namespace std;
@@ -35,7 +35,8 @@ private:
 
 	Movement movement;
 
-	int cannonLaunchSpeed;
+	float cannonLaunchSpeed;
+	bool airResistanceOn;
 
 public:
 
@@ -44,10 +45,11 @@ public:
 
 	bool Update(double frameTime, double gameTime, vector<PhysicsObject*>& projectiles, Camera* camera, GameObject* skySphere, Terrain* terrain, GameObject* cannon);
 	bool UpdateCamera(double frameTime, Camera* camera, Terrain* terrain);
-	bool UpdatePhysicsObjects(double frameTime, double gameTime, vector<PhysicsObject*>& projectiles, XMFLOAT3 cannonRotation);
+	bool UpdatePhysicsObjects(double frameTime, double gameTime, vector<PhysicsObject*>& projectiles, XMFLOAT3 cannonRotation, Terrain* terrain);
 	bool UpdateSky(double gameTime, GameObject* skySphere);
 	bool UpdateCannon(GameObject* cannon);
 
-	int GetLaunchSpeed();
+	float GetLaunchSpeed();
+	bool AirResistanceOn();
 };
 

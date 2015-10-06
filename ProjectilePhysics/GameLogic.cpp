@@ -3,7 +3,8 @@
 GameLogic::GameLogic(InputManager* Input)
 {
 	this->Input = Input;
-	cannonLaunchSpeed = 80;
+	cannonLaunchSpeed = GameConstants::INITIAL_LAUNCH_SPEED;
+	airResistanceOn = true;
 }
 
 GameLogic::~GameLogic()
@@ -11,9 +12,14 @@ GameLogic::~GameLogic()
 
 }
 
-int GameLogic::GetLaunchSpeed()
+float GameLogic::GetLaunchSpeed()
 {
 	return cannonLaunchSpeed;
+}
+
+bool GameLogic::AirResistanceOn()
+{
+	return airResistanceOn;
 }
 
 bool GameLogic::Update(double frameTime, double gameTime, vector<PhysicsObject*>& projectiles, Camera* camera, GameObject* skySphere, Terrain* terrain, GameObject* cannon)
@@ -26,7 +32,7 @@ bool GameLogic::Update(double frameTime, double gameTime, vector<PhysicsObject*>
 	if (!UpdateCannon(cannon))
 		return false;
 
-	if (!UpdatePhysicsObjects(frameTime, gameTime, projectiles, cannon->GetRotation()))
+	if (!UpdatePhysicsObjects(frameTime, gameTime, projectiles, cannon->GetRotation(), terrain))
 		return false;
 
 	if (!UpdateSky(gameTime, skySphere))
@@ -176,7 +182,7 @@ bool GameLogic::UpdateCamera(double frameTime, Camera* camera, Terrain* terrain)
 	return true;
 }
 
-bool GameLogic::UpdatePhysicsObjects(double frameTime, double gameTime, vector<PhysicsObject*>& projectiles, XMFLOAT3 cannonRotation)
+bool GameLogic::UpdatePhysicsObjects(double frameTime, double gameTime, vector<PhysicsObject*>& projectiles, XMFLOAT3 cannonRotation, Terrain* terrain)
 {
 
 	//if (int(gameTime) % int(frameTime) < 5)
@@ -206,7 +212,11 @@ bool GameLogic::UpdatePhysicsObjects(double frameTime, double gameTime, vector<P
 	//	projectiles.push_back(newObj);
 	//}
 
-	if (Input->SpaceClicked())
+	if (Input->RightMouseClicked())
+		airResistanceOn = !airResistanceOn;
+	
+
+	if (Input->LeftMouseClicked())
 	{
 		bool found = false;
 		PhysicsObject* copy = nullptr;
@@ -219,8 +229,7 @@ bool GameLogic::UpdatePhysicsObjects(double frameTime, double gameTime, vector<P
 
 				if (!p->IsAlive() && !p->IsUsed())
 				{
-					p->SetAcceleration(XMFLOAT3(0, 0, 100));
-
+					p->SetPosition(GameConstants::CANNONBALL_START_POS);
 					float b = sin(XMConvertToRadians(360 - cannonRotation.x));
 					float c = cos(XMConvertToRadians(360 - cannonRotation.x));
 
@@ -239,8 +248,6 @@ bool GameLogic::UpdatePhysicsObjects(double frameTime, double gameTime, vector<P
 		{
 			PhysicsObject* newObj = new PhysicsObject(*copy);
 			newObj->SetPosition(GameConstants::CANNONBALL_START_POS);
-
-			newObj->SetAcceleration(XMFLOAT3(0, 0, 100));
 
 			float b = sin(XMConvertToRadians(360 - cannonRotation.x));
 			float c = cos(XMConvertToRadians(360 - cannonRotation.x));
@@ -261,63 +268,65 @@ bool GameLogic::UpdatePhysicsObjects(double frameTime, double gameTime, vector<P
 		{
 			if (p->IsAlive())
 			{
-				if (p->GetPosition().y < 10.0f)
-					p->KillPhysics();
-
 				
-				float timeStep = float(frameTime / 100);
-				
-				XMFLOAT3 acc = p->GetAcceleration();
+				float timeStep = float(frameTime / 1000);	
 				XMFLOAT3 pos = p->GetPosition();
 				XMFLOAT3 vel = p->GetVelocity();
 				float mass = p->GetMass();
-				float alpha = atan((pos.y - GameConstants::CANNONBALL_START_POS.y) / (pos.z - GameConstants::CANNONBALL_START_POS.z));
+				float alpha = XMConvertToRadians(360 - cannonRotation.x);
 
+				float airDragForce = 0.5f * PhysicsConstants::DRAG_COEFF_SPHERE * PhysicsConstants::AIR_DENSITY*p->GetCrossSectionalArea();
+				float airDragY = -airDragForce * pow(vel.y, 2) * sin(alpha);
+				float airDragZ = -(airDragForce / p->GetMass()) * pow(vel.z, 2) * cos(alpha);
 
-				pos.x = pos.x + vel.x*timeStep;
+				if (airResistanceOn)
+				{
+					pos.y = pos.y + MeterToUnits(vel.y * timeStep - 0.5f * (PhysicsConstants::GRAVITY.y + airDragY) * pow(timeStep, 2));
+					pos.z = pos.z + MeterToUnits(vel.z * timeStep - 0.5f * (airDragZ) * pow(timeStep, 2));
 
+					vel.x = vel.x + PhysicsConstants::GRAVITY.x * timeStep;
+					vel.y = vel.y + (PhysicsConstants::GRAVITY.y + airDragY) * timeStep;
+					vel.z = vel.z + (PhysicsConstants::GRAVITY.z + airDragZ) * timeStep;
+				}
+				else
+				{
+					pos.y = pos.y + MeterToUnits(vel.y * timeStep - 0.5f * PhysicsConstants::GRAVITY.y * pow(timeStep, 2));
+					pos.z = pos.z + MeterToUnits(vel.z * timeStep);
 
-				//ENHETEN I VELOCITY OSV BLIR UNITS/SECOND ISTÄLLET FÖR METERS/SECOND. ANGÄR HUR MÅNGA UNITS DET GÅR PÅ EN METER.
+					vel.x = vel.x + PhysicsConstants::GRAVITY.x * timeStep;
+					vel.y = vel.y + PhysicsConstants::GRAVITY.y * timeStep;
+					vel.z = vel.z + PhysicsConstants::GRAVITY.z * timeStep;
+				}
 
+				if (pos.y < terrain->GetY(pos.x, pos.z) + MeterToUnits(p->GetRadius()))
+				{
+					pos.y = terrain->GetY(pos.x, pos.z) + MeterToUnits(p->GetRadius() + 0.2f);
+					vel.y *= -0.2f;
+					vel.z *= 0.2f;
 
-				/*pos.y = pos.y + vel.y*timeInSeconds;*/
-				pos.y = pos.y + vel.y * timeStep - 0.5f * PhysicsConstants::GRAVITY.y * pow(timeStep,2);
-				//float cannonRotationY = XMConvertToRadians(cannonRotation.y);
-				//pos.y = pos.y * XMConvertToDegrees(cos(a)) * timeInSeconds;
-
-				pos.z = pos.z + vel.z*timeStep;
-
-				//Sideways gravity or air resistance
-				//pos.z = pos.z + vel.z * timeStep - 0.5f * DRAG * pow(timeStep, 2);
-
-				vel.x = vel.x + PhysicsConstants::GRAVITY.x * timeStep;
-				vel.y = vel.y + PhysicsConstants::GRAVITY.y * timeStep;
-				vel.z = vel.z + PhysicsConstants::GRAVITY.z * timeStep;
+					if(abs(vel.z) < 0.2f || abs(vel.y) < 0.3f)
+						p->KillPhysics();
+				}
 
 				p->SetPosition(pos);
 				p->SetVelocity(vel);
-
-
-				//Perform physics calculations here
-				//http://stackoverflow.com/questions/25065676/a-c-function-to-calculate-and-sample-the-trajectory-of-a-projectile-in-3d-spac
-				//http://www.physics.buffalo.edu/phy410-505-2008/chapter2/ch2-lec1.pdf
-				//http://www.splung.com/content/sid/2/page/projectiles
-				//http://www.ingvet.kau.se/juerfuch/kurs/amek/prst/06_simu.pdf
-				//http://wps.aw.com/wps/media/objects/877/898586/topics/topic01.pdf
-				//http://www.codeproject.com/Articles/19107/Flight-of-a-projectile
-
-				//Vxz = v0xz * cos(Alpha) * t
-				//Vy = v0 * sin(Alpha) - g * t
-
-
-				//Ta fram ny hastighet genom v = v0 + a ??t .
-				//Ta fram en ny position genom s = s0 + v0 ??t
-
 
 				p->Update(frameTime);
 			}
 		}
 	}
+
+
+
+	//Perform physics calculations here
+	//http://stackoverflow.com/questions/25065676/a-c-function-to-calculate-and-sample-the-trajectory-of-a-projectile-in-3d-spac
+	//http://www.physics.buffalo.edu/phy410-505-2008/chapter2/ch2-lec1.pdf
+	//http://www.splung.com/content/sid/2/page/projectiles
+	//http://www.ingvet.kau.se/juerfuch/kurs/amek/prst/06_simu.pdf
+	//http://wps.aw.com/wps/media/objects/877/898586/topics/topic01.pdf
+	//http://www.codeproject.com/Articles/19107/Flight-of-a-projectile
+
+
 
 	return true;
 }
@@ -357,13 +366,13 @@ bool GameLogic::UpdateCannon(GameObject* cannon)
 
 	if (Input->LeftArrowDown())
 	{
-		if(cannonLaunchSpeed > 0)
-			cannonLaunchSpeed--;
+		if (cannonLaunchSpeed > 0)
+			cannonLaunchSpeed -= 0.1f;;
 	}
 	else if (Input->RightArrowDown())
 	{
-		if(cannonLaunchSpeed < GameConstants::MAX_LAUNCH_SPEED)
-			cannonLaunchSpeed++;
+		if (cannonLaunchSpeed < GameConstants::MAX_LAUNCH_SPEED)
+			cannonLaunchSpeed += 0.1f;
 	}
 
 	return true;
