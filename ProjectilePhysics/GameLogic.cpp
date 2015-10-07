@@ -306,17 +306,27 @@ bool GameLogic::UpdatePhysicsObjects(double frameTime, double gameTime, vector<P
 					//vel.y *= -0.2f - float((rand() % 10) / 10.0f);
 					//vel.z *= 0.2f - float((rand() % 10) / 10.0f);
 
-					XMFLOAT3 normal = terrain->GetNormalAt((int)pos.x, (int)pos.z);
-					float dot = XMVectorGetX(XMVector3Dot(XMVector3Normalize(XMLoadFloat3(&vel)), XMLoadFloat3(&normal)));
+					//GER INTE NORMALEN FÖR QUADEN UTAN FÖR VERTEXPUNKTEN! GÖR LIKNANDE SOM FÖR GETY()
+					XMVECTOR normal = XMLoadFloat3(&terrain->GetNormalAt((int)pos.x, (int)pos.z));
+					XMVECTOR velVec = XMLoadFloat3(&vel);
 
-					vel.y *= dot - float((rand() % 10) / 100.0f);
-					vel.z *= -dot + float((rand() % 10) / 100.0f);
+					XMVECTOR responseForceVec = XMVector3Dot(velVec, -normal) * normal;
+					XMFLOAT3 responseForce;
+					XMStoreFloat3(&responseForce, responseForceVec);
 
-					if(abs(vel.z) < 0.2f || abs(vel.y) < 0.3f)
+					vel.x += responseForce.x;
+					vel.y += responseForce.y;
+					vel.z += responseForce.z;
+
+					velVec = XMVectorSet(vel.x, vel.y, vel.z, 1.0f);
+					velVec = XMVector3Normalize(velVec);
+					XMFLOAT3 v;
+					XMStoreFloat3(&v, velVec);
+
+					if(abs(v.z) + abs(v.y) < 1.0f)
 						p->KillPhysics();
 
 
-					//https://en.wikipedia.org/wiki/Collision_response
 					//http://stackoverflow.com/questions/9806630/calculating-the-vertex-normals-of-a-quad
 				}
 
@@ -327,18 +337,6 @@ bool GameLogic::UpdatePhysicsObjects(double frameTime, double gameTime, vector<P
 			}
 		}
 	}
-
-
-
-	//Perform physics calculations here
-	//http://stackoverflow.com/questions/25065676/a-c-function-to-calculate-and-sample-the-trajectory-of-a-projectile-in-3d-spac
-	//http://www.physics.buffalo.edu/phy410-505-2008/chapter2/ch2-lec1.pdf
-	//http://www.splung.com/content/sid/2/page/projectiles
-	//http://www.ingvet.kau.se/juerfuch/kurs/amek/prst/06_simu.pdf
-	//http://wps.aw.com/wps/media/objects/877/898586/topics/topic01.pdf
-	//http://www.codeproject.com/Articles/19107/Flight-of-a-projectile
-
-
 
 	return true;
 }

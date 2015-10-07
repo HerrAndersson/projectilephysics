@@ -16,6 +16,7 @@
 
 Add Quad-tree culling: http://www.rastertek.com/tertut05.html
 Add small body of water
+Moving : http://stackoverflow.com/questions/25605659/avoid-ground-collision-with-bullet
 
 */
 #define _CRTDBG_MAP_ALLOC

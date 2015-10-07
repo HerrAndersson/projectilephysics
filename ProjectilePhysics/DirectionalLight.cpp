@@ -36,8 +36,9 @@ void DirectionalLight::GenerateViewMatrix()
 {
 
 	DirectX::XMVECTOR posVec = DirectX::XMLoadFloat3(&position);
-	DirectX::XMVECTOR upVec = XMVectorSet(0, 1, 0, 0);
+	DirectX::XMVECTOR upVec = XMVectorSet(0.0f, 1.0f, 0.0f, 1.0f);
 	DirectX::XMVECTOR lookVec = DirectX::XMLoadFloat3(&lookAt);
+	lookVec = XMVectorSetW(lookVec, 1.0f);
 
 	viewMatrix = XMMatrixLookAtLH(posVec, lookVec, upVec);
 }

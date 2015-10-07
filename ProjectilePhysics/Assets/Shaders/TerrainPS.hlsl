@@ -45,48 +45,48 @@ float4 main(VS_OUT input) : SV_TARGET
 	//return float4(pow(sm.x, 7000), pow(sm.y, 7000), pow(sm.z, 7000), 1);
 
 
-	//SHADOW MAPEN ÄR KORREKT, SAMPLINGVÄRDET ÄR FÖR LÅGT
+	//////SHADOW MAPEN ÄR KORREKT, SAMPLINGVÄRDET ÄR FÖR LÅGT
+
+	//float4 wp4 = float4(input.worldPos.xyz, 1.0f);
+	//float4 lightSpacePos = mul(mul(wp4, lightView), lightProj);
+
 	//float3 wp = input.worldPos.xyz;
-	//float4 lightSpacePos = mul(mul(input.worldPos, lightView), lightProj);
-
-	//float2 smTex;
-	//smTex.x = 0.5f + (lightSpacePos.x / lightSpacePos.w * 0.5f);
-	//smTex.y = 0.5f - (lightSpacePos.y / lightSpacePos.w * 0.5f);
-
-	//float depth = lightSpacePos.z / lightSpacePos.w;
-
-	//float epsilon = 0.004f;
-	//float dx = 1.0f / shadowMapSize;
-
-	//Less filtering
-	//float s0 = ShadowMap.Sample(SampleType, smTex).r;
-	//float s1 = ShadowMap.Sample(SampleType, smTex + float2(dx, 0.0f)).r;
-	//float s2 = ShadowMap.Sample(SampleType, smTex + float2(0.0f, dx)).r;
-	//float s3 = ShadowMap.Sample(SampleType, smTex + float2(dx, dx)).r;
-
-	//float2 texelPos = smTex * shadowMapSize;
-	//float2 lerps = frac(texelPos);
-	//float shadowCoeff = lerp(lerp(s0, s1, lerps.x), lerp(s2, s3, lerps.x), lerps.y);
-
-	//shadowCoeff = float(ShadowMap.SampleCmpLevelZero(sampleStateComparison, smTex, depth + epsilon));
-
-	//shadowCoeff = pow(shadowCoeff, 7000);
-	///*depth = pow(depth, 7000);*/
-	//shadowCoeff = saturate(shadowCoeff);
-	//depth = saturate(depth);
-
-	//shadowCoeff /= 3000;
-	//depth /= 3000;
-
-	//if (shadowCoeff < depth - epsilon)
+	//float3 lightToPixelVec = normalize(lightPos - wp);
+	//float howMuchLight = dot(lightToPixelVec, input.normal);
+	//if (howMuchLight > 0.0f)
 	//{
-	//	finalColor = saturate(finalColor * shadowCoeff);
+
+	//	float2 smTex;
+	//	smTex.x = 0.5f + (lightSpacePos.x / lightSpacePos.w * 0.5f);
+	//	smTex.y = 0.5f - (lightSpacePos.y / lightSpacePos.w * 0.5f);
+
+	//	float depth = lightSpacePos.z / lightSpacePos.w;
+
+	//	float epsilon = 0.004f;
+	//	float dx = 1.0f / shadowMapSize;
+
+	//	//Less filtering
+	//	float s0 = ShadowMap.Sample(SampleType, smTex).r;
+	//	float s1 = ShadowMap.Sample(SampleType, smTex + float2(dx, 0.0f)).r;
+	//	float s2 = ShadowMap.Sample(SampleType, smTex + float2(0.0f, dx)).r;
+	//	float s3 = ShadowMap.Sample(SampleType, smTex + float2(dx, dx)).r;
+
+	//	float2 texelPos = smTex * shadowMapSize;
+	//	float2 lerps = frac(texelPos);
+	//	float shadowCoeff = lerp(lerp(s0, s1, lerps.x), lerp(s2, s3, lerps.x), lerps.y);
+
+	//	shadowCoeff = float(ShadowMap.SampleCmpLevelZero(sampleStateComparison, smTex, depth + epsilon));
+
+	//	//shadowCoeff = pow(shadowCoeff, 7000);
+	//	///*depth = pow(depth, 7000);*/
+	//	//shadowCoeff = saturate(shadowCoeff);
+	//	//depth = saturate(depth);
+
+	//	if (shadowCoeff < depth - epsilon)
+	//	{
+	//		finalColor = saturate(finalColor * shadowCoeff);
+	//	}
 	//}
-
-
-
-
-
 
 
 	//Get local illumination from the "sun" on the whole scene
