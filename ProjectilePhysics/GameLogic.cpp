@@ -326,7 +326,7 @@ bool GameLogic::UpdatePhysicsObjects(double frameTime, double gameTime, vector<P
 					if(abs(v.z) + abs(v.y) < 1.0f)
 						p->KillPhysics();
 
-
+					//http://gamedevelopment.tutsplus.com/tutorials/create-custom-2d-physics-engine-aabb-circle-impulse-resolution--gamedev-6331
 					//http://stackoverflow.com/questions/9806630/calculating-the-vertex-normals-of-a-quad
 				}
 
