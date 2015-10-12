@@ -20,8 +20,11 @@ PhysicsObject::PhysicsObject(const PhysicsObject& other) : GameObject(other)
 	isAlive = false;
 	used = false;
 	timeAlive = 0;
-	this->mass = other.mass;
 	velocity = XMFLOAT3(0, 0, 0);
+
+	this->mass = other.mass;
+	this->radius = other.radius;
+	this->crossSectionalArea = other.crossSectionalArea;
 }
 
 PhysicsObject::~PhysicsObject()

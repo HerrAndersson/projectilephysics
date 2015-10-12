@@ -298,7 +298,7 @@ bool GameLogic::UpdatePhysicsObjects(double frameTime, double gameTime, vector<P
 					vel.z = vel.z + PhysicsConstants::GRAVITY.z * timeStep;
 				}
 
-				if (pos.y < terrain->GetY(pos.x, pos.z) + MeterToUnits(p->GetRadius()))
+				if (pos.y <= terrain->GetY(pos.x, pos.z) + MeterToUnits(p->GetRadius()))
 				{
 	
 					pos.y = terrain->GetY(pos.x, pos.z) + MeterToUnits(p->GetRadius() + 0.2f);
