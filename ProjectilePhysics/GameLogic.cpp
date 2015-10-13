@@ -291,6 +291,7 @@ bool GameLogic::UpdatePhysicsObjects(double frameTime, double gameTime, vector<P
 				}
 				else
 				{
+					pos.x = pos.x + MeterToUnits(vel.x * timeStep);
 					pos.y = pos.y + MeterToUnits(vel.y * timeStep - 0.5f * PhysicsConstants::GRAVITY.y * pow(timeStep, 2));
 					pos.z = pos.z + MeterToUnits(vel.z * timeStep);
 
@@ -301,11 +302,8 @@ bool GameLogic::UpdatePhysicsObjects(double frameTime, double gameTime, vector<P
 
 				if (pos.y <= terrain->GetY(pos.x, pos.z) + MeterToUnits(p->GetRadius()))
 				{
-	
-					pos.y = terrain->GetY(pos.x, pos.z) + MeterToUnits(p->GetRadius() + 0.2f);
 
-					//vel.y *= -0.2f - float((rand() % 10) / 10.0f);
-					//vel.z *= 0.2f - float((rand() % 10) / 10.0f);
+					pos.y = terrain->GetY(pos.x, pos.z) + MeterToUnits(p->GetRadius() + 0.001f);
 
 					XMVECTOR normal = XMLoadFloat3(&terrain->GetNormalAt(pos.x, pos.z));
 					XMVECTOR velVec = XMLoadFloat3(&vel);
@@ -314,20 +312,23 @@ bool GameLogic::UpdatePhysicsObjects(double frameTime, double gameTime, vector<P
 					XMFLOAT3 responseForce;
 					XMStoreFloat3(&responseForce, responseForceVec);
 
-					vel.x += responseForce.x;
-					vel.y += responseForce.y;
-					vel.z += responseForce.z;
+					int r = rand() % 10 + 11;
+					float a = r / 100.0f;
 
-					velVec = XMVectorSet(vel.x, vel.y, vel.z, 1.0f);
-					velVec = XMVector3Normalize(velVec);
-					XMFLOAT3 v;
-					XMStoreFloat3(&v, velVec);
+					vel.x = (0.15f + a) * (vel.x + responseForce.x);
+					vel.y = (0.1f + a) * responseForce.y;
+					vel.z = (0.15f + a) * (vel.z + responseForce.z);
 
-					if(abs(v.z) + abs(v.y) < 1.0f)
+					//cout << a << endl;
+					//cout << "Normal   " << XMVectorGetX(normal) << " " << XMVectorGetY(normal) << " " << XMVectorGetZ(normal) << endl;
+					//cout << "Response " << responseForce.x << " " << responseForce.y << " " << responseForce.z << endl;
+					//cout << "Velocity " << vel.x << " " << vel.y << " " << vel.z << endl; 
+					//cout << endl;
+
+
+					if(abs(vel.z) < 0.3f && abs(vel.y) < 0.3f)
 						p->KillPhysics();
 
-					//http://gamedevelopment.tutsplus.com/tutorials/create-custom-2d-physics-engine-aabb-circle-impulse-resolution--gamedev-6331
-					//http://stackoverflow.com/questions/9806630/calculating-the-vertex-normals-of-a-quad
 				}
 
 				p->SetPosition(pos);

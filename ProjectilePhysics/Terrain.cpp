@@ -105,7 +105,7 @@ XMFLOAT3 Terrain::GetNormalAt(float x, float z)
 		XMVECTOR vec1 = XMVector3Normalize(XMLoadFloat3(&XMFLOAT3(x2 - x1, y21 - y11, z1 - z1)));
 		XMVECTOR vec2 = XMVector3Normalize(XMLoadFloat3(&XMFLOAT3(x1 - x1, y12 - y11, z2 - z1)));
 
-		XMVECTOR n = XMVector3Normalize(XMVector3Cross(vec1, vec2));
+		XMVECTOR n = XMVector3Normalize(XMVector3Cross(vec2, vec1));
 
 		returnValue = XMFLOAT3(XMVectorGetX(n), XMVectorGetY(n), XMVectorGetZ(n));
 	}
