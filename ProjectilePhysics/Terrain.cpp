@@ -78,107 +78,37 @@ float Terrain::GetY(float x, float z)
 	}
 	return returnValue;
 }
-//
-//float Terrain::GetAngleOfQuad(float x, float z)
-//{
-//	if (x <= terrainWidth - 2 && z <= terrainHeight - 2 && x >= 0 + 1 && z >= 0 + 1)
-//	{
-//		int x1, x2, z1, z2;
-//		float q11, q12, q21, q22;
-//		x1 = (int)floor(x);
-//		x2 = (int)floor(x + 1);
-//		z1 = (int)floor(z);
-//		z2 = (int)floor(z + 1);
-//
-//		q11 = GetHeightAt(x1, z1);
-//		q12 = GetHeightAt(x1, z2);
-//		q21 = GetHeightAt(x2, z1);
-//		q22 = GetHeightAt(x2, z2);
-//
-//
-//		//Find lowest Y and (x,z)-coordinates for that point.
-//		float lowestY = q11;
-//		int xs = x1;
-//		int zs = z1;
-//
-//		if (lowestY > q12)
-//		{
-//			lowestY = q12;
-//			xs = x1;
-//			zs = z2;
-//		}
-//		if (lowestY > q21)
-//		{
-//			lowestY = q21;
-//			xs = x2;
-//			zs = z1;
-//		}
-//		if (lowestY > q22)
-//		{
-//			lowestY = q22;
-//			xs = x2;
-//			zs = z2;
-//		}
-//
-//		//Find highest Y and (x,z)-coordinates for that point.
-//		float highestY = q11;
-//		int xh = x1;
-//		int zh = z1;
-//
-//		if (highestY < q12)
-//		{
-//			highestY = q12;
-//			xh = x1;
-//			zh = z2;
-//		}
-//		if (highestY < q21)
-//		{
-//			highestY = q21;
-//			xh = x2;
-//			zh = z1;
-//		}
-//		if (highestY < q22)
-//		{
-//			highestY = q22;
-//			xh = x2;
-//			zh = z2;
-//		}
-//
-//
-//
-//		XMVECTOR lowestPoint = XMVectorSet(xs, lowestY, zs, 0);
-//		XMVECTOR highestPoint = XMVectorSet(xh, lowestY, zh, 0);
-//		XMVECTOR highPoint = XMVectorSet(xh, lowestY, zh, 0);
-//
-//		XMVECTOR vecA = highestPoint - lowestPoint;
-//		XMVECTOR vecB = highPoint - lowestPoint;
-//
-//		float lengthA = XMVectorGetX(XMVector3Length(vecA));
-//		float lengthB = XMVectorGetX(XMVector3Length(vecB));
-//
-//
-//
-//
-//
-//		//float angle = 
-//
-//
-//	}
-//
-//	return 0;
-//}
 
 float Terrain::GetHeightAt(int x, int z)
 {
 	return heightMap[(terrainHeight * z) + x].y;
 }
 
-XMFLOAT3 Terrain::GetNormalAt(int x, int z)
+XMFLOAT3 Terrain::GetNormalAt(float x, float z)
 {
 	XMFLOAT3 returnValue(0, 0, 0);
 
 	if (x <= terrainWidth - 2 && z <= terrainHeight - 2 && x >= 0 + 1 && z >= 0 + 1)
-		returnValue = XMFLOAT3(heightMap[(terrainHeight * z) + x].nx, heightMap[(terrainHeight * z) + x].ny, heightMap[(terrainHeight * z) + x].nz);
+	{
+		int x1, x2, z1, z2;
+		float y11, y12, y21, y22;
+		x1 = (int)floor(x);
+		x2 = (int)floor(x + 1);
+		z1 = (int)floor(z);
+		z2 = (int)floor(z + 1);
+
+		y11 = GetHeightAt(x1, z1);
+		y12 = GetHeightAt(x1, z2);
+		y21 = GetHeightAt(x2, z1);
+		y22 = GetHeightAt(x2, z2);
+
+		XMVECTOR vec1 = XMVector3Normalize(XMLoadFloat3(&XMFLOAT3(x2 - x1, y21 - y11, z1 - z1)));
+		XMVECTOR vec2 = XMVector3Normalize(XMLoadFloat3(&XMFLOAT3(x1 - x1, y12 - y11, z2 - z1)));
+
+		XMVECTOR n = XMVector3Normalize(XMVector3Cross(vec1, vec2));
+
+		returnValue = XMFLOAT3(XMVectorGetX(n), XMVectorGetY(n), XMVectorGetZ(n));
+	}
 
 	return returnValue;
 }

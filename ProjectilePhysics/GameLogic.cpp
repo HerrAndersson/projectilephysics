@@ -185,7 +185,7 @@ bool GameLogic::UpdateCamera(double frameTime, Camera* camera, Terrain* terrain)
 bool GameLogic::UpdatePhysicsObjects(double frameTime, double gameTime, vector<PhysicsObject*>& projectiles, XMFLOAT3 cannonRotation, Terrain* terrain)
 {
 
-	//if (int(gameTime) % int(frameTime) < 5)
+	//if (int(gameTime) % int(frameTime))
 	//{
 	//	PhysicsObject* copy2 = nullptr;
 	//	for (auto p : projectiles)
@@ -199,8 +199,6 @@ bool GameLogic::UpdatePhysicsObjects(double frameTime, double gameTime, vector<P
 	//	PhysicsObject* newObj = new PhysicsObject(*copy2);
 	//	newObj->SetPosition(GameConstants::CANNONBALL_START_POS);
 
-	//	newObj->SetAcceleration(XMFLOAT3(0, 0, 100));
-
 	//	float b = sin(XMConvertToRadians(360 - cannonRotation.x));
 	//	float c = cos(XMConvertToRadians(360 - cannonRotation.x));
 
@@ -211,6 +209,9 @@ bool GameLogic::UpdatePhysicsObjects(double frameTime, double gameTime, vector<P
 	//	newObj->WakePhysics();
 	//	projectiles.push_back(newObj);
 	//}
+
+
+
 
 	if (Input->RightMouseClicked())
 		airResistanceOn = !airResistanceOn;
@@ -306,8 +307,7 @@ bool GameLogic::UpdatePhysicsObjects(double frameTime, double gameTime, vector<P
 					//vel.y *= -0.2f - float((rand() % 10) / 10.0f);
 					//vel.z *= 0.2f - float((rand() % 10) / 10.0f);
 
-					//GER INTE NORMALEN FÖR QUADEN UTAN FÖR VERTEXPUNKTEN! GÖR LIKNANDE SOM FÖR GETY()
-					XMVECTOR normal = XMLoadFloat3(&terrain->GetNormalAt((int)pos.x, (int)pos.z));
+					XMVECTOR normal = XMLoadFloat3(&terrain->GetNormalAt(pos.x, pos.z));
 					XMVECTOR velVec = XMLoadFloat3(&vel);
 
 					XMVECTOR responseForceVec = XMVector3Dot(velVec, -normal) * normal;

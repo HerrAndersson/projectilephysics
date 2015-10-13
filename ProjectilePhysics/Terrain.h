@@ -57,7 +57,7 @@ public:
 	~Terrain();
 
 	float GetY(float x, float z);
-	XMFLOAT3 GetNormalAt(int x, int z);
+	XMFLOAT3 GetNormalAt(float x, float z);
 
 	int GetVertexCount();
 

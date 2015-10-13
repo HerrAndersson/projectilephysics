@@ -22,9 +22,13 @@ Game::Game(HINSTANCE hInstance, HWND hwnd, int screenWidth, int screenHeight, bo
 	sunLight->SetLookAt(XMFLOAT3(512, 0, 512));
 	sunLight->SetPosition(sun->GetPosition());
 
+	gameObjects.push_back(sun);
+
 	GameObject* cannonBase = new GameObject(ObjectTypes::STATIC, Assets->GetRenderObject(5), XMFLOAT3(480, 10, 128), XMFLOAT3(MeterToUnits(1.5f), MeterToUnits(2.5f), MeterToUnits(1.8f)), XMFLOAT3(-20, 0, 0));
 	gameObjects.push_back(cannonBase);
 
+	cannon = new GameObject(ObjectTypes::CANNON, Assets->GetRenderObject(3), GameConstants::CANNONBALL_START_POS, XMFLOAT3(MeterToUnits(0.4f), MeterToUnits(0.4f), MeterToUnits(3.0f)), XMFLOAT3(-45, 0, 0));
+	gameObjects.push_back(cannon);
 
 
 	XMFLOAT3 pos = GameConstants::CANNONBALL_START_POS;
@@ -53,9 +57,7 @@ Game::Game(HINSTANCE hInstance, HWND hwnd, int screenWidth, int screenHeight, bo
 		
 	}
 
-	cannon = new GameObject(ObjectTypes::CANNON, Assets->GetRenderObject(3), GameConstants::CANNONBALL_START_POS, XMFLOAT3(MeterToUnits(0.4f), MeterToUnits(0.4f), MeterToUnits(3.0f)), XMFLOAT3(-45, 0, 0));
-
-	for (size_t i = 0; i < 1; i++)
+	for (size_t i = 0; i < 10; i++)
 	{
 		PhysicsObject* sphere = new PhysicsObject(ObjectTypes::PHYSICS, Assets->GetRenderObject(2), GameConstants::CANNONBALL_START_POS, XMFLOAT3(MeterToUnits(0.25f / 2), MeterToUnits(0.25f / 2), MeterToUnits(0.25f / 2)), XMFLOAT3(0, 0, 0), PhysicsConstants::IRON_DENSITY, UnitsToMeter(MeterToUnits(0.25f / 2) / 2));
 		projectiles.push_back(sphere);
@@ -78,9 +80,7 @@ Game::~Game()
 	delete camera;
 	delete terrain;
 	delete skySphere;
-	delete sun;
 	delete sunLight;
-	delete cannon;
 
 	for (auto go : gameObjects) 
 		delete go;
@@ -156,17 +156,10 @@ bool Game::Render()
 	for (int i = 0; i < (signed)projectiles.size(); i++)
 		Renderer->Render(projectiles.at(i));
 
-	Renderer->Render(sun);
-	Renderer->Render(cannon);
-
 	Renderer->SetCullingState(CullingState::FRONT);
 	Renderer->Render(skySphere);
 
 	////////////////////////////////////////////////////////////// Text //////////////////////////////////////////////////////////////
-	//string s = "Angle: " + to_string(360 - cannon->GetRotation().x)
-	//	+ "\n" 
-	//	+ "Launch speed: " + to_string(Logic->GetLaunchSpeed());
-
 	float length = 0;
 	bool found = false;
 	for (unsigned int i = 0; i < projectiles.size() - 1 && !found; i++)
