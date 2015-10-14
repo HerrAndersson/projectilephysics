@@ -27,13 +27,12 @@ class GameLogic
 private:
 
 	InputManager*  Input;
-
-	bool quitGame = true;
+	Movement movement;
 
 	int screenWidth;
 	int screenHeight;
 
-	Movement movement;
+	double startTime;
 
 	float cannonLaunchSpeed;
 	bool airResistanceOn;

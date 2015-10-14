@@ -1,4 +1,5 @@
 #include "GameLogic.h"
+#include <DirectXCollision.h>
 
 GameLogic::GameLogic(InputManager* Input)
 {
@@ -48,12 +49,14 @@ bool GameLogic::Update(double frameTime, double gameTime, vector<PhysicsObject*>
 
 bool GameLogic::UpdateCamera(double frameTime, Camera* camera, Terrain* terrain)
 {
+	BoundingBox b = BoundingBox(XMFLOAT3(480, 10, 135), XMFLOAT3(MeterToUnits(1.8f / 2), MeterToUnits(2.5f / 2), MeterToUnits(3.8f / 2)));
+	BoundingSphere s = BoundingSphere(XMFLOAT3(0, 0, 0), 1.5f);
 
 	XMFLOAT2 difference;
 	XMFLOAT3 rotation = camera->GetRotation();
 	XMFLOAT3 position = camera->GetPosition();
+	XMFLOAT3 oldPos = position;
 	float radians;
-
 	float speedMultiplier;
 
 	if (Input->ShiftDown())
@@ -98,6 +101,7 @@ bool GameLogic::UpdateCamera(double frameTime, Camera* camera, Terrain* terrain)
 	}
 
 	radians = XMConvertToRadians(rotation.y);
+	
 	position.x += sinf(radians) * movement.forwardSpeed;
 	position.z += cosf(radians) * movement.forwardSpeed;
 
@@ -176,6 +180,12 @@ bool GameLogic::UpdateCamera(double frameTime, Camera* camera, Terrain* terrain)
 	if (position.z > GameConstants::WORLD_SIZE - 35)
 		position.z = GameConstants::WORLD_SIZE - 35;
 
+	
+	s.Center = position;
+
+	if (b.Intersects(s))
+		position = oldPos;
+
 	camera->SetRotation(rotation);
 	camera->SetPosition(position);
 
@@ -184,9 +194,10 @@ bool GameLogic::UpdateCamera(double frameTime, Camera* camera, Terrain* terrain)
 
 bool GameLogic::UpdatePhysicsObjects(double frameTime, double gameTime, vector<PhysicsObject*>& projectiles, XMFLOAT3 cannonRotation, Terrain* terrain)
 {
-
-	//if (int(gameTime) % int(frameTime))
+	//if (abs(startTime - gameTime) > 200)
 	//{
+	//	startTime = gameTime;
+
 	//	PhysicsObject* copy2 = nullptr;
 	//	for (auto p : projectiles)
 	//	{
@@ -209,8 +220,6 @@ bool GameLogic::UpdatePhysicsObjects(double frameTime, double gameTime, vector<P
 	//	newObj->WakePhysics();
 	//	projectiles.push_back(newObj);
 	//}
-
-
 
 
 	if (Input->RightMouseClicked())
@@ -312,22 +321,29 @@ bool GameLogic::UpdatePhysicsObjects(double frameTime, double gameTime, vector<P
 					XMFLOAT3 responseForce;
 					XMStoreFloat3(&responseForce, responseForceVec);
 
-					int r = rand() % 10 + 11;
-					float a = r / 100.0f;
+					
+					XMVECTOR down = XMLoadFloat3(&XMFLOAT3(0, -1, 0));
+					float randomOffset = float((rand() % 10 + 11)/100.0f);
+					float dotProduct = XMVectorGetX(XMVector3Dot(down, normal));
+					float value = 1.0f;
 
-					vel.x = (0.15f + a) * (vel.x + responseForce.x);
-					vel.y = (0.1f + a) * responseForce.y;
-					vel.z = (0.15f + a) * (vel.z + responseForce.z);
+					if (dotProduct > -0.97)
+						value += 0.5f + abs(dotProduct);
 
+
+					vel.x = value * (0.15f + randomOffset) * (vel.x + responseForce.x);
+					vel.y = value * (0.1f + randomOffset) * responseForce.y;
+					vel.z = value * (0.15f + randomOffset) * (vel.z + responseForce.z);
+
+					if(abs(vel.z) < 0.3f && abs(vel.y) < 0.3f)
+						p->KillPhysics();
+
+					//cout << dotProduct << endl;
 					//cout << a << endl;
 					//cout << "Normal   " << XMVectorGetX(normal) << " " << XMVectorGetY(normal) << " " << XMVectorGetZ(normal) << endl;
 					//cout << "Response " << responseForce.x << " " << responseForce.y << " " << responseForce.z << endl;
 					//cout << "Velocity " << vel.x << " " << vel.y << " " << vel.z << endl; 
 					//cout << endl;
-
-
-					if(abs(vel.z) < 0.3f && abs(vel.y) < 0.3f)
-						p->KillPhysics();
 
 				}
 

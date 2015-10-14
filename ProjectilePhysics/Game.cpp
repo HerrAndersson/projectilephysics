@@ -59,7 +59,7 @@ Game::Game(HINSTANCE hInstance, HWND hwnd, int screenWidth, int screenHeight, bo
 
 	for (size_t i = 0; i < 10; i++)
 	{
-		PhysicsObject* sphere = new PhysicsObject(ObjectTypes::PHYSICS, Assets->GetRenderObject(2), GameConstants::CANNONBALL_START_POS, XMFLOAT3(MeterToUnits(0.25f / 2), MeterToUnits(0.25f / 2), MeterToUnits(0.25f / 2)), XMFLOAT3(0, 0, 0), PhysicsConstants::IRON_DENSITY, UnitsToMeter(MeterToUnits(0.25f / 2) / 2));
+		PhysicsObject* sphere = new PhysicsObject(ObjectTypes::PHYSICS, Assets->GetRenderObject(2), GameConstants::CANNONBALL_START_POS, XMFLOAT3(MeterToUnits(0.225f), MeterToUnits(0.225f), MeterToUnits(0.225f)), XMFLOAT3(0, 0, 0), PhysicsConstants::IRON_DENSITY, UnitsToMeter(MeterToUnits(0.225f / 2)));
 		projectiles.push_back(sphere);
 	}
 
