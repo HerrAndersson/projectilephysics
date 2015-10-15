@@ -62,6 +62,16 @@ bool RenderModule::InitializeSamplers()
 	if (FAILED(result))
 		throw std::runtime_error("RenderModule(InitializeSamplers): samplerStateClamp initialization failed.");
 
+	//Create a POINT texture sampler state.
+	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+
+	result = device->CreateSamplerState(&samplerDesc, &sampleStatePoint);
+	if (FAILED(result))
+		throw std::runtime_error("RenderModule(InitializeSamplers): samplerStatePoint initialization failed.");
+	
 	//Create a COMPARISON sampler state
 	samplerDesc.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_MIP_POINT;
 	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
@@ -349,6 +359,7 @@ void RenderModule::UseDefaultShader()
 	deviceContext->PSSetSamplers(0, 1, &sampleStateClamp);
 	deviceContext->PSSetSamplers(1, 1, &sampleStateWrap);
 	deviceContext->PSSetSamplers(2, 1, &sampleStateComparison);
+	deviceContext->PSSetSamplers(3, 1, &sampleStatePoint);
 }
 
 void RenderModule::UseTerrainShader()
@@ -365,6 +376,7 @@ void RenderModule::UseTerrainShader()
 	deviceContext->PSSetSamplers(0, 1, &sampleStateClamp);
 	deviceContext->PSSetSamplers(1, 1, &sampleStateWrap);
 	deviceContext->PSSetSamplers(2, 1, &sampleStateComparison);
+	deviceContext->PSSetSamplers(3, 1, &sampleStatePoint);
 }
 
 bool RenderModule::Render(GameObject* gameObject)

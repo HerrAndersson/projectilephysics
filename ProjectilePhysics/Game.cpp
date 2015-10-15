@@ -7,6 +7,7 @@ Game::Game(HINSTANCE hInstance, HWND hwnd, int screenWidth, int screenHeight, bo
 
 	camera = new Camera(XM_PI / 2.2f, screenWidth, screenHeight, 0.1f, 3000.0f);
 	camera->SetPosition(XMFLOAT3(512, 50, 50));
+	camera->SetLookAt(0, 0, 1);
 
 	Renderer = new RenderModule(hwnd, screenWidth, screenHeight, fullscreen, shadowMapSize);
 	Assets = new AssetManager(Renderer->GetDevice());
@@ -14,22 +15,19 @@ Game::Game(HINSTANCE hInstance, HWND hwnd, int screenWidth, int screenHeight, bo
 
 	Logic = new GameLogic(Input);
 
-
 	//Objects
 	skySphere = new GameObject(ObjectTypes::STATIC, Assets->GetRenderObject(0), XMFLOAT3(512, 100, 512), XMFLOAT3(850, 850, 850), XMFLOAT3(0, 0, 0));
-	sun = new GameObject(ObjectTypes::STATIC, Assets->GetRenderObject(4), XMFLOAT3(512, 550, -50), XMFLOAT3(20, 20, 20), XMFLOAT3(0, 0, 0));
-	sunLight = new DirectionalLight(XM_PI / 2, 1.0f, 0.1f, 3000.0f);
-	sunLight->SetLookAt(XMFLOAT3(512, 0, 512));
-	sunLight->SetPosition(sun->GetPosition());
+	sun = new GameObject(ObjectTypes::STATIC, Assets->GetRenderObject(4), XMFLOAT3(512, 500, -400), XMFLOAT3(10, 10, 10), XMFLOAT3(0, 0, 0));
 
-	gameObjects.push_back(sun);
+	sunCam = new Camera(XM_PI / 2.2f, 1, 1, 0.1f, 3000.0f);
+	sunCam->SetPosition(sun->GetPosition());
+	sunCam->SetRotation(XMFLOAT3(45.0f, 0.0f, 0.0f));
 
 	GameObject* cannonBase = new GameObject(ObjectTypes::STATIC, Assets->GetRenderObject(5), XMFLOAT3(480, 10, 128), XMFLOAT3(MeterToUnits(1.5f), MeterToUnits(2.5f), MeterToUnits(1.8f)), XMFLOAT3(-20, 0, 0));
 	gameObjects.push_back(cannonBase);
 
 	cannon = new GameObject(ObjectTypes::CANNON, Assets->GetRenderObject(3), GameConstants::CANNONBALL_START_POS, XMFLOAT3(MeterToUnits(0.4f), MeterToUnits(0.4f), MeterToUnits(3.0f)), XMFLOAT3(-45, 0, 0));
 	gameObjects.push_back(cannon);
-
 
 	XMFLOAT3 pos = GameConstants::CANNONBALL_START_POS;
 	for (int i = 0; i < 1000; i++)
@@ -80,7 +78,8 @@ Game::~Game()
 	delete camera;
 	delete terrain;
 	delete skySphere;
-	delete sunLight;
+	delete sunCam;
+	delete sun;
 
 	for (auto go : gameObjects) 
 		delete go;
@@ -95,12 +94,12 @@ bool Game::Update(double frameTime, double gameTime)
 	if (!Logic->Update(frameTime, gameTime, projectiles, camera, skySphere, terrain, cannon))
 		return false;
 
-	XMFLOAT3 pos = sun->GetPosition();
+	/*XMFLOAT3 pos = sun->GetPosition();
 	pos.x = 512 + sin(float(gameTime / 10000.0f)) * 500;
 	pos.z = 512 + cos(float(gameTime / 10000.0f)) * 500;
 
 	sun->SetPosition(pos);
-	sunLight->SetPosition(pos);
+	sunLight->SetPosition(pos);*/
 
 	return true;
 }
@@ -115,14 +114,14 @@ bool Game::Render()
 	camera->GetProjectionMatrix(projectionMatrix);
 	camera->GetViewMatrix(viewMatrix);
 
-	sunLight->GetViewMatrix(lightView);
-	sunLight->GetProjectionMatrix(lightProjection);
+	sunCam->GetViewMatrix(lightView);
+	sunCam->GetProjectionMatrix(lightProjection);
 
 	//camera->GetProjectionMatrix(lightProjection);
 	//camera->GetViewMatrix(lightView);
 
-	//sunLight->GetViewMatrix(viewMatrix);
-	//sunLight->GetProjectionMatrix(projectionMatrix);
+	//sunCam->GetViewMatrix(viewMatrix);
+	//sunCam->GetProjectionMatrix(projectionMatrix);
 
 	///////////////////////////////////////////////////////////// Shadows /////////////////////////////////////////////////////////////
 	Renderer->ActivateShadowRendering(lightView, lightProjection);
@@ -142,7 +141,7 @@ bool Game::Render()
 	//Shadows funkar inte!
 	////////////////////////////////////////////////////////////// Normal //////////////////////////////////////////////////////////////
 	Renderer->BeginScene(0.05f, 0.05f, 0.05f, 1.0f);
-	Renderer->SetDataPerFrame(viewMatrix, projectionMatrix, camera->GetPosition(), sunLight->GetPosition(), lightView, lightProjection);
+	Renderer->SetDataPerFrame(viewMatrix, projectionMatrix, camera->GetPosition(), sunCam->GetPosition(), lightView, lightProjection);
 
 	Renderer->UseTerrainShader();
 	Renderer->SetTerrainData(XMMatrixIdentity(), XMFLOAT3(0, 0, 0), terrain);
@@ -156,8 +155,10 @@ bool Game::Render()
 	for (int i = 0; i < (signed)projectiles.size(); i++)
 		Renderer->Render(projectiles.at(i));
 
+	Renderer->Render(sun);
+
 	Renderer->SetCullingState(CullingState::FRONT);
-	Renderer->Render(skySphere);
+	//Renderer->Render(skySphere);
 
 	////////////////////////////////////////////////////////////// Text //////////////////////////////////////////////////////////////
 	float length = 0;

@@ -397,7 +397,6 @@ void Terrain::InitializeBuffers(ID3D11Device* device)
 			index3 = (terrainHeight * (i + 1)) + j;				//Upper left
 			index4 = (terrainHeight * (i + 1)) + (j + 1);		//Upper right
 
-																// Upper left
 			tv = heightMap[index3].tv;
 			//Cover the top edge
 			if (tv == 1.0f)

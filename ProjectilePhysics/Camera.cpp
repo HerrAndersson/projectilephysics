@@ -13,7 +13,7 @@ Camera::Camera(float fovAngleY, int width, int height, float viewNear, float vie
 	this->viewFar = viewFar;
 
 	//Set where the camera is looking by default.
-	camLookAt = XMVectorSet(0.0f, 0.0f, 1.0f, 1.0f);
+	camLookAt = XMVectorSet(0, 0, 1, 0);
 
 	projectionMatrix = XMMatrixPerspectiveFovLH(fovAngleY, aspectRatioWbyH, viewNear, viewFar);
 	Update();
@@ -56,7 +56,7 @@ void Camera::Update()
 
 	XMVECTOR up = XMVectorSet(0, 1, 0, 0);
 	XMVECTOR pos = XMVectorSet(position.x, position.y, position.z, 0);
-	XMVECTOR lookAt = XMVectorSet(0, 0, 1, 0);
+	XMVECTOR lookAt = camLookAt;
 
 	rotationMatrix = XMMatrixRotationRollPitchYaw(XMConvertToRadians(rotation.x), XMConvertToRadians(rotation.y), 0);
 
@@ -71,7 +71,7 @@ void Camera::Update()
 
 void Camera::SetLookAt(float x, float y, float z)
 {
-	camLookAt = XMVectorSet(x, y, z, 1);
+	camLookAt = XMVectorSet(x, y, z, 0);
 	Update();
 }
 

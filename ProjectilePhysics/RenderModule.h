@@ -58,6 +58,7 @@ private:
 	ID3D11SamplerState*		sampleStateWrap;
 	ID3D11SamplerState*		sampleStateClamp;
 	ID3D11SamplerState*     sampleStateComparison;
+	ID3D11SamplerState*     sampleStatePoint;
 
 	//Other
 	ID3D11InputLayout*		layoutPosUvNorm;

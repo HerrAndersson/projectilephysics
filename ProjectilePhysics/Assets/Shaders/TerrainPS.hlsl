@@ -1,11 +1,10 @@
-SamplerState SampleType;
-
 Texture2D ShadowMap : register(t0);
 Texture2D shaderTexture[4] : register(t1);
 
 SamplerState sampleStateClamp : register(s0);
 SamplerState sampleStateWrap : register(s1);
 SamplerComparisonState sampleStateComparison : register(s2);
+SamplerState samplerStatePoint : register(s3);
 
 cbuffer lightBuffer : register(b0)
 {
@@ -26,6 +25,11 @@ struct VS_OUT
 	float3 colorModifier: COLORMODIFIER;
 };
 
+float2 texOffset(int u, int v)
+{
+	return float2(u * 1.0f / shadowMapSize, v * 1.0f / shadowMapSize);
+}
+
 float4 main(VS_OUT input) : SV_TARGET
 {
 	float4 blendMapColor = shaderTexture[0].Sample(sampleStateWrap, input.tex);
@@ -39,22 +43,20 @@ float4 main(VS_OUT input) : SV_TARGET
 
 
 
-
-
 	//float4 sm = ShadowMap.Sample(SampleType, input.tex);
-	//return float4(pow(sm.x, 7000), pow(sm.y, 7000), pow(sm.z, 7000), 1);
+	//return float4(pow(sm.x, 8000), pow(sm.y, 8000), pow(sm.z, 8000), 1);
 
 
-	//////SHADOW MAPEN ÄR KORREKT, SAMPLINGVÄRDET ÄR FÖR LÅGT
 
 	//float4 wp4 = float4(input.worldPos.xyz, 1.0f);
 	//float4 lightSpacePos = mul(mul(wp4, lightView), lightProj);
 
 	//float3 wp = input.worldPos.xyz;
-	//float3 lightToPixelVec = normalize(lightPos - wp);
+	//float3 lightToPixelVec = normalize(wp - lightPos);
 	//float howMuchLight = dot(lightToPixelVec, input.normal);
-	//if (howMuchLight > 0.0f)
-	//{
+
+	////if (howMuchLight > 0.0f)
+	////{
 
 	//	float2 smTex;
 	//	smTex.x = 0.5f + (lightSpacePos.x / lightSpacePos.w * 0.5f);
@@ -62,31 +64,24 @@ float4 main(VS_OUT input) : SV_TARGET
 
 	//	float depth = lightSpacePos.z / lightSpacePos.w;
 
-	//	float epsilon = 0.004f;
+	//	float epsilon = 0.000001f;
 	//	float dx = 1.0f / shadowMapSize;
 
 	//	//Less filtering
-	//	float s0 = ShadowMap.Sample(SampleType, smTex).r;
-	//	float s1 = ShadowMap.Sample(SampleType, smTex + float2(dx, 0.0f)).r;
-	//	float s2 = ShadowMap.Sample(SampleType, smTex + float2(0.0f, dx)).r;
-	//	float s3 = ShadowMap.Sample(SampleType, smTex + float2(dx, dx)).r;
+	//	float s0 = ShadowMap.Sample(samplerStatePoint, smTex).r;
+	//	float s1 = ShadowMap.Sample(samplerStatePoint, smTex + float2(dx, 0.0f)).r;
+	//	float s2 = ShadowMap.Sample(samplerStatePoint, smTex + float2(0.0f, dx)).r;
+	//	float s3 = ShadowMap.Sample(samplerStatePoint, smTex + float2(dx, dx)).r;
 
 	//	float2 texelPos = smTex * shadowMapSize;
 	//	float2 lerps = frac(texelPos);
 	//	float shadowCoeff = lerp(lerp(s0, s1, lerps.x), lerp(s2, s3, lerps.x), lerps.y);
 
-	//	shadowCoeff = float(ShadowMap.SampleCmpLevelZero(sampleStateComparison, smTex, depth + epsilon));
-
-	//	//shadowCoeff = pow(shadowCoeff, 7000);
-	//	///*depth = pow(depth, 7000);*/
-	//	//shadowCoeff = saturate(shadowCoeff);
-	//	//depth = saturate(depth);
-
 	//	if (shadowCoeff < depth - epsilon)
 	//	{
-	//		finalColor = saturate(finalColor * shadowCoeff);
+	//		finalColor = finalColor * pow(shadowCoeff, 10000);
 	//	}
-	//}
+	////}
 
 
 	//Get local illumination from the "sun" on the whole scene
@@ -97,3 +92,48 @@ float4 main(VS_OUT input) : SV_TARGET
 
 	return finalColor;
 }
+
+
+
+
+
+
+
+
+
+
+//float4 lpos = mul(mul(input.worldPos, lightView), lightProj);
+//lpos.xyz /= lpos.w;
+//
+////if position is not visible to the light - dont illuminate it. results in hard light frustum
+//if (lpos.x < -1.0f || lpos.x > 1.0f ||
+//	lpos.y < -1.0f || lpos.y > 1.0f ||
+//	lpos.z < 0.0f || lpos.z > 1.0f) return ambient;
+//
+////transform clip space coords to texture space coords (-1:1 to 0:1)
+//lpos.x = lpos.x / 2 + 0.5;
+//lpos.y = lpos.y / -2 + 0.5;
+//
+////apply shadow map bias
+//lpos.z -= 0.004f;
+//
+////PCF sampling for shadow map
+//float sum = 0;
+//float x, y;
+//
+////perform PCF filtering on a 4 x 4 texel neighborhood
+//for (y = -1.5; y <= 1.5; y += 1.0)
+//{
+//	for (x = -1.5; x <= 1.5; x += 1.0)
+//	{
+//		sum += ShadowMap.SampleCmpLevelZero(sampleStateComparison, lpos.xy + texOffset(x, y), lpos.z);
+//	}
+//}
+//
+//
+//float shadowFactor = sum / 16.0;
+//
+////calculate ilumination at fragment
+//float3 L = normalize(lightPos - input.worldPos.xyz);
+//float ndotl = dot(normalize(input.normal), L);
+//return ambient + shadowFactor*textureColor*ndotl;
