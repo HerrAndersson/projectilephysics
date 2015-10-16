@@ -33,6 +33,7 @@ private:
 
 	Key leftMouse = Key(VK_LBUTTON);
 	Key rightMouse = Key(VK_RBUTTON);
+	Key middleMouse = Key(VK_MBUTTON);
 	Key esc = Key(VK_ESCAPE);
 	Key space = Key(VK_SPACE);
 
@@ -62,6 +63,9 @@ public:
 
 	bool RightMouseDown();
 	bool RightMouseClicked();
+
+	bool MiddleMouseDown();
+	bool MiddleMouseClicked();
 
 	bool SpaceDown();
 	bool SpaceClicked();

@@ -155,12 +155,20 @@ bool Game::Render()
 	for (int i = 0; i < (signed)projectiles.size(); i++)
 		Renderer->Render(projectiles.at(i));
 
-	Renderer->Render(sun);
+	//Renderer->Render(sun);
 
 	Renderer->SetCullingState(CullingState::FRONT);
-	//Renderer->Render(skySphere);
+	Renderer->Render(skySphere);
 
-	////////////////////////////////////////////////////////////// Text //////////////////////////////////////////////////////////////
+	RenderText();
+
+	Renderer->EndScene();
+
+	return result;
+}
+
+void Game::RenderText()
+{
 	float length = 0;
 	bool found = false;
 	for (unsigned int i = 0; i < projectiles.size() - 1 && !found; i++)
@@ -176,30 +184,42 @@ bool Game::Render()
 		if (projectiles.at(projectiles.size() - 1)->IsUsed())
 			length = projectiles.at(projectiles.size() - 1)->GetPosition().z - GameConstants::CANNONBALL_START_POS.z;
 
-
-	int x1, x2 = 0;
-	int y1, y2 = 0;
+	int x1 = 0, x2 = 0;
+	int x3 = 0, x4 = 0;
+	int y1 = 0, y2 = 0;
 	TruncateOne(float(360 - cannon->GetRotation().x), x1, x2);
 	TruncateOne(Logic->GetLaunchSpeed(), y1, y2);
+	TruncateOne(float(cannon->GetRotation().y), x3, x4);
+
+	if (x3 > 20)
+	{
+		x3 = x3 - 360;
+		if (x3 > -20)
+			x4 = 9 - x4;
+		else
+			x4 = 0;
+	}
+
 	string s1;
 	if (Logic->AirResistanceOn())
 		s1 = "ON";
 	else
 		s1 = "OFF";
 
-	string s = "Angle: " + to_string(x1) + "." + to_string(x2)
-		+ "\n"
-		+ "Launch speed: " + to_string(y1) + "." + to_string(y2)
-		+ "\n"
-		+ "Air resistance: " + s1
-		+ "\n"
-		+ "Last length: " + to_string(UnitsToMeter(length));
+	string s2;
+	if (Logic->ResponseForceOn())
+		s2 = "ON";
+	else
+		s2 = "OFF";
+
+	string s = "Angle Z: " + to_string(x1) + "." + to_string(x2)
+		+ "\n" + "Angle Y: " + to_string(x3) + "." + to_string(x4)
+		+ "\n" + "Air resistance: " + s1
+		+ "\n" + "Response: " + s2
+		+ "\n" + "Launch speed: " + to_string(y1) + "." + to_string(y2)
+		+ "\n" + "Last length: " + to_string(UnitsToMeter(length));
 
 	Renderer->DrawString(wstring(s.begin(), s.end()), (FLOAT)20.0f, (FLOAT)7, (FLOAT)5, 0xff000000);
-
-	Renderer->EndScene();
-
-	return result;
 }
 
 void* Game::operator new(size_t i)

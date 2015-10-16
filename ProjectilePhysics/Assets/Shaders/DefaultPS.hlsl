@@ -30,6 +30,7 @@ float4 main(pixelInputType input) : SV_TARGET
 
 	float4 finalColor = AssetTexture.Sample(sampleStateClamp, input.tex);
 
+	return finalColor;
 
 	//float3 wp = input.worldPos.xyz;
 	//float3 lightToPixelVec = normalize(lightPos - wp);
@@ -66,12 +67,12 @@ float4 main(pixelInputType input) : SV_TARGET
 	//	}
 	//}
 
-	//Get local illumination from the "sun" on the whole scene
-	float3 lightDir = normalize(lightPos - float3(512, 0, 512));
-	float lightIntensity = saturate(dot(input.normal.xyz, lightDir)) + 0.35f;
-	finalColor = saturate(finalColor * lightIntensity);
+	////Get local illumination from the "sun" on the whole scene
+	//float3 lightDir = normalize(lightPos - float3(512, 0, 512));
+	//float lightIntensity = saturate(dot(input.normal.xyz, lightDir)) + 0.35f;
+	//finalColor = saturate(finalColor * lightIntensity);
 
-	return finalColor;
+	//return finalColor;
 
 }
 

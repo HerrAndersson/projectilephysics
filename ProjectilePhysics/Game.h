@@ -38,6 +38,8 @@ private:
 	GameObject*					cannon;
 	Camera*						sunCam;
 
+	void RenderText();
+
 public:
 
 	Game(HINSTANCE hInstance, HWND hwnd, int screenWidth, int screenHeight, bool fullscreen);

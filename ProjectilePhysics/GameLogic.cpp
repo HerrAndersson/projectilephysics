@@ -5,7 +5,8 @@ GameLogic::GameLogic(InputManager* Input)
 {
 	this->Input = Input;
 	cannonLaunchSpeed = GameConstants::INITIAL_LAUNCH_SPEED;
-	airResistanceOn = true;
+	airResistanceOn = true; 
+	responseForceOn = true;
 }
 
 GameLogic::~GameLogic()
@@ -21,6 +22,11 @@ float GameLogic::GetLaunchSpeed()
 bool GameLogic::AirResistanceOn()
 {
 	return airResistanceOn;
+}
+
+bool GameLogic::ResponseForceOn()
+{
+	return responseForceOn;
 }
 
 bool GameLogic::Update(double frameTime, double gameTime, vector<PhysicsObject*>& projectiles, Camera* camera, GameObject* skySphere, Terrain* terrain, GameObject* cannon)
@@ -224,6 +230,8 @@ bool GameLogic::UpdatePhysicsObjects(double frameTime, double gameTime, vector<P
 
 	if (Input->RightMouseClicked())
 		airResistanceOn = !airResistanceOn;
+	if (Input->MiddleMouseClicked())
+		responseForceOn = !responseForceOn;
 	
 
 	if (Input->LeftMouseClicked())
@@ -240,13 +248,7 @@ bool GameLogic::UpdatePhysicsObjects(double frameTime, double gameTime, vector<P
 				if (!p->IsAlive() && !p->IsUsed())
 				{
 					p->SetPosition(GameConstants::CANNONBALL_START_POS);
-					float b = sin(XMConvertToRadians(360 - cannonRotation.x));
-					float c = cos(XMConvertToRadians(360 - cannonRotation.x));
-
-					float velY = cannonLaunchSpeed * b;
-					float velZ = cannonLaunchSpeed * c;
-
-					p->SetVelocity(XMFLOAT3(0, velY, velZ));
+					p->SetVelocity(CalculateVelocity(cannonLaunchSpeed, cannonRotation));
 					p->WakePhysics();
 					found = true;
 					break;
@@ -258,14 +260,7 @@ bool GameLogic::UpdatePhysicsObjects(double frameTime, double gameTime, vector<P
 		{
 			PhysicsObject* newObj = new PhysicsObject(*copy);
 			newObj->SetPosition(GameConstants::CANNONBALL_START_POS);
-
-			float b = sin(XMConvertToRadians(360 - cannonRotation.x));
-			float c = cos(XMConvertToRadians(360 - cannonRotation.x));
-
-			float velY = cannonLaunchSpeed * b;
-			float velZ = cannonLaunchSpeed * c;
-
-			newObj->SetVelocity(XMFLOAT3(0, velY, velZ));
+			newObj->SetVelocity(CalculateVelocity(cannonLaunchSpeed, cannonRotation));
 			newObj->WakePhysics();
 
 			projectiles.push_back(newObj);
@@ -282,69 +277,61 @@ bool GameLogic::UpdatePhysicsObjects(double frameTime, double gameTime, vector<P
 				float timeStep = float(frameTime / 1000);	
 				XMFLOAT3 pos = p->GetPosition();
 				XMFLOAT3 vel = p->GetVelocity();
-				float mass = p->GetMass();
-				float alpha = XMConvertToRadians(360 - cannonRotation.x);
-
-				float airDragForce = 0.5f * PhysicsConstants::DRAG_COEFF_SPHERE * PhysicsConstants::AIR_DENSITY*p->GetCrossSectionalArea();
-				float airDragY = -airDragForce * pow(vel.y, 2) * sin(alpha);
-				float airDragZ = -(airDragForce / p->GetMass()) * pow(vel.z, 2) * cos(alpha);
+				float airDragX = 0, airDragY = 0, airDragZ = 0;
 
 				if (airResistanceOn)
 				{
-					pos.y = pos.y + MeterToUnits(vel.y * timeStep - 0.5f * (PhysicsConstants::GRAVITY.y + airDragY) * pow(timeStep, 2));
-					pos.z = pos.z + MeterToUnits(vel.z * timeStep - 0.5f * (airDragZ) * pow(timeStep, 2));
+					float mass = p->GetMass();
+					float alpha = XMConvertToRadians(360 - cannonRotation.x);
+					float beta = XMConvertToRadians(cannonRotation.y);
+					float airDragForce = 0.5f * PhysicsConstants::DRAG_COEFF_SPHERE * PhysicsConstants::AIR_DENSITY*p->GetCrossSectionalArea();
 
-					vel.x = vel.x + PhysicsConstants::GRAVITY.x * timeStep;
-					vel.y = vel.y + (PhysicsConstants::GRAVITY.y + airDragY) * timeStep;
-					vel.z = vel.z + (PhysicsConstants::GRAVITY.z + airDragZ) * timeStep;
+					airDragX = -(airDragForce / p->GetMass()) * pow(vel.x, 2) * sin(beta);
+					airDragY = -airDragForce * pow(vel.y, 2) * sin(alpha);
+					airDragZ = -(airDragForce / p->GetMass()) * pow(vel.z, 2) * cos(alpha);
 				}
-				else
-				{
-					pos.x = pos.x + MeterToUnits(vel.x * timeStep);
-					pos.y = pos.y + MeterToUnits(vel.y * timeStep - 0.5f * PhysicsConstants::GRAVITY.y * pow(timeStep, 2));
-					pos.z = pos.z + MeterToUnits(vel.z * timeStep);
 
-					vel.x = vel.x + PhysicsConstants::GRAVITY.x * timeStep;
-					vel.y = vel.y + PhysicsConstants::GRAVITY.y * timeStep;
-					vel.z = vel.z + PhysicsConstants::GRAVITY.z * timeStep;
-				}
+				pos.x = pos.x + MeterToUnits(vel.x * timeStep - 0.5f * (airDragX) * pow(timeStep, 2));
+				pos.y = pos.y + MeterToUnits(vel.y * timeStep - 0.5f * (PhysicsConstants::GRAVITY.y + airDragY) * pow(timeStep, 2));
+				pos.z = pos.z + MeterToUnits(vel.z * timeStep - 0.5f * (airDragZ)* pow(timeStep, 2));
+
+				vel.x = vel.x + (PhysicsConstants::GRAVITY.x + airDragX) * timeStep;
+				vel.y = vel.y + (PhysicsConstants::GRAVITY.y + airDragY) * timeStep;
+				vel.z = vel.z + (PhysicsConstants::GRAVITY.z + airDragZ) * timeStep;
+
 
 				if (pos.y <= terrain->GetY(pos.x, pos.z) + MeterToUnits(p->GetRadius()))
 				{
-
 					pos.y = terrain->GetY(pos.x, pos.z) + MeterToUnits(p->GetRadius() + 0.001f);
 
-					XMVECTOR normal = XMLoadFloat3(&terrain->GetNormalAt(pos.x, pos.z));
-					XMVECTOR velVec = XMLoadFloat3(&vel);
-
-					XMVECTOR responseForceVec = XMVector3Dot(velVec, -normal) * normal;
-					XMFLOAT3 responseForce;
-					XMStoreFloat3(&responseForce, responseForceVec);
-
-					
-					XMVECTOR down = XMLoadFloat3(&XMFLOAT3(0, -1, 0));
-					float randomOffset = float((rand() % 10 + 11)/100.0f);
-					float dotProduct = XMVectorGetX(XMVector3Dot(down, normal));
-					float value = 1.0f;
-
-					if (dotProduct > -0.97)
-						value += 0.5f + abs(dotProduct);
-
-
-					vel.x = value * (0.15f + randomOffset) * (vel.x + responseForce.x);
-					vel.y = value * (0.1f + randomOffset) * responseForce.y;
-					vel.z = value * (0.15f + randomOffset) * (vel.z + responseForce.z);
-
-					if(abs(vel.z) < 0.3f && abs(vel.y) < 0.3f)
+					if (!responseForceOn)
+					{
 						p->KillPhysics();
+					}
+					else
+					{
+						XMVECTOR normal = XMLoadFloat3(&terrain->GetNormalAt(pos.x, pos.z));
+						XMVECTOR velVec = XMLoadFloat3(&vel);
 
-					//cout << dotProduct << endl;
-					//cout << a << endl;
-					//cout << "Normal   " << XMVectorGetX(normal) << " " << XMVectorGetY(normal) << " " << XMVectorGetZ(normal) << endl;
-					//cout << "Response " << responseForce.x << " " << responseForce.y << " " << responseForce.z << endl;
-					//cout << "Velocity " << vel.x << " " << vel.y << " " << vel.z << endl; 
-					//cout << endl;
+						XMVECTOR responseForceVec = XMVector3Dot(velVec, -normal) * normal;
+						XMFLOAT3 responseForce;
+						XMStoreFloat3(&responseForce, responseForceVec);
 
+						XMVECTOR down = XMLoadFloat3(&XMFLOAT3(0, -1, 0));
+						float randomOffset = float((rand() % 10 + 11) / 100.0f);
+						float dotProduct = XMVectorGetX(XMVector3Dot(down, normal));
+						float value = 1.0f;
+
+						if (dotProduct > -0.97)
+							value += 0.5f + abs(dotProduct);
+
+						vel.x = value * (0.15f + randomOffset) * (vel.x + responseForce.x);
+						vel.y = value * (0.1f + randomOffset) * responseForce.y;
+						vel.z = value * (0.15f + randomOffset) * (vel.z + responseForce.z);
+
+						if (abs(vel.z) < 0.3f && abs(vel.y) < 0.3f)
+							p->KillPhysics();
+					}
 				}
 
 				p->SetPosition(pos);
@@ -372,35 +359,60 @@ bool GameLogic::UpdateSky(double gameTime, GameObject* skySphere)
 
 bool GameLogic::UpdateCannon(GameObject* cannon)
 {
+	//////////////////////////////////////// Rotation ////////////////////////////////////////
+	XMFLOAT3 cannonRotation = cannon->GetRotation();
 	if (Input->UpArrowDown())
 	{
-		XMFLOAT3 cannonRotation = cannon->GetRotation();
-
 		if (cannonRotation.x > 295)
 			cannonRotation.x -= GameConstants::CANNON_PITCH_SPEED;
-
-		cannon->SetRotation(cannonRotation);
 	}
 	else if (Input->DownArrowDown())
 	{
-		XMFLOAT3 cannonRotation = cannon->GetRotation();
-
 		if (cannonRotation.x < 358.9)
 			cannonRotation.x += GameConstants::CANNON_PITCH_SPEED;
-
-		cannon->SetRotation(cannonRotation);
 	}
 
 	if (Input->LeftArrowDown())
 	{
+		if (cannonRotation.y > 340.1 || cannonRotation.y < 21)
+			cannonRotation.y -= GameConstants::CANNON_PITCH_SPEED;
+	}
+	else if (Input->RightArrowDown())
+	{
+		if (cannonRotation.y > 340 || cannonRotation.y < 20)
+			cannonRotation.y += GameConstants::CANNON_PITCH_SPEED;
+	}
+
+	cannon->SetRotation(cannonRotation);
+
+	////////////////////////////////////// Launch speed //////////////////////////////////////
+	if (Input->KeyDown('z'))
+	{
 		if (cannonLaunchSpeed > GameConstants::MIN_LAUNCH_SPEED)
 			cannonLaunchSpeed -= 0.1f;;
 	}
-	else if (Input->RightArrowDown())
+	else if (Input->KeyDown('x'))
 	{
 		if (cannonLaunchSpeed < GameConstants::MAX_LAUNCH_SPEED)
 			cannonLaunchSpeed += 0.1f;
 	}
 
 	return true;
+}
+
+XMFLOAT3 GameLogic::CalculateVelocity(float launchSpeed, XMFLOAT3 cannonRotation)
+{
+	float b = sin(XMConvertToRadians(360 - cannonRotation.x));
+	float c = cos(XMConvertToRadians(360 - cannonRotation.x));
+
+	float d = cos(XMConvertToRadians(cannonRotation.y));
+	float e = sin(XMConvertToRadians(cannonRotation.y));
+
+	float velY = launchSpeed * b;
+	float velZ = launchSpeed * c;
+
+	float velX = velZ * e;
+	velZ = velZ * d;
+
+	return XMFLOAT3(velX, velY, velZ);
 }

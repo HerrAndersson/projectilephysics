@@ -36,6 +36,9 @@ private:
 
 	float cannonLaunchSpeed;
 	bool airResistanceOn;
+	bool responseForceOn;
+
+	XMFLOAT3 CalculateVelocity(float launchSpeed, XMFLOAT3 cannonRotation);
 
 public:
 
@@ -50,5 +53,6 @@ public:
 
 	float GetLaunchSpeed();
 	bool AirResistanceOn();
+	bool ResponseForceOn();
 };
 

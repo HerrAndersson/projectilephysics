@@ -19,6 +19,7 @@ void InputManager::Update()
 	esc.Update();
 	rightMouse.Update();
 	space.Update();
+	middleMouse.Update();
 }
 
 void InputManager::HandleMouse()
@@ -159,6 +160,19 @@ bool InputManager::RightMouseDown()
 bool InputManager::RightMouseClicked()
 {
 	if (rightMouse.lastState == Key::KeyStates::DOWN && GetAsyncKeyState(rightMouse.key) == 0)
+		return true;
+
+	return false;
+}
+
+bool InputManager::MiddleMouseDown()
+{
+	return GetAsyncKeyState(VK_MBUTTON) != 0;
+}
+
+bool InputManager::MiddleMouseClicked()
+{
+	if (middleMouse.lastState == Key::KeyStates::DOWN && GetAsyncKeyState(middleMouse.key) == 0)
 		return true;
 
 	return false;
