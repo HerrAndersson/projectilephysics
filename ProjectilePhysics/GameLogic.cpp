@@ -6,7 +6,7 @@ GameLogic::GameLogic(InputManager* Input)
 	this->Input = Input;
 	cannonLaunchSpeed = GameConstants::INITIAL_LAUNCH_SPEED;
 	airResistanceOn = true; 
-	responseForceOn = true;
+	responseForceOn = false;
 }
 
 GameLogic::~GameLogic()
@@ -277,28 +277,27 @@ bool GameLogic::UpdatePhysicsObjects(double frameTime, double gameTime, vector<P
 				float timeStep = float(frameTime / 1000);	
 				XMFLOAT3 pos = p->GetPosition();
 				XMFLOAT3 vel = p->GetVelocity();
-				float airDragX = 0, airDragY = 0, airDragZ = 0;
+				XMVECTOR dragVec = XMVectorSet(0, 0, 0, 0);
+				XMVECTOR velVec = XMLoadFloat3(&vel);
 
 				if (airResistanceOn)
 				{
 					float mass = p->GetMass();
-					float alpha = XMConvertToRadians(360 - cannonRotation.x);
-					float beta = XMConvertToRadians(cannonRotation.y);
-					float airDragForce = 0.5f * PhysicsConstants::DRAG_COEFF_SPHERE * PhysicsConstants::AIR_DENSITY*p->GetCrossSectionalArea();
+					float airDragForce = (0.5f * PhysicsConstants::DRAG_COEFF_SPHERE * PhysicsConstants::AIR_DENSITY*p->GetCrossSectionalArea()) / p->GetMass();
 
-					airDragX = -(airDragForce / p->GetMass()) * pow(vel.x, 2) * sin(beta);
-					airDragY = -airDragForce * pow(vel.y, 2) * sin(alpha);
-					airDragZ = -(airDragForce / p->GetMass()) * pow(vel.z, 2) * cos(alpha);
+					XMVECTOR normVel = XMVector3Normalize(velVec);
+
+					dragVec = XMVectorSet(airDragForce * pow(vel.x, 2), airDragForce * pow(vel.y, 2), airDragForce* pow(vel.z, 2), 0);
+					dragVec = dragVec * -normVel;
 				}
 
-				pos.x = pos.x + MeterToUnits(vel.x * timeStep - 0.5f * (airDragX) * pow(timeStep, 2));
-				pos.y = pos.y + MeterToUnits(vel.y * timeStep - 0.5f * (PhysicsConstants::GRAVITY.y + airDragY) * pow(timeStep, 2));
-				pos.z = pos.z + MeterToUnits(vel.z * timeStep - 0.5f * (airDragZ)* pow(timeStep, 2));
+				dragVec += XMVectorSet(0, PhysicsConstants::GRAVITY.y, 0, 0);
+				velVec += dragVec * timeStep;
+				XMStoreFloat3(&vel, velVec);
 
-				vel.x = vel.x + (PhysicsConstants::GRAVITY.x + airDragX) * timeStep;
-				vel.y = vel.y + (PhysicsConstants::GRAVITY.y + airDragY) * timeStep;
-				vel.z = vel.z + (PhysicsConstants::GRAVITY.z + airDragZ) * timeStep;
-
+				pos.x += MeterToUnits(vel.x * timeStep);
+				pos.y += MeterToUnits(vel.y * timeStep);
+				pos.z += MeterToUnits(vel.z * timeStep);
 
 				if (pos.y <= terrain->GetY(pos.x, pos.z) + MeterToUnits(p->GetRadius()))
 				{
@@ -416,3 +415,14 @@ XMFLOAT3 GameLogic::CalculateVelocity(float launchSpeed, XMFLOAT3 cannonRotation
 
 	return XMFLOAT3(velX, velY, velZ);
 }
+
+
+
+//Enligt analytiska metoden
+//vel.x += drag.x * timeStep;
+//vel.y += (PhysicsConstants::GRAVITY.y + drag.y) * timeStep;
+//vel.z += drag.z * timeStep;
+
+//pos.x += MeterToUnits(vel.x * timeStep - 0.5f * (-airDragX) * pow(timeStep, 2));
+//pos.y += MeterToUnits(vel.y * timeStep - 0.5f * (PhysicsConstants::GRAVITY.y + -airDragY) * pow(timeStep, 2));
+//pos.z += MeterToUnits(vel.z * timeStep - 0.5f * (-airDragZ)* pow(timeStep, 2));
