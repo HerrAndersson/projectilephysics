@@ -14,7 +14,7 @@ class Terrain
 {
 private:
 
-	//For our texture-blending to work this has to be set to 1. 
+	//For texture-blending to work this has to be set to 1. 
 	//If no blending is used then repeating texture works
 	const int TEXTURE_REPEAT = 1;
 
