@@ -61,7 +61,7 @@ Game::Game(HINSTANCE hInstance, HWND hwnd, int screenWidth, int screenHeight, bo
 		projectiles.push_back(sphere);
 	}
 
-	terrain = new Terrain(Renderer->GetDevice(), "Assets/Textures/heightmap01f.bmp", 3.0f,
+	terrain = new Terrain(Renderer->GetDevice(), "Assets/Textures/heightmap01f_small.bmp", 12.0f, 4.0f,
 		Assets->LoadTexture("Assets/Textures/blendmap.png"),
 		Assets->LoadTexture("Assets/Textures/grass1.png"),
 		Assets->LoadTexture("Assets/Textures/stone1.png"),
@@ -157,8 +157,8 @@ bool Game::Render()
 
 	//Renderer->Render(sun);
 
-	Renderer->SetCullingState(CullingState::FRONT);
-	Renderer->Render(skySphere);
+	//Renderer->SetCullingState(CullingState::FRONT);
+	//Renderer->Render(skySphere);
 
 	RenderText();
 

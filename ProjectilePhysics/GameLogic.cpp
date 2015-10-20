@@ -177,14 +177,14 @@ bool GameLogic::UpdateCamera(double frameTime, Camera* camera, Terrain* terrain)
 
 	position.y = terrain->GetY(position.x, position.z) + MovementConstants::CAMERA_HEIGHT_OFFSET;
 
-	if (position.x < 35)
-		position.x = 35;
-	if (position.x > GameConstants::WORLD_SIZE - 35)
-		position.x = GameConstants::WORLD_SIZE - 35;
-	if (position.z < 35)
-		position.z = 35;
-	if (position.z > GameConstants::WORLD_SIZE - 35)
-		position.z = GameConstants::WORLD_SIZE - 35;
+	//if (position.x < 35)
+	//	position.x = 35;
+	//if (position.x > GameConstants::WORLD_SIZE - 35)
+	//	position.x = GameConstants::WORLD_SIZE - 35;
+	//if (position.z < 35)
+	//	position.z = 35;
+	//if (position.z > GameConstants::WORLD_SIZE - 35)
+	//	position.z = GameConstants::WORLD_SIZE - 35;
 
 	
 	s.Center = position;

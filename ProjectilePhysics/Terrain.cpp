@@ -4,7 +4,7 @@
 using namespace DirectX;
 using namespace std;
 
-Terrain::Terrain(ID3D11Device* device, char* heightMapName, float normalizeFactor, ID3D11ShaderResourceView* blendMap, ID3D11ShaderResourceView* grass, ID3D11ShaderResourceView* stone, ID3D11ShaderResourceView* sand)
+Terrain::Terrain(ID3D11Device* device, char* heightMapName, float normalizeFactor, float sizeFactor, ID3D11ShaderResourceView* blendMap, ID3D11ShaderResourceView* grass, ID3D11ShaderResourceView* stone, ID3D11ShaderResourceView* sand)
 {
 	indexBuffer = nullptr;
 	vertexBuffer = nullptr;
@@ -23,7 +23,10 @@ Terrain::Terrain(ID3D11Device* device, char* heightMapName, float normalizeFacto
 	if (!result)
 		throw runtime_error("Terrain: LoadHeightMap Error");
 
+	this->sizeFactor = sizeFactor;
+	EnlargeTerrain(sizeFactor);
 	NormalizeHeightMap(normalizeFactor);
+
 	CalculateNormals();
 	CalculateTextureCoordinates();
 
@@ -55,6 +58,8 @@ void Terrain::GetBuffers(ID3D11Buffer*& vertexBuffer, ID3D11Buffer*& indexBuffer
 float Terrain::GetY(float x, float z)
 {
 	float returnValue = 0.0f;
+	x /= sizeFactor;
+	z /= sizeFactor;
 
 	//Normalizing with bilinear interpolation
 	if (x <= terrainWidth - 2 && z <= terrainHeight - 2 && x >= 0 + 1 && z >= 0 + 1)
@@ -102,8 +107,8 @@ XMFLOAT3 Terrain::GetNormalAt(float x, float z)
 		y21 = GetHeightAt(x2, z1);
 		y22 = GetHeightAt(x2, z2);
 
-		XMVECTOR vec1 = XMVector3Normalize(XMLoadFloat3(&XMFLOAT3(x2 - x1, y21 - y11, z1 - z1)));
-		XMVECTOR vec2 = XMVector3Normalize(XMLoadFloat3(&XMFLOAT3(x1 - x1, y12 - y11, z2 - z1)));
+		XMVECTOR vec1 = XMVector3Normalize(XMLoadFloat3(&XMFLOAT3(float(x2 - x1), y21 - y11, float(z1 - z1))));
+		XMVECTOR vec2 = XMVector3Normalize(XMLoadFloat3(&XMFLOAT3(float(x1 - x1), y12 - y11, float(z2 - z1))));
 
 		XMVECTOR n = XMVector3Normalize(XMVector3Cross(vec2, vec1));
 
@@ -202,6 +207,19 @@ void Terrain::NormalizeHeightMap(float factor)
 		for (int j = 0; j < terrainWidth; j++)
 		{
 			heightMap[(terrainHeight * i) + j].y /= factor;
+		}
+	}
+}
+
+void Terrain::EnlargeTerrain(float sizeFactor)
+{
+	for (int i = 0; i < terrainHeight; i++)
+	{
+		for (int j = 0; j < terrainWidth; j++)
+		{
+			heightMap[(terrainHeight * i) + j].y *= sizeFactor;
+			heightMap[(terrainHeight * i) + j].x *= sizeFactor;
+			heightMap[(terrainHeight * i) + j].z *= sizeFactor;
 		}
 	}
 }

@@ -35,6 +35,8 @@ private:
 	int vertexCount;
 	int indexCount;
 
+	float sizeFactor;
+
 	HeightMap* heightMap;
 
 	ID3D11Buffer* vertexBuffer;
@@ -48,12 +50,13 @@ private:
 	void NormalizeHeightMap(float factor);
 	void CalculateNormals();
 	void CalculateTextureCoordinates();
+	void EnlargeTerrain(float sizeFactor);
 
 	float GetHeightAt(int x, int z);
 
 public:
 
-	Terrain(ID3D11Device* device, char* heightMapName, float normalizeFactor, ID3D11ShaderResourceView* blendMap, ID3D11ShaderResourceView* grass, ID3D11ShaderResourceView* stone, ID3D11ShaderResourceView* sand);
+	Terrain(ID3D11Device* device, char* heightMapName, float normalizeFactor, float sizeFactor, ID3D11ShaderResourceView* blendMap, ID3D11ShaderResourceView* grass, ID3D11ShaderResourceView* stone, ID3D11ShaderResourceView* sand);
 	~Terrain();
 
 	float GetY(float x, float z);
