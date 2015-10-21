@@ -93,6 +93,9 @@ XMFLOAT3 Terrain::GetNormalAt(float x, float z)
 {
 	XMFLOAT3 returnValue(0, 0, 0);
 
+	x /= sizeFactor;
+	z /= sizeFactor;
+
 	if (x <= terrainWidth - 2 && z <= terrainHeight - 2 && x >= 0 + 1 && z >= 0 + 1)
 	{
 		int x1, x2, z1, z2;
@@ -245,11 +248,11 @@ void Terrain::CalculateNormals()
 			vertex1[0] = heightMap[index1].x;
 			vertex1[1] = heightMap[index1].y;
 			vertex1[2] = heightMap[index1].z;
-
+											
 			vertex2[0] = heightMap[index2].x;
 			vertex2[1] = heightMap[index2].y;
 			vertex2[2] = heightMap[index2].z;
-
+											
 			vertex3[0] = heightMap[index3].x;
 			vertex3[1] = heightMap[index3].y;
 			vertex3[2] = heightMap[index3].z;

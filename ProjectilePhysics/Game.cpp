@@ -157,8 +157,8 @@ bool Game::Render()
 
 	//Renderer->Render(sun);
 
-	//Renderer->SetCullingState(CullingState::FRONT);
-	//Renderer->Render(skySphere);
+	Renderer->SetCullingState(CullingState::FRONT);
+	Renderer->Render(skySphere);
 
 	RenderText();
 

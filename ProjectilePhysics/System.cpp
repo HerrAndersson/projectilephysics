@@ -68,11 +68,11 @@ bool System::Update()
 
 	if (timer->GetFrameTime() >= MS_PER_FRAME)
 	{
-		//if (GetFocus() == hwnd)
-		//{
+		if (GetFocus() == hwnd)
+		{
 		result = game->Update(timer->GetFrameTime(), timer->GetGameTime());
 		if (!result) { return false; }
-		//}
+		}
 
 		result = game->Render();
 		if (!result) { return false; }
@@ -173,6 +173,7 @@ void System::InitializeWindows()
 	SetForegroundWindow(hwnd);
 	SetFocus(hwnd);
 
+	SetCursorPos(screenWidth / 2, screenHeight / 2);
 	ShowCursor(showCursor);
 }
 
