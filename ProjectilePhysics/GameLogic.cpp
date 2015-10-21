@@ -215,14 +215,7 @@ bool GameLogic::UpdatePhysicsObjects(double frameTime, double gameTime, vector<P
 
 	//	PhysicsObject* newObj = new PhysicsObject(*copy2);
 	//	newObj->SetPosition(GameConstants::CANNONBALL_START_POS);
-
-	//	float b = sin(XMConvertToRadians(360 - cannonRotation.x));
-	//	float c = cos(XMConvertToRadians(360 - cannonRotation.x));
-
-	//	float velY = cannonLaunchSpeed * b;
-	//	float velZ = cannonLaunchSpeed * c;
-
-	//	newObj->SetVelocity(XMFLOAT3(0, velY, velZ));
+	//	newObj->SetVelocity(CalculateVelocity(cannonLaunchSpeed, cannonRotation));
 	//	newObj->WakePhysics();
 	//	projectiles.push_back(newObj);
 	//}
