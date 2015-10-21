@@ -55,4 +55,7 @@ namespace GameConstants
 	const int NUMBER_OF_CANNONBALLS = 20;
 	const XMFLOAT3 CANNONBALL_START_POS = XMFLOAT3(480, 15, 135);
 	const float CANNON_PITCH_SPEED = 0.1f;
+
+	const float TO_METER = 1 / UNITS_PER_METER;
+	const float TO_UNITS = UNITS_PER_METER;
 }

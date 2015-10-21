@@ -279,15 +279,14 @@ bool GameLogic::UpdatePhysicsObjects(double frameTime, double gameTime, vector<P
 				XMFLOAT3 vel = p->GetVelocity();
 				XMVECTOR dragVec = XMVectorSet(0, 0, 0, 0);
 				XMVECTOR velVec = XMLoadFloat3(&vel);
+				XMVECTOR posVec = XMLoadFloat3(&pos);
 
 				if (airResistanceOn)
 				{
-					float mass = p->GetMass();
 					float airDragForce = (0.5f * PhysicsConstants::DRAG_COEFF_SPHERE * PhysicsConstants::AIR_DENSITY*p->GetCrossSectionalArea()) / p->GetMass();
+					dragVec = XMVectorSet(airDragForce * pow(vel.x, 2), airDragForce * pow(vel.y, 2), airDragForce* pow(vel.z, 2), 0);
 
 					XMVECTOR normVel = XMVector3Normalize(velVec);
-
-					dragVec = XMVectorSet(airDragForce * pow(vel.x, 2), airDragForce * pow(vel.y, 2), airDragForce* pow(vel.z, 2), 0);
 					dragVec = dragVec * -normVel;
 				}
 
@@ -295,9 +294,8 @@ bool GameLogic::UpdatePhysicsObjects(double frameTime, double gameTime, vector<P
 				velVec += dragVec * timeStep;
 				XMStoreFloat3(&vel, velVec);
 
-				pos.x += MeterToUnits(vel.x * timeStep);
-				pos.y += MeterToUnits(vel.y * timeStep);
-				pos.z += MeterToUnits(vel.z * timeStep);
+				posVec += velVec * timeStep * GameConstants::TO_UNITS;
+				XMStoreFloat3(&pos, posVec);
 
 				if (pos.y <= terrain->GetY(pos.x, pos.z) + MeterToUnits(p->GetRadius()))
 				{
