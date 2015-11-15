@@ -54,8 +54,8 @@ void Camera::Update()
 
 	XMMATRIX rotationMatrix;
 
-	XMVECTOR up = XMVectorSet(0, 1, 0, 0);
-	XMVECTOR pos = XMVectorSet(position.x, position.y, position.z, 0);
+	XMVECTOR up = XMVectorSet(0, 1, 0, 1);
+	XMVECTOR pos = XMVectorSet(position.x, position.y, position.z, 1);
 	XMVECTOR lookAt = camLookAt;
 
 	rotationMatrix = XMMatrixRotationRollPitchYaw(XMConvertToRadians(rotation.x), XMConvertToRadians(rotation.y), 0);
@@ -71,7 +71,7 @@ void Camera::Update()
 
 void Camera::SetLookAt(float x, float y, float z)
 {
-	camLookAt = XMVectorSet(x, y, z, 0);
+	camLookAt = XMVectorSet(x, y, z, 1);
 	Update();
 }
 

@@ -17,7 +17,7 @@ Game::Game(HINSTANCE hInstance, HWND hwnd, int screenWidth, int screenHeight, bo
 
 	//Objects
 	skySphere = new GameObject(ObjectTypes::STATIC, Assets->GetRenderObject(0), XMFLOAT3(512, 100, 512), XMFLOAT3(850, 850, 850), XMFLOAT3(0, 0, 0));
-	sun = new GameObject(ObjectTypes::STATIC, Assets->GetRenderObject(4), XMFLOAT3(512, 500, -400), XMFLOAT3(10, 10, 10), XMFLOAT3(0, 0, 0));
+	sun = new GameObject(ObjectTypes::STATIC, Assets->GetRenderObject(4), XMFLOAT3(512, 800, -400), XMFLOAT3(10, 10, 10), XMFLOAT3(0, 0, 0));
 
 	sunCam = new Camera(XM_PI / 2.2f, 1, 1, 0.1f, 3000.0f);
 	sunCam->SetPosition(sun->GetPosition());
@@ -25,6 +25,9 @@ Game::Game(HINSTANCE hInstance, HWND hwnd, int screenWidth, int screenHeight, bo
 
 	GameObject* cannonBase = new GameObject(ObjectTypes::STATIC, Assets->GetRenderObject(5), XMFLOAT3(480, 10, 128), XMFLOAT3(MeterToUnits(1.5f), MeterToUnits(2.5f), MeterToUnits(1.8f)), XMFLOAT3(-20, 0, 0));
 	gameObjects.push_back(cannonBase);
+
+	GameObject* camel = new GameObject(ObjectTypes::STATIC, Assets->GetRenderObject(1), XMFLOAT3(380, 0, 582), XMFLOAT3(MeterToUnits(5.5f), MeterToUnits(5.5f), MeterToUnits(5.5f)), XMFLOAT3(0, 45, 0));
+	gameObjects.push_back(camel);
 
 	cannon = new GameObject(ObjectTypes::CANNON, Assets->GetRenderObject(3), GameConstants::CANNONBALL_START_POS, XMFLOAT3(MeterToUnits(0.4f), MeterToUnits(0.4f), MeterToUnits(3.0f)), XMFLOAT3(-45, 0, 0));
 	gameObjects.push_back(cannon);
@@ -61,7 +64,7 @@ Game::Game(HINSTANCE hInstance, HWND hwnd, int screenWidth, int screenHeight, bo
 		projectiles.push_back(sphere);
 	}
 
-	terrain = new Terrain(Renderer->GetDevice(), "Assets/Textures/heightmap01f_small.bmp", 12.0f, 4.0f,
+	terrain = new Terrain(Renderer->GetDevice(), "Assets/Textures/heightmap01f_small.bmp", 8.0f, 4.0f,
 		Assets->LoadTexture("Assets/Textures/blendmap.png"),
 		Assets->LoadTexture("Assets/Textures/grass1.png"),
 		Assets->LoadTexture("Assets/Textures/stone1.png"),
@@ -94,12 +97,13 @@ bool Game::Update(double frameTime, double gameTime)
 	if (!Logic->Update(frameTime, gameTime, projectiles, camera, skySphere, terrain, cannon))
 		return false;
 
-	/*XMFLOAT3 pos = sun->GetPosition();
-	pos.x = 512 + sin(float(gameTime / 10000.0f)) * 500;
-	pos.z = 512 + cos(float(gameTime / 10000.0f)) * 500;
+	//XMFLOAT3 pos = sun->GetPosition();
+	//pos.x = 512 + sin(float(gameTime / 10000.0f)) * 500;
+	//pos.z = 512 + cos(float(gameTime / 10000.0f)) * 500;
 
-	sun->SetPosition(pos);
-	sunLight->SetPosition(pos);*/
+	//sun->SetPosition(pos);
+	//sunCam->SetPosition(pos);
+	//sunCam->SetLookAt(0, -1, 1);
 
 	return true;
 }
@@ -155,7 +159,7 @@ bool Game::Render()
 	for (int i = 0; i < (signed)projectiles.size(); i++)
 		Renderer->Render(projectiles.at(i));
 
-	//Renderer->Render(sun);
+	Renderer->Render(sun);
 
 	Renderer->SetCullingState(CullingState::FRONT);
 	Renderer->Render(skySphere);
