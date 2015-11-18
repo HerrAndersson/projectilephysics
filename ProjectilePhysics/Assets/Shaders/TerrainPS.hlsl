@@ -42,13 +42,9 @@ float4 main(VS_OUT input) : SV_TARGET
 	float4 finalColor = textureColor;
 
 
-
 	//float4 sm = ShadowMap.Sample(sampleStatePoint, input.tex);
 	////return sm.xxxx;
 	//return float4(pow(sm.x, 800), pow(sm.y, 800), pow(sm.z, 800), 1);
-
-
-
 	float4 wp4 = float4(input.worldPos.xyz, 1.0f);
 	float4 lightSpacePos = mul(mul(wp4, lightView), lightProj);
 
@@ -58,7 +54,6 @@ float4 main(VS_OUT input) : SV_TARGET
 
 	//if (howMuchLight > 0.0f)
 	//{
-
 		float2 smTex;
 		smTex.x = 0.5f + (lightSpacePos.x / lightSpacePos.w * 0.5f);
 		smTex.y = 0.5f - (lightSpacePos.y / lightSpacePos.w * 0.5f);
