@@ -17,7 +17,7 @@ Game::Game(HINSTANCE hInstance, HWND hwnd, int screenWidth, int screenHeight, bo
 
 	//Objects
 	skySphere = new GameObject(ObjectTypes::STATIC, Assets->GetRenderObject(0), XMFLOAT3(512, 100, 512), XMFLOAT3(850, 850, 850), XMFLOAT3(0, 0, 0));
-	sun = new GameObject(ObjectTypes::STATIC, Assets->GetRenderObject(4), XMFLOAT3(512, 500, -400), XMFLOAT3(10, 10, 10), XMFLOAT3(0, 0, 0));
+	sun = new GameObject(ObjectTypes::STATIC, Assets->GetRenderObject(4), XMFLOAT3(512, 500, -300), XMFLOAT3(10, 10, 10), XMFLOAT3(0, 0, 0));
 
 	sunCam = new Camera(XM_PI / 2.2f, 1, 1, 0.1f, 3000.0f);
 	sunCam->SetPosition(sun->GetPosition());
@@ -99,7 +99,27 @@ bool Game::Update(double frameTime, double gameTime)
 	pos.z = 512 + cos(float(gameTime / 10000.0f)) * 500;
 
 	sun->SetPosition(pos);
-	sunLight->SetPosition(pos);*/
+	sunCam->SetPosition(pos);*/
+
+	XMFLOAT3 pos = sun->GetPosition();
+
+	if (!lr)
+	{
+		if (pos.x > 112)
+			pos.x--;
+		else
+			lr = !lr;
+	}
+	else
+	{
+		if (pos.x < 912)
+			pos.x++;
+		else
+			lr = !lr;
+	}
+
+	sun->SetPosition(pos);
+	sunCam->SetPosition(pos);
 
 	return true;
 }

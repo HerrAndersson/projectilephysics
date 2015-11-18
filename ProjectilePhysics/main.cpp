@@ -30,7 +30,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 	try
 	{
-		system = new System(false, true, 1600, 900);
+		system = new System(false, true, 657, 223);
 		system->Run();
 		delete system;
 	}

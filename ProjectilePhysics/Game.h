@@ -23,6 +23,7 @@ private:
 
 	int screenWidth, screenHeight;
 	const int shadowMapSize = 2048;
+	bool lr = false;
 
 	Camera*						camera;
 	GameLogic*					Logic;
