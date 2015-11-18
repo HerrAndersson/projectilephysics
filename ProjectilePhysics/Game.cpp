@@ -102,7 +102,7 @@ bool Game::Update(double frameTime, double gameTime)
 	//pos.z = 512 + cos(float(gameTime / 10000.0f)) * 500;
 
 	//sun->SetPosition(pos);
-	sunCam->SetPosition(pos);*/
+	//sunCam->SetPosition(pos);
 
 	XMFLOAT3 pos = sun->GetPosition();
 
