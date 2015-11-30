@@ -70,8 +70,8 @@ bool System::Update()
 	{
 		if (GetFocus() == hwnd)
 		{
-		result = game->Update(timer->GetFrameTime(), timer->GetGameTime());
-		if (!result) { return false; }
+			result = game->Update(timer->GetFrameTime(), timer->GetGameTime());
+			if (!result) { return false; }
 		}
 
 		result = game->Render();
@@ -85,54 +85,13 @@ bool System::Update()
 			s += " - CPU%: " + std::to_string(cpuUsage->GetCpuPercentage())
 				+ "    Milliseconds/frame: " + std::to_string(timer->GetFrameTime())
 				+ "    FPS: " + std::to_string(fps.fps)
-				+ "    Total time(ms): " + std::to_string(int(timer->GetGameTime()));
+				+ "    Total time(ms): " + std::to_string((timer->GetGameTime()));
 		}
 
 		timer->Reset();
 
 		SetWindowText(hwnd, s.c_str());
 
-
-
-	//https://msdn.microsoft.com/en-us/library/windows/desktop/bb205075(v=vs.85).aspx#Handling_Window_Resizing
-	//http://www.gamedev.net/topic/623652-how-should-i-resize-a-directx-11-window/
-
-
-		if (GetAsyncKeyState(VK_LEFT) != 0)
-		{
-			int posX = 0;
-			int posY = 0;
-			windowWidth = GetSystemMetrics(SM_CXSCREEN);
-			windowHeight = GetSystemMetrics(SM_CYSCREEN);
-			SetWindowLong(hwnd, GWL_STYLE, WS_POPUP);
-			SetWindowPos(hwnd, HWND_TOP, posX, posY, windowWidth, windowHeight, SWP_FRAMECHANGED);
-
-			SetForegroundWindow(hwnd);
-			SetFocus(hwnd);
-
-			SetCursorPos(screenWidth / 2, screenHeight / 2);
-			ShowCursor(showCursor);
-		}
-
-		//if(GetAsyncKeyState(VK_RIGHT) != 0)
-		//{
-		//	windowHeight = 900;
-		//	windowWidth = 1600;
-		//	int posX = (GetSystemMetrics(SM_CXSCREEN) - windowWidth) / 2;
-		//	int posY = (GetSystemMetrics(SM_CYSCREEN) - windowHeight) / 2;
-
-		//	RECT rc2 = { 0, 0, windowWidth, windowHeight };
-		//	AdjustWindowRect(&rc2, WS_OVERLAPPEDWINDOW, FALSE);
-
-		//	SetWindowLong(hwnd, GWL_STYLE, WS_OVERLAPPEDWINDOW);
-		//	SetWindowPos(hwnd, NULL, posX, posY, rc2.right - rc2.left, rc2.bottom - rc2.top, SWP_NOOWNERZORDER | SWP_NOZORDER);
-
-		//	SetForegroundWindow(hwnd);
-		//	SetFocus(hwnd);
-
-		//	SetCursorPos(screenWidth / 2, screenHeight / 2);
-		//	ShowCursor(showCursor);
-		//}
 	}
 
 	return result;
@@ -210,34 +169,6 @@ void System::InitializeWindows()
 	hwnd = CreateWindowEx(WS_EX_APPWINDOW, applicationName, applicationName,
 		WS_OVERLAPPEDWINDOW | CW_USEDEFAULT | CW_USEDEFAULT,
 		posX, posY, rc.right - rc.left, rc.bottom - rc.top, NULL, NULL, hinstance, NULL);
-
-
-
-	//windowHeight = 900;
-	//windowWidth = 1600;
-	//posX = (GetSystemMetrics(SM_CXSCREEN) - windowWidth) / 2;
-	//posY = (GetSystemMetrics(SM_CYSCREEN) - windowHeight) / 2;
-
-	//RECT rc2 = { 0, 0, windowWidth, windowHeight };
-	//AdjustWindowRect(&rc2, WS_OVERLAPPEDWINDOW, FALSE);
-
-	//SetWindowPos(hwnd, NULL, posX, posY, rc2.right - rc2.left, rc2.bottom - rc2.top, SWP_NOOWNERZORDER | SWP_NOZORDER);
-
-
-
-
-	posX = 0;
-	posY = 0;
-	windowWidth = GetSystemMetrics(SM_CXSCREEN);
-	windowHeight = GetSystemMetrics(SM_CYSCREEN);
-	SetWindowLong(hwnd, GWL_STYLE, WS_POPUP);
-	SetWindowPos(hwnd, HWND_TOP, posX, posY, windowWidth, windowHeight, SWP_FRAMECHANGED);
-
-	////ShowWindow(hwnd, SW_MAXIMIZE);
-
-
-
-
 
 	ShowWindow(hwnd, SW_SHOW);
 	SetForegroundWindow(hwnd);

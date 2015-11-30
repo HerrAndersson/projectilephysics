@@ -27,15 +27,16 @@ Timer::~Timer()
 void Timer::Update()
 {
 	INT64 currentTime;
-	double timeDifference;
-
 	QueryPerformanceCounter((LARGE_INTEGER*)&currentTime);		//Query the current time
-	timeDifference = (double)(currentTime - startTime); 		//Difference in time since the last time-query 
-	tempTime = timeDifference / ticksPerMs;					//Time difference over the timer speed resolution give frameTime
+	double timeDifference = (double)(currentTime - startTime); 	//Difference in time since the last time-query 
+	tempTime = timeDifference / ticksPerMs;						//Time difference over the timer speed resolution give frameTime
 	startTime = currentTime; 									//Restart the timer
 
 	frameTime += tempTime;
 	gameTime += tempTime;
+
+	if (gameTime > (DBL_MAX - 100000000))
+		gameTime = 0;
 }
 
 double Timer::GetFrameTime()

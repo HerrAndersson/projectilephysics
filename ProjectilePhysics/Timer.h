@@ -10,9 +10,9 @@ private:
 	double ticksPerMs;
 	INT64 startTime;
 
-	double tempTime;   //Time since last frame
-	double frameTime;  //Time since the beginning of the game
-	double gameTime;
+	double tempTime;
+	double frameTime;   //Time since last frame
+	double gameTime;	//Time since the beginning of the game
 
 public:
 
