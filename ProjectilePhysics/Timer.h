@@ -24,6 +24,8 @@ public:
 	double GetFrameTime();
 	double GetGameTime();
 
+	int GetFPS();
+
 	void Reset();
 
 };

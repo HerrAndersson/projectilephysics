@@ -13,7 +13,6 @@ System::System(bool fullscreen, bool showCursor, int windowWidth, int windowHeig
 
 	timer = new Timer();
 	cpuUsage = new Cpu();
-	fps = FPS();
 
 	game = new Game(hinstance, hwnd, this->windowWidth, this->windowHeight, fullscreen);
 }
@@ -77,14 +76,12 @@ bool System::Update()
 		result = game->Render();
 		if (!result) { return false; }
 
-		fps.Update();
-
 		std::string s = "Physics";
 		if (debugShowFps)
 		{
 			s += " - CPU%: " + std::to_string(cpuUsage->GetCpuPercentage())
 				+ "    Milliseconds/frame: " + std::to_string(timer->GetFrameTime())
-				+ "    FPS: " + std::to_string(fps.fps)
+				+ "    FPS: " + std::to_string(timer->GetFPS())
 				+ "    Total time(ms): " + std::to_string((timer->GetGameTime()));
 		}
 

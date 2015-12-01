@@ -54,3 +54,8 @@ void Timer::Reset()
 	frameTime = 0;
 }
 
+int Timer::GetFPS()
+{
+	return (int)(1 / (frameTime / 1000));
+}
+
