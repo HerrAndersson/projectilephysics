@@ -30,7 +30,7 @@ namespace MovementConstants
 	const float SPEED_MULTIPLIER = 0.07f;
 	const float SHIFT_SPEED_MULTIPLIER = 0.35f;
 	const float LOOK_SPEED = 0.5f;
-	const float VIEW_BOUNDS = 75.0f;
+	const float VIEW_BOUNDS = 90.0f;
 	const float CAMERA_HEIGHT_OFFSET = MeterToUnits(1.8f);
 }
 
