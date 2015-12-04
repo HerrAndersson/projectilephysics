@@ -18,6 +18,8 @@ protected:
 	XMFLOAT3		colorModifier = XMFLOAT3(0, 0, 0);
 	XMVECTOR		forwardVector;
 
+	XMMATRIX		worldMatrix;
+
 	RenderObject*	renderObject;
 
 public:
@@ -26,7 +28,7 @@ public:
 	GameObject(const GameObject& other);
 	virtual ~GameObject();
 
-	XMMATRIX GetWorldMatrix();
+	XMMATRIX* GetWorldMatrix();
 	RenderObject* GetRenderObject();
 
 	XMFLOAT3 GetColorModifier()							const { return colorModifier; }

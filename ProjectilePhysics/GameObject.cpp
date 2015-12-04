@@ -25,7 +25,7 @@ GameObject::~GameObject()
 	renderObject = nullptr;
 }
 
-XMMATRIX GameObject::GetWorldMatrix()
+XMMATRIX* GameObject::GetWorldMatrix()
 {
 
 	/*Usually it is scale * rotation * translation.
@@ -38,7 +38,9 @@ XMMATRIX GameObject::GetWorldMatrix()
 	XMMATRIX translationMatrix = XMMatrixTranslation(position.x, position.y, position.z);
 	XMMATRIX scalingMatrix = XMMatrixScaling(scale.x, scale.y, scale.z);
 
-	return scalingMatrix * rotationMatrix * translationMatrix;
+	worldMatrix = (scalingMatrix * rotationMatrix * translationMatrix);
+
+	return &worldMatrix;
 }
 RenderObject* GameObject::GetRenderObject()
 {

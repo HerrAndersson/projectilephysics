@@ -131,14 +131,16 @@ bool Game::Render()
 {
 	bool result = true;
 
-	XMMATRIX viewMatrix, projectionMatrix;
-	XMMATRIX lightView, lightProjection;
+	XMMATRIX viewMatrix;
+	XMMATRIX projectionMatrix;
+	XMMATRIX lightView;
+	XMMATRIX lightProjection;
 
-	camera->GetProjectionMatrix(projectionMatrix);
-	camera->GetViewMatrix(viewMatrix);
+	projectionMatrix = *camera->GetProjectionMatrix();
+	viewMatrix = *camera->GetViewMatrix();
 
-	sunCam->GetViewMatrix(lightView);
-	sunCam->GetProjectionMatrix(lightProjection);
+	lightView = *sunCam->GetViewMatrix();
+	lightProjection = *sunCam->GetProjectionMatrix();
 
 	//camera->GetProjectionMatrix(lightProjection);
 	//camera->GetViewMatrix(lightView);

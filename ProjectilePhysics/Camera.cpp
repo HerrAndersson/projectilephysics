@@ -80,14 +80,14 @@ XMVECTOR Camera::GetCamUp()
 	return camUp;
 }
 
-void Camera::GetProjectionMatrix(XMMATRIX& projectionMatrixIn)
+XMMATRIX* Camera::GetProjectionMatrix()
 {
-	projectionMatrixIn = projectionMatrix;
+	return &projectionMatrix;
 }
 
-void Camera::GetViewMatrix(XMMATRIX& viewMatrixIn)
+XMMATRIX* Camera::GetViewMatrix()
 {
-	viewMatrixIn = viewMatrix;
+	return &viewMatrix;
 }
 
 const float Camera::GetAspectRatio()

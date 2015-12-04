@@ -114,25 +114,25 @@ bool System::Update()
 			ShowCursor(showCursor);
 		}
 
-		//if(GetAsyncKeyState(VK_RIGHT) != 0)
-		//{
-		//	windowHeight = 900;
-		//	windowWidth = 1600;
-		//	int posX = (GetSystemMetrics(SM_CXSCREEN) - windowWidth) / 2;
-		//	int posY = (GetSystemMetrics(SM_CYSCREEN) - windowHeight) / 2;
+		if(GetAsyncKeyState(VK_RIGHT) != 0)
+		{
+			windowHeight = 900;
+			windowWidth = 1600;
+			int posX = (GetSystemMetrics(SM_CXSCREEN) - windowWidth) / 2;
+			int posY = (GetSystemMetrics(SM_CYSCREEN) - windowHeight) / 2;
 
-		//	RECT rc2 = { 0, 0, windowWidth, windowHeight };
-		//	AdjustWindowRect(&rc2, WS_OVERLAPPEDWINDOW, FALSE);
+			RECT rc2 = { 0, 0, windowWidth, windowHeight };
+			AdjustWindowRect(&rc2, WS_OVERLAPPEDWINDOW, FALSE);
 
-		//	SetWindowLong(hwnd, GWL_STYLE, WS_OVERLAPPEDWINDOW);
-		//	SetWindowPos(hwnd, NULL, posX, posY, rc2.right - rc2.left, rc2.bottom - rc2.top, SWP_NOOWNERZORDER | SWP_NOZORDER);
+			SetWindowLong(hwnd, GWL_STYLE, WS_OVERLAPPEDWINDOW);
+			SetWindowPos(hwnd, NULL, posX, posY, rc2.right - rc2.left, rc2.bottom - rc2.top, SWP_NOOWNERZORDER | SWP_NOZORDER);
 
-		//	SetForegroundWindow(hwnd);
-		//	SetFocus(hwnd);
+			SetForegroundWindow(hwnd);
+			SetFocus(hwnd);
 
-		//	SetCursorPos(screenWidth / 2, screenHeight / 2);
-		//	ShowCursor(showCursor);
-		//}
+			SetCursorPos(screenWidth / 2, screenHeight / 2);
+			ShowCursor(showCursor);
+		}
 	}
 
 	return result;
@@ -210,34 +210,6 @@ void System::InitializeWindows()
 	hwnd = CreateWindowEx(WS_EX_APPWINDOW, applicationName, applicationName,
 		WS_OVERLAPPEDWINDOW | CW_USEDEFAULT | CW_USEDEFAULT,
 		posX, posY, rc.right - rc.left, rc.bottom - rc.top, NULL, NULL, hinstance, NULL);
-
-
-
-	//windowHeight = 900;
-	//windowWidth = 1600;
-	//posX = (GetSystemMetrics(SM_CXSCREEN) - windowWidth) / 2;
-	//posY = (GetSystemMetrics(SM_CYSCREEN) - windowHeight) / 2;
-
-	//RECT rc2 = { 0, 0, windowWidth, windowHeight };
-	//AdjustWindowRect(&rc2, WS_OVERLAPPEDWINDOW, FALSE);
-
-	//SetWindowPos(hwnd, NULL, posX, posY, rc2.right - rc2.left, rc2.bottom - rc2.top, SWP_NOOWNERZORDER | SWP_NOZORDER);
-
-
-
-
-	posX = 0;
-	posY = 0;
-	windowWidth = GetSystemMetrics(SM_CXSCREEN);
-	windowHeight = GetSystemMetrics(SM_CYSCREEN);
-	SetWindowLong(hwnd, GWL_STYLE, WS_POPUP);
-	SetWindowPos(hwnd, HWND_TOP, posX, posY, windowWidth, windowHeight, SWP_FRAMECHANGED);
-
-	////ShowWindow(hwnd, SW_MAXIMIZE);
-
-
-
-
 
 	ShowWindow(hwnd, SW_SHOW);
 	SetForegroundWindow(hwnd);

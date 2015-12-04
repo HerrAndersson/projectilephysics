@@ -386,7 +386,7 @@ bool RenderModule::Render(GameObject* gameObject)
 	ID3D11DeviceContext* deviceContext = d3d->GetDeviceContext();
 	RenderObject* renderObject = gameObject->GetRenderObject();
 
-	result = SetDataPerObject(gameObject->GetWorldMatrix(), renderObject, gameObject->GetColorModifier());
+	result = SetDataPerObject(*gameObject->GetWorldMatrix(), renderObject, gameObject->GetColorModifier());
 		
 	if (!result)
 		return false;
@@ -424,7 +424,7 @@ bool RenderModule::RenderShadow(GameObject* gameObject)
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	deviceContext->IASetVertexBuffers(0, 1, &renderObject->model->vertexBuffer, &vertexSize, &offset);
 
-	shadowMap->SetDataPerObject(deviceContext, gameObject->GetWorldMatrix());
+	shadowMap->SetDataPerObject(deviceContext, *gameObject->GetWorldMatrix());
 
 	//Now render the prepared buffers with the shader.
 	deviceContext->Draw(renderObject->model->vertexBufferSize, 0);

@@ -36,8 +36,8 @@ public:
 	const float GetAspectRatio();
 
 	void Update();
-	void GetViewMatrix(XMMATRIX& viewMatrix);
-	void GetProjectionMatrix(XMMATRIX& projectionMatrix);
+	XMMATRIX* GetViewMatrix();
+	XMMATRIX* GetProjectionMatrix();
 
 	//Overloading these guarantees 16B alignment of XMMATRIX
 	void* operator new(size_t i);
