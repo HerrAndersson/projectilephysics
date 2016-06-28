@@ -26,26 +26,31 @@ void InputManager::HandleMouse()
 {
 	lastMousePos = mousePos;
 
-	LPPOINT point = new POINT();
-	GetCursorPos(point);
+	POINT point;
+	GetCursorPos(&point);
 
-	ScreenToClient(hwnd, point);
+	RECT rect;
+	GetClientRect(hwnd, &rect);
+	MapWindowPoints(hwnd, GetParent(hwnd), (LPPOINT)&rect, 2);
 
-	mousePos.x = (float)point->x;
-	mousePos.y = (float)point->y;
+	float sx = float(rect.left + rect.right) / 2.0f;
+	float sy = float(rect.top + rect.bottom) / 2.0f;
+	SetCursorPos((int)sx, (int)sy);
+
+	float dx = point.x - sx;
+	float dy = point.y - sy;
+
+	deltaPos = XMFLOAT2(dx, dy);
 
 	if (mousePos.x < 0)  { mousePos.x = 0; }
 	if (mousePos.y < 0)  { mousePos.y = 0; }
 	if (mousePos.x  > screenWidth)  { mousePos.x = (float)screenWidth; }
 	if (mousePos.y  > screenHeight) { mousePos.y = (float)screenHeight; }
-
-	delete point;
 }
 
 bool InputManager::MouseMoved(XMFLOAT2& difference)
 {
-
-	if ((lastMousePos.x == mousePos.x) && (lastMousePos.y == mousePos.y))
+	if (std::abs(deltaPos.x) < std::numeric_limits<float>::epsilon() && std::abs(deltaPos.y) < std::numeric_limits<float>::epsilon())
 	{
 		difference.x = 0;
 		difference.y = 0;
@@ -54,9 +59,7 @@ bool InputManager::MouseMoved(XMFLOAT2& difference)
 	}
 	else
 	{
-		difference.x = mousePos.x - lastMousePos.x;
-		difference.y = mousePos.y - lastMousePos.y;
-
+		difference = deltaPos;
 		return true;
 	}
 }

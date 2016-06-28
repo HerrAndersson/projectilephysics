@@ -39,6 +39,7 @@ private:
 
 	XMFLOAT2 mousePos;
 	XMFLOAT2 lastMousePos;
+	XMFLOAT2 deltaPos;
 
 public:
 

@@ -54,29 +54,29 @@ float4 main(VS_OUT input) : SV_TARGET
 
 	//if (howMuchLight > 0.0f)
 	//{
-		float2 smTex;
-		smTex.x = 0.5f + (lightSpacePos.x / lightSpacePos.w * 0.5f);
-		smTex.y = 0.5f - (lightSpacePos.y / lightSpacePos.w * 0.5f);
+		//float2 smTex;
+		//smTex.x = 0.5f + (lightSpacePos.x / lightSpacePos.w * 0.5f);
+		//smTex.y = 0.5f - (lightSpacePos.y / lightSpacePos.w * 0.5f);
 
-		float depth = lightSpacePos.z / lightSpacePos.w;
+		//float depth = lightSpacePos.z / lightSpacePos.w;
 
-		float epsilon = 0.000001f;
-		float dx = 1.0f / shadowMapSize;
+		//float epsilon = 0.000001f;
+		//float dx = 1.0f / shadowMapSize;
 
-		//Less filtering
-		float s0 = ShadowMap.Sample(sampleStatePoint, smTex).r;
-		float s1 = ShadowMap.Sample(sampleStatePoint, smTex + float2(dx, 0.0f)).r;
-		float s2 = ShadowMap.Sample(sampleStatePoint, smTex + float2(0.0f, dx)).r;
-		float s3 = ShadowMap.Sample(sampleStatePoint, smTex + float2(dx, dx)).r;
-		
-		float2 texelPos = smTex * shadowMapSize;
-		float2 lerps = frac(texelPos);
-		float shadowCoeff = lerp(lerp(s0, s1, lerps.x), lerp(s2, s3, lerps.x), lerps.y);
+		////Less filtering
+		//float s0 = ShadowMap.Sample(sampleStatePoint, smTex).r;
+		//float s1 = ShadowMap.Sample(sampleStatePoint, smTex + float2(dx, 0.0f)).r;
+		//float s2 = ShadowMap.Sample(sampleStatePoint, smTex + float2(0.0f, dx)).r;
+		//float s3 = ShadowMap.Sample(sampleStatePoint, smTex + float2(dx, dx)).r;
+		//
+		//float2 texelPos = smTex * shadowMapSize;
+		//float2 lerps = frac(texelPos);
+		//float shadowCoeff = lerp(lerp(s0, s1, lerps.x), lerp(s2, s3, lerps.x), lerps.y);
 
-		if (shadowCoeff < depth - epsilon)
-		{
-			finalColor = finalColor * saturate(((shadowCoeff * 10) - 2.5f) / 10);
-		}
+		//if (shadowCoeff < depth - epsilon)
+		//{
+		//	finalColor = finalColor * saturate(((shadowCoeff * 10) - 2.5f) / 10);
+		//}
 	//}
 
 

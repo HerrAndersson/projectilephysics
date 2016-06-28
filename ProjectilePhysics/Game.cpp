@@ -19,15 +19,15 @@ Game::Game(HINSTANCE hInstance, HWND hwnd, int screenWidth, int screenHeight, bo
 	skySphere = new GameObject(ObjectTypes::STATIC, Assets->GetRenderObject(0), XMFLOAT3(512, 100, 512), XMFLOAT3(850, 850, 850), XMFLOAT3(0, 0, 0));
 	sun = new GameObject(ObjectTypes::STATIC, Assets->GetRenderObject(4), XMFLOAT3(512, 500, -300), XMFLOAT3(10, 10, 10), XMFLOAT3(0, 0, 0));
 
-	sunCam = new Camera(XM_PI / 2.2f, 1, 1, 0.1f, 3000.0f);
-	sunCam->SetPosition(sun->GetPosition());
-	sunCam->SetRotation(XMFLOAT3(45.0f, 0.0f, 0.0f));
+	//sunCam = new Camera(XM_PI / 2.2f, 1, 1, 0.1f, 3000.0f);
+	//sunCam->SetPosition(sun->GetPosition());
+	//sunCam->SetRotation(XMFLOAT3(45.0f, 0.0f, 0.0f));
 
 	GameObject* cannonBase = new GameObject(ObjectTypes::STATIC, Assets->GetRenderObject(5), XMFLOAT3(480, 10, 128), XMFLOAT3(MeterToUnits(1.5f), MeterToUnits(2.5f), MeterToUnits(1.8f)), XMFLOAT3(-20, 0, 0));
 	gameObjects.push_back(cannonBase);
 
-	GameObject* camel = new GameObject(ObjectTypes::STATIC, Assets->GetRenderObject(1), XMFLOAT3(380, 0, 582), XMFLOAT3(MeterToUnits(5.5f), MeterToUnits(5.5f), MeterToUnits(5.5f)), XMFLOAT3(0, 45, 0));
-	gameObjects.push_back(camel);
+	//GameObject* camel = new GameObject(ObjectTypes::STATIC, Assets->GetRenderObject(1), XMFLOAT3(380, 0, 582), XMFLOAT3(MeterToUnits(5.5f), MeterToUnits(5.5f), MeterToUnits(5.5f)), XMFLOAT3(0, 45, 0));
+	//gameObjects.push_back(camel);
 
 	cannon = new GameObject(ObjectTypes::CANNON, Assets->GetRenderObject(3), GameConstants::CANNONBALL_START_POS, XMFLOAT3(MeterToUnits(0.4f), MeterToUnits(0.4f), MeterToUnits(3.0f)), XMFLOAT3(-45, 0, 0));
 	gameObjects.push_back(cannon);
@@ -104,25 +104,25 @@ bool Game::Update(double frameTime, double gameTime)
 	//sun->SetPosition(pos);
 	//sunCam->SetPosition(pos);
 
-	XMFLOAT3 pos = sun->GetPosition();
+	//XMFLOAT3 pos = sun->GetPosition();
 
-	if (!lr)
-	{
-		if (pos.x > 112)
-			pos.x--;
-		else
-			lr = !lr;
-	}
-	else
-	{
-		if (pos.x < 912)
-			pos.x++;
-		else
-			lr = !lr;
-	}
+	//if (!lr)
+	//{
+	//	if (pos.x > 112)
+	//		pos.x--;
+	//	else
+	//		lr = !lr;
+	//}
+	//else
+	//{
+	//	if (pos.x < 912)
+	//		pos.x++;
+	//	else
+	//		lr = !lr;
+	//}
 
-	sun->SetPosition(pos);
-	sunCam->SetPosition(pos);
+	//sun->SetPosition(pos);
+	//sunCam->SetPosition(pos);
 
 	return true;
 }
@@ -139,8 +139,8 @@ bool Game::Render()
 	projectionMatrix = *camera->GetProjectionMatrix();
 	viewMatrix = *camera->GetViewMatrix();
 
-	lightView = *sunCam->GetViewMatrix();
-	lightProjection = *sunCam->GetProjectionMatrix();
+	//lightView = *sunCam->GetViewMatrix();
+	//lightProjection = *sunCam->GetProjectionMatrix();
 
 	//camera->GetProjectionMatrix(lightProjection);
 	//camera->GetViewMatrix(lightView);
@@ -149,24 +149,24 @@ bool Game::Render()
 	//sunCam->GetProjectionMatrix(projectionMatrix);
 
 	///////////////////////////////////////////////////////////// Shadows /////////////////////////////////////////////////////////////
-	Renderer->ActivateShadowRendering(lightView, lightProjection);
+	//Renderer->ActivateShadowRendering(lightView, lightProjection);
 
-	for (int i = 0; i < (signed)gameObjects.size(); i++) 
-		Renderer->RenderShadow(gameObjects.at(i));
+	//for (int i = 0; i < (signed)gameObjects.size(); i++) 
+	//	Renderer->RenderShadow(gameObjects.at(i));
 
-	for (int i = 0; i < (signed)projectiles.size(); i++)
-		Renderer->RenderShadow(projectiles.at(i));
+	//for (int i = 0; i < (signed)projectiles.size(); i++)
+	//	Renderer->RenderShadow(projectiles.at(i));
 
-	Renderer->RenderShadow(cannon);
+	//Renderer->RenderShadow(cannon);
 
-	//Render last of all shadow objects
-	Renderer->SetCullingState(CullingState::BACK);
-	Renderer->RenderShadow(terrain);
+	////Render last of all shadow objects
+	//Renderer->SetCullingState(CullingState::BACK);
+	//Renderer->RenderShadow(terrain);
 
 	//Shadows funkar inte!
 	////////////////////////////////////////////////////////////// Normal //////////////////////////////////////////////////////////////
 	Renderer->BeginScene(0.05f, 0.05f, 0.05f, 1.0f);
-	Renderer->SetDataPerFrame(viewMatrix, projectionMatrix, camera->GetPosition(), sunCam->GetPosition(), lightView, lightProjection);
+	Renderer->SetDataPerFrame(viewMatrix, projectionMatrix, camera->GetPosition(), sun->GetPosition(), lightView, lightProjection);
 
 	Renderer->UseTerrainShader();
 	Renderer->SetTerrainData(XMMatrixIdentity(), XMFLOAT3(0, 0, 0), terrain);
